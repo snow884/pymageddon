@@ -1320,7 +1320,7 @@ def send_map_data():
         tiles = find_tiles(player_object, rad=MAP_VIEW_SIZE)
         particles = find_particles(player_object, rad=MAP_VIEW_SIZE)
         
-        all_images = [inheritor.image for inheritor in MyObject.__subclasses__()] + [inheritor.image for inheritor in Tile.__subclasses__()]
+        all_images = [inheritor.image for inheritor in MyObject.__subclasses__()] + [inheritor.image for inheritor in Tile.__subclasses__()] + [inheritor.image for inheritor in Particle.__subclasses__()]
         
         other_images = ['static/other/health_bar_green.png','static/other/health_bar_red.png','static/other/health_bar_yellow.png']
         
