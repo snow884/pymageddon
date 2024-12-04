@@ -1,0 +1,3 @@
+redis
+passlib
+python-multipart

@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+    <head>
+    </head>
+</head>
+<body>
+
+    <form id="createPlayerForm">
+      <p id="message_area"></p>
+      <label for="uname"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="username" required>
+  
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="password" required>
+  
+      <label for="psw"><b>Verify password</b></label>
+      <input type="password" placeholder="Enter Password" name="verify_password" required>
+  
+      <button type="submit">Create user</button>
+
+    </form>
+  
+    <script>
+        console.log("JS executing...")
+        // Get a reference to the form element
+        const form = document.getElementById('createPlayerForm');
+        const waring_message = document.getElementById('message_area');
+        // Add an event listener for the submit event
+        form.addEventListener('submit', function(event) {
+            console.log("submit pressed...")
+
+            const username = form.elements.username.value;
+            const password = form.elements.password.value;
+            const verify_password = form.elements.password.value;
+
+            fetch('/create_player', {
+                method: 'POST', // or 'POST', 'PUT', 'DELETE', etc.
+                headers: {
+                  'Content-Type': 'application/json', // Another example header
+                },
+                body: JSON.stringify({
+                    "username":username,
+                    "password":password,
+                    "verify_password":verify_password,
+                }),
+              })
+                .then(response => {
+                    return response.json(); // Assuming JSON response
+                })
+                .then(data => {
+
+                    if (data["detail"]) {
+                        waring_message.innerText = data["detail"];
+                    } 
+
+                    if (data["status"]=="success") {
+                        waring_message.innerText = "success";
+                        
+                        window.location.replace("/login_page");
+                    }
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                    waring_message.innerText = error;
+                });
+            
+            event.preventDefault();
+
+        });
+        
+      </script>
+
+  </form>
+</body>
+</html>
