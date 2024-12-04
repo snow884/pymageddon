@@ -1,43 +1,30 @@
-from typing import Union
-
-from fastapi import FastAPI
-import redis
-import json 
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
+import json
 import time
-
-from typing import Annotated
-
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 import jwt
+import redis
 from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.staticfiles import StaticFiles
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from pydantic import BaseModel
-
-import jwt
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 app = FastAPI()
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host="localhost", port=6379, db=0)
 
 origins = [
     "http://localhost:8000",  # Your frontend's origin
     "http://localhost:8000",  # Replace with your frontend's port if different
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
 ]
 
 app.add_middleware(
@@ -51,13 +38,11 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-
 class KeysPressed(BaseModel):
-    ArrowRight:bool
-    ArrowLeft:bool
-    ArrowDown:bool
-    ArrowUp:bool
-
+    ArrowRight: bool
+    ArrowLeft: bool
+    ArrowDown: bool
+    ArrowUp: bool
 
 
 def fake_hash_password(password: str):
@@ -71,14 +56,17 @@ class User(BaseModel):
     username: str
     hashed_password: str
 
+
 class UserCreate(BaseModel):
     username: str
     password: str
     verify_password: str
 
+
 class UserLogin(BaseModel):
     username: str
     password: str
+
 
 class Token(BaseModel):
     access_token: str
@@ -90,7 +78,6 @@ class TokenData(BaseModel):
 
 
 from passlib.context import CryptContext
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -106,12 +93,12 @@ def get_password_hash(password):
 
 
 def get_user(username: str):
-    user_dict_str = r.get(f'player_{username}')
+    user_dict_str = r.get(f"player_{username}")
     if not user_dict_str:
         return None
-    
+
     user_dict = json.loads(user_dict_str)
-    
+
     return User(**user_dict)
 
 
@@ -180,19 +167,22 @@ async def login_for_access_token(
     )
     return Token(access_token=access_token, token_type="bearer")
 
+
 @app.get("/login_page")
 def login_page():
     with open("login.html") as f:
         html_content = f.read()
-    
+
     return HTMLResponse(content=html_content, status_code=200)
+
 
 @app.get("/create_player_page")
 def create_user_page():
     with open("create_user.html") as f:
         html_content = f.read()
-    
+
     return HTMLResponse(content=html_content, status_code=200)
+
 
 @app.get("/users/me/", response_model=User)
 async def read_users_me(
@@ -208,54 +198,60 @@ async def read_own_items(
     return [{"item_id": "Foo", "owner": current_user.username}]
 
 
-
-
 @app.get("/")
 def index():
     with open("index.html") as f:
         html_content = f.read()
-    
+
     return HTMLResponse(content=html_content, status_code=200)
+
 
 @app.post("/create_player")
 def create_player(new_user: UserCreate):
 
     if new_user.verify_password != new_user.password:
         raise HTTPException(status_code=400, detail="Passwords dont match")
-    
+
     hashed_password = get_password_hash(new_user.password)
-    
+
     if get_user(new_user.username):
-        raise HTTPException(status_code=400, detail="User with this username already exists")
-    
+        raise HTTPException(
+            status_code=400, detail="User with this username already exists"
+        )
+
     user = User(username=new_user.username, hashed_password=hashed_password)
 
-    r.set(f'player_{user.username}', user.json())
-    
-    return {'status':'success'}
-    
-@app.post("/control")
-def control(current_user: Annotated[User, Depends(get_current_active_user)],my_keys:KeysPressed):
+    r.set(f"player_{user.username}", user.json())
 
-    r.set(f'control_{current_user.username}',my_keys.json())
+    return {"status": "success"}
+
+
+@app.post("/control")
+def control(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    my_keys: KeysPressed,
+):
+
+    r.set(f"control_{current_user.username}", my_keys.json())
+
 
 @app.get("/get_map")
 def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
 
-    map_data_str = r.get(f'map_{current_user.username}')
+    map_data_str = r.get(f"map_{current_user.username}")
     map_data = json.loads(map_data_str)
-    
+
     unix_timestamp = time.time()
     new_map_timestamp = map_data["global_params"]["new_map_timestamp"]
-    
+
     timestamp = map_data["global_params"]["timestamp"]
     print(new_map_timestamp - unix_timestamp)
     map_data["global_params"]["time_left"] = new_map_timestamp - unix_timestamp
-    
+
     return map_data
+
 
 @app.get("/ping")
 def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
-    
-    return {'status':'success'}
 
+    return {"status": "success"}
