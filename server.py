@@ -226,6 +226,15 @@ def create_player(new_user: UserCreate):
     return {"status": "success"}
 
 
+@app.post("/button")
+def control(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    button: KeysPressed,
+):
+
+    r.set(f"button_{current_user.username}", my_keys.json())
+
+
 @app.post("/control")
 def control(
     current_user: Annotated[User, Depends(get_current_active_user)],
