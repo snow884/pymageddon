@@ -1,3 +1,7 @@
+import json
+from enum import Enum
+
+
 # Custom JSON encoder
 class EnumEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -21,10 +25,3 @@ class Actions(Enum):
     ROTATE_LEFT = 4
 
     MOVE_FORWARD = 6
-
-
-@dataclass
-class Map:
-
-    size_x: int = 0
-    size_y: int = 0

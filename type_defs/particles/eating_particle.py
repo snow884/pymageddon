@@ -1,0 +1,10 @@
+from type_defs.particles.base_particle import BaseParticle
+
+
+class EatingParticle(BaseParticle):
+
+    type_name: str = "Eating"
+
+    image: str = "static/particles/eating.png"
+
+    lifetime: int = 3

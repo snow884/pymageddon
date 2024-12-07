@@ -5,8 +5,28 @@ from dataclasses import dataclass
 
 import redis
 from dataclasses_json import dataclass_json
-from image_utils import generate_map
+
+from common_utils.common_enums import Actions, EnumEncoder, Rotations
+from common_utils.grid_utils import (
+    find_objects,
+    find_particles,
+    find_tiles,
+    get_nearest_free_location,
+)
+from common_utils.image_utils import generate_map
+from singleton import realm
+from type_defs.objects.angel import Angel
 from type_defs.objects.base_object import BaseObject
+from type_defs.objects.chicken import Chicken
+from type_defs.objects.chicken_egg import ChickenEgg
+from type_defs.objects.cow import Cow
+from type_defs.objects.fox import Fox
+from type_defs.objects.grass import Grass
+from type_defs.objects.seed import Seed
+from type_defs.objects.stone import Stone
+from type_defs.particles.base_particle import BaseParticle
+from type_defs.tiles.base_tile import BaseTile
+from type_defs.tiles.tile1 import Tile1
 
 r = redis.Redis(host="localhost", port=6379, db=0)
 
@@ -24,195 +44,57 @@ class Player:
     name = ""
 
 
-def find_nearest(obj: BaseObject, type_in, rad: int = 10):
-
-    min_obj = None
-    min_dist = -1
-    min_i = -1
-    min_j = -1
-
-    for i in range(max(0, obj.x - rad), min(obj.x + rad, MAP.size_x)):
-        for j in range(max(0, obj.y - rad), min(obj.y + rad, MAP.size_x)):
-            obj_index_found = TILES[(i, j)].occupied_by
-            if obj_index_found:
-                if type_in:
-
-                    if isinstance(type_in, list):
-                        obj_in_type = any(
-                            [
-                                isinstance(OBJECT_LIST[obj_index_found], t)
-                                for t in type_in
-                            ]
-                        )
-                    else:
-                        obj_in_type = isinstance(OBJECT_LIST[obj_index_found], type_in)
-
-                    if obj_in_type:
-                        if (
-                            min_dist > abs(obj.x - i) + abs(obj.y - j)
-                        ) or min_dist == -1:
-                            min_dist = abs(obj.x - i) + abs(obj.y - j)
-
-                            min_i = i
-                            min_j = j
-                            min_obj = OBJECT_LIST[obj_index_found]
-                else:
-
-                    if (min_dist > abs(obj.x - i) + abs(obj.y - j)) or min_dist == -1:
-                        min_dist = abs(obj.x - i) + abs(obj.y - j)
-
-                        min_i = i
-                        min_j = j
-                        min_obj = OBJECT_LIST[obj_index_found]
-
-    return min_obj
+realm.MAP = Map(size_x=200, size_y=200)
 
 
-def find_objects(obj: BaseObject, rad: int = 30):
+def populate_map():
 
-    objects_found = {}
+    for i in range(0, realm.MAP.size_x):
+        for j in range(0, realm.MAP.size_y):
+            realm.TILES[(i, j)] = Tile1(x=i, y=j)
+            if random.randint(0, 5) == 4:
+                random.choice([Cow, Grass, Seed, Stone, Chicken, ChickenEgg, Fox])(
+                    x_new=i, y_new=j
+                )
 
-    for i in range(max(0, obj.x - rad), min(obj.x + rad, MAP.size_x)):
-        for j in range(max(0, obj.y - rad), min(obj.y + rad, MAP.size_x)):
-            obj_index_found = TILES[(i, j)].occupied_by
+            else:
 
-            if obj_index_found:
+                if random.randint(0, 500) == 499:
 
-                objects_found[obj_index_found] = OBJECT_LIST[obj_index_found]
-
-    return objects_found
-
-
-def find_tiles(obj: BaseObject, rad: int = 30):
-
-    tiles = {}
-
-    for i in range(max(0, obj.x - rad), min(obj.x + rad, MAP.size_x)):
-        for j in range(max(0, obj.y - rad), min(obj.y + rad, MAP.size_x)):
-            tiles[(i, j)] = TILES[(i, j)]
-
-    return tiles
-
-
-def find_particles(obj: BaseObject, rad: int = 30):
-
-    particles_found = {}
-
-    for i in range(max(0, obj.x - rad), min(obj.x + rad, MAP.size_x)):
-        for j in range(max(0, obj.y - rad), min(obj.y + rad, MAP.size_x)):
-
-            particles_index_found = TILES[(i, j)].occupied_by_particles
-
-            if particles_index_found:
-                for particle_index_found in particles_index_found:
-
-                    particles_found[particle_index_found] = PARTICLE_LIST[
-                        particle_index_found
-                    ]
-
-    return particles_found
-
-
-def get_nearest_free_location(x, y):
-
-    rad = 1
-
-    while rad < MAP.size_x:
-
-        for i in [max(0, x - rad), min(x + rad, MAP.size_x)]:
-            for j in range(max(0, y - rad), min(y + rad, MAP.size_x)):
-                tile = TILES[(i, j)]
-                if not tile.occupied_by:
-                    return i, j
-
-        for i in range(max(0, x - rad), min(x + rad, MAP.size_x)):
-            for j in [max(0, y - rad), min(y + rad, MAP.size_x)]:
-                tile = TILES[(i, j)]
-                if not tile.occupied_by:
-                    return i, j
-
-        rad = rad + 1
-
-    return None
-
-
-def obj_fut(str):
-
-    found = [
-        inheritor
-        for inheritor in BaseObject.__subclasses__()
-        if str == inheritor.__name__
-    ]
-
-    if found:
-        return found[0]
-    else:
-        raise Exception(f"class name {str} not found")
-
-
-TILES = {}
-OBJECT_LIST = {}
-PLAYER_LIST = {}
-PARTICLE_LIST = {}
-OBJ_COUNTER = 0
-MAP_VIEW_SIZE = 11
-TIME_INTERVAL = 0.66
-EPOCH_COUNTER = 0
-MAP = Map(size_x=200, size_y=200)
-
-for i in range(0, MAP.size_x):
-    for j in range(0, MAP.size_y):
-        TILES[(i, j)] = Tile1(x=i, y=j)
-        if random.randint(0, 5) == 4:
-            random.choice([Cow, Grass, Seed, Stone, Chicken, ChickenEgg, Fox])(
-                x_new=i, y_new=j
-            )
-
-        else:
-
-            if random.randint(0, 500) == 499:
-
-                Angel(x_new=i, y_new=j)
+                    Angel(x_new=i, y_new=j)
 
 
 def handle_players():
-
-    global PLAYER_LIST
 
     for key in r.keys(pattern="player_*"):
         key_str = key.decode()
 
         player_name = key_str.replace("player_", "")
 
-        if player_name not in PLAYER_LIST.keys():
+        if player_name not in realm.PLAYER_LIST.keys():
 
-            control_data_str = r.get(f"control_{player_name}")
+            # control_data_str = r.get(f"control_{player_name}")
 
-            if control_data_str:
+            # if (control_data_str):
 
-                control_data = json.loads(control_data_str)
+            # control_data = json.loads(control_data_str)
 
-                if any([value for key, value in control_data.items()]):
-                    print(f"Creating player {player_name}")
-                    x_new, y_new = get_nearest_free_location(10, 10)
-                    Cow(
-                        x_new=x_new,
-                        y_new=y_new,
-                        is_player=True,
-                        player_name=player_name,
-                    )
+            # if any([value for key, value in control_data.items()]):
+            print(f"Creating player {player_name}")
+            x_new, y_new = get_nearest_free_location(10, 10)
+            Cow(x_new=x_new, y_new=y_new, is_player=True, player_name=player_name)
 
 
 def evaluate_thinking():
 
-    for i, obj in OBJECT_LIST.items():
+    for i, obj in realm.OBJECT_LIST.items():
         if not obj.is_player:
             obj.intent = obj.think()
 
 
 def evaluate_moves():
 
-    for i, obj in OBJECT_LIST.items():
+    for i, obj in realm.OBJECT_LIST.items():
 
         if obj.intent == Actions.MOVE_FORWARD:
 
@@ -265,20 +147,20 @@ def evaluate_moves():
 
 def send_map_data():
 
-    for player_name, player_object in PLAYER_LIST.items():
+    for player_name, player_object in realm.PLAYER_LIST.items():
 
-        # print(f"Sending maps for player {player_name}")
+        # print(f"Sending realm.MAPs for player {player_name}")
 
-        map_data = r.get(f"map_{player_name}")
+        map_data = r.get(f"realm.MAP_{player_name}")
 
-        objects = find_objects(player_object, rad=MAP_VIEW_SIZE)
-        tiles = find_tiles(player_object, rad=MAP_VIEW_SIZE)
-        particles = find_particles(player_object, rad=MAP_VIEW_SIZE)
+        objects = find_objects(player_object, rad=realm.MAP_VIEW_SIZE)
+        tiles = find_tiles(player_object, rad=realm.MAP_VIEW_SIZE)
+        particles = find_particles(player_object, rad=realm.MAP_VIEW_SIZE)
 
         all_images = (
-            [inheritor.image for inheritor in MyObject.__subclasses__()]
-            + [inheritor.image for inheritor in Tile.__subclasses__()]
-            + [inheritor.image for inheritor in Particle.__subclasses__()]
+            [inheritor.image for inheritor in BaseObject.__subclasses__()]
+            + [inheritor.image for inheritor in BaseTile.__subclasses__()]
+            + [inheritor.image for inheritor in BaseParticle.__subclasses__()]
         )
 
         other_images = [
@@ -294,12 +176,12 @@ def send_map_data():
         data = {
             "global_params": {
                 "status": "running",
-                "time_interval": TIME_INTERVAL,
-                "map_view_size": MAP_VIEW_SIZE,
-                "epoch": EPOCH_COUNTER,
+                "time_interval": realm.TIME_INTERVAL,
+                "map_view_size": realm.MAP_VIEW_SIZE,
+                "epoch": realm.EPOCH_COUNTER,
                 "textures": all_images + other_images,
                 "timestamp": unix_timestamp,
-                "new_map_timestamp": unix_timestamp + TIME_INTERVAL,
+                "new_map_timestamp": unix_timestamp + realm.TIME_INTERVAL,
             },
             "player": {"object_id": player_object.index},
             "objects": {k: o.to_dict() for k, o in objects.items()},
@@ -312,7 +194,7 @@ def send_map_data():
 
 def evaluate_player_control():
 
-    for player_name, player_object in PLAYER_LIST.items():
+    for player_name, player_object in realm.PLAYER_LIST.items():
 
         control_data_str = r.get(f"control_{player_name}")
 
@@ -350,15 +232,16 @@ def evaluate_player_control():
 
 def evaluate_effects():
 
-    for i, obj in list(OBJECT_LIST.items()):
+    for i, obj in list(realm.OBJECT_LIST.items()):
 
-        if i in OBJECT_LIST.keys():
+        if i in realm.OBJECT_LIST.keys():
+            if obj.effects:
+                for e in obj.effects:
+                    e.run_effect(obj)
 
-            obj.effects()
+    for i, par in list(realm.PARTICLE_LIST.items()):
 
-    for i, par in list(PARTICLE_LIST.items()):
-
-        if i in PARTICLE_LIST.keys():
+        if i in realm.PARTICLE_LIST.keys():
 
             par.effects()
 
@@ -367,13 +250,15 @@ def count_object():
 
     cnt_dict = {}
 
-    for i, o in OBJECT_LIST.items():
+    for i, o in realm.OBJECT_LIST.items():
         cnt_dict[o.type_name] = cnt_dict.get(o.type_name, 0) + 1
 
     for type_name, cnt in cnt_dict.items():
 
         print(f"{type_name} : {cnt}")
 
+
+populate_map()
 
 while True:
 
@@ -385,7 +270,7 @@ while True:
     evaluate_moves()
     count_object()
     send_map_data()
-    generate_map(TILES, MAP, OBJECT_LIST)
+    generate_map()
 
     end_time = time.time()
     print(
@@ -394,11 +279,11 @@ while True:
         "ms",
     )
 
-    while (end_time - start_time) < TIME_INTERVAL:
+    while (end_time - start_time) < realm.TIME_INTERVAL:
         end_time = time.time()
         time.sleep(0.01)
 
     end_time = time.time()
     print("Total epoch time :", (end_time - start_time) * 10**3, "ms")
 
-    EPOCH_COUNTER = EPOCH_COUNTER + 1
+    realm.EPOCH_COUNTER = realm.EPOCH_COUNTER + 1

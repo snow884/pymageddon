@@ -1,7 +1,9 @@
 from PIL import Image
 
+from singleton import realm
 
-def generate_map(TILES, MAP, OBJECT_LIST):
+
+def generate_map():
 
     # Create a new image with a white background
     width = 200
@@ -12,13 +14,13 @@ def generate_map(TILES, MAP, OBJECT_LIST):
     pixels = image.load()
 
     # Generate a simple gradient
-    for x in range(0, MAP.size_x):
-        for y in range(0, MAP.size_y):
+    for x in range(0, realm.MAP.size_x):
+        for y in range(0, realm.MAP.size_y):
 
-            index = TILES[(x, y)].occupied_by
+            index = realm.TILES[(x, y)].occupied_by
 
             if index:
-                obj = OBJECT_LIST[index]
+                obj = realm.OBJECT_LIST[index]
             else:
                 obj = None
 
@@ -40,4 +42,4 @@ def generate_map(TILES, MAP, OBJECT_LIST):
             pixels[x, y] = (r, g, b)
 
     # Save the image
-    image.save("static/other/map_image.png")
+    image.save("static/other/realm.MAP_image.png")
