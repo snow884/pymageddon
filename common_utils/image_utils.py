@@ -42,4 +42,4 @@ def generate_map():
             pixels[x, y] = (r, g, b)
 
     # Save the image
-    image.save("static/other/realm.MAP_image.png")
+    image.save("static/other/map_image.png")

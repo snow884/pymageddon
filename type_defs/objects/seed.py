@@ -9,7 +9,7 @@ class Seed(BaseObject):
     type_name: str = "Seed"
     image = "static/objects/seed.png"
 
-    effects = [TurnInto(future_object_class="Grass", time_to_turn=100)]
+    effects = [TurnInto(future_object_class="Grass", time_to_turn=300)]
 
     def __init__(self, x_new: int, y_new: int):
         super().__init__(x_new, y_new)

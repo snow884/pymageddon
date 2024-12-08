@@ -17,4 +17,4 @@ class Grass(BaseObject):
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
         )
 
-    effects = [EmitObject(object_to_emit="Seed", time_to_emit=20)]
+    effects = [EmitObject(object_to_emit="Seed", time_to_emit=50)]

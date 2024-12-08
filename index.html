@@ -305,8 +305,25 @@
                                     }  
                                 });
                                 
-                                let my_texture_url = '/static/other/map_image.png';
-                                PIXI.Assets.load(my_texture_url).then(texture => {this.textures[my_texture_url] = texture}).catch(err => console.error(err));
+                                let nav_map_texture_url = '/static/other/map_image.png';
+                                
+                                this.textures[nav_map_texture_url].destroy();
+
+                                PIXI.Assets.load(nav_map_texture_url).then(texture => {this.textures[nav_map_texture_url] = texture}).catch(err => console.error(err));
+                                
+                                this.nav_map_sprite.destroy();
+
+                                this.nav_map_sprite = PIXI.Sprite.from(nav_map_texture_url);
+                                
+                                app.stage.addChild(this.nav_map_sprite);
+                                
+                                this.nav_map_sprite.zIndex = 5;
+                                this.nav_map_sprite.x=app.screen.width - 1.5/20.0*app.screen.width;
+                                this.nav_map_sprite.y=1.5/20.0*app.screen.width;
+                                this.nav_map_sprite.height=3/20.0*app.screen.width;
+                                this.nav_map_sprite.width=3/20.0*app.screen.width;
+                                this.nav_map_sprite.anchor.set(0.5);
+
                                 let player_obj = this.objects[this.player_id];
                                 this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*app.screen.width + (player_obj.x/200.0)*3.0/20.0*app.screen.width;
                                 this.nav_cross_sprite.y= (player_obj.y/200.0)*3.0/20.0*app.screen.width;

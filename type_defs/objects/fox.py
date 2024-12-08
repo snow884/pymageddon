@@ -32,7 +32,7 @@ class Fox(BaseObject):
 
     def think(self):
 
-        return simple_chase(self, chase_after=["Chicken", "Cow"], chase_from=[])
+        return simple_chase(self, chase_after=["Chicken", "Cow"], chase_from=None)
 
     def die(self):
         DeathParticle(x_new=self.x, y_new=self.y)

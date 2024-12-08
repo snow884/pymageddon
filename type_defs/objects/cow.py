@@ -30,7 +30,7 @@ class Cow(BaseObject):
         )
 
     def think(self):
-        return simple_chase(self, chase_after=["Seed", "Grass"], chase_from=["Fox"])
+        return simple_chase(self, chase_after=["Seed", "Grass"], chase_from="Fox")
 
     def die(self):
         DeathParticle(x_new=self.x, y_new=self.y)

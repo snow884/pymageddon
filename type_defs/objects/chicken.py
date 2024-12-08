@@ -7,7 +7,6 @@ from type_defs.objects.chicken_egg import ChickenEgg
 from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
 from type_defs.objects.effects.hp_depletion import HpDepletion
 from type_defs.objects.effects.lay_object import LayObject
-from type_defs.objects.fox import Fox
 from type_defs.objects.seed import Seed
 from type_defs.particles.death_particle import DeathParticle
 
@@ -34,7 +33,7 @@ class Chicken(BaseObject):
 
     def think(self):
 
-        return simple_chase(self, chase_after=[Seed], chase_from=[Fox])
+        return simple_chase(self, chase_after=["Seed"], chase_from="Fox")
 
     def die(self):
         DeathParticle(x_new=self.x, y_new=self.y)

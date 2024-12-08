@@ -22,12 +22,20 @@ def simple_chase(parent_object, chase_after=[], chase_from=[]):
 
     intent = None
 
-    found_fox_obj = find_nearest(parent_object, chase_from)
+    found_fox_obj = None
 
-    if found_fox_obj:
-        mode = "run_away"
+    if chase_from:
+        if mode not in ["random", "run_away"]:
+
+            found_fox_obj = find_nearest(parent_object, chase_from)
+
+            if found_fox_obj:
+                mode = "run_away"
 
     if mode == "run_away":
+        if not found_fox_obj:
+            found_fox_obj = find_nearest(parent_object, chase_from)
+
         if run_away_num == 0:
 
             run_away_dir = random.randint(0, 2) > 0
