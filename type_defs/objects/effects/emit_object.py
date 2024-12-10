@@ -7,10 +7,10 @@ from type_defs.objects.effects.base_effect import BaseEffect
 
 class EmitObject(BaseEffect):
     def __init__(self, object_to_emit, time_to_emit):
+        super().__init__()
 
         self.object_to_emit = object_to_emit
         self.time_to_emit = time_to_emit
-        self.cycle_counter = 0
 
     def description(self):
 
@@ -20,11 +20,13 @@ class EmitObject(BaseEffect):
 
     def run_effect(self, parent_object):
 
+        cycle_counter = parent_object.variables.get("emit_object_cycle_counter", 0)
+
         obj_object_to_emit = obj_fut(self.object_to_emit)
 
-        self.cycle_counter = self.cycle_counter + 1
+        cycle_counter = cycle_counter + 1
 
-        if self.cycle_counter > self.time_to_emit:
+        if cycle_counter > self.time_to_emit:
 
             x_new = random.choice([-1, 0, 1]) + parent_object.x
             y_new = random.choice([-1, 0, 1]) + parent_object.y
@@ -35,4 +37,6 @@ class EmitObject(BaseEffect):
                 if tile.occupied_by is None:
                     obj_object_to_emit(x_new=x_new, y_new=y_new)
 
-            self.cycle_counter = 0
+            cycle_counter = 0
+
+        parent_object.variables["emit_object_cycle_counter"] = cycle_counter

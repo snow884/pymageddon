@@ -1,3 +1,4 @@
 redis
 passlib
 python-multipart
+fastapi==0.115.

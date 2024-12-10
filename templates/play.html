@@ -114,7 +114,7 @@
 
                         if (obj_data["is_alive"]) {
                             
-                            let hp_texture = map.textures["static/other/health_bar_green.png"];
+                            let hp_texture = map.textures["../../static/other/health_bar_green.png"];
                             
                             this.health_bar = PIXI.Sprite.from(hp_texture);
                             app.stage.addChild(this.health_bar);
@@ -171,15 +171,15 @@
                         if (this.health_bar) {
 
                             if (this.hp_new<=20){
-                                this.health_bar.texture = map.textures["static/other/health_bar_red.png"];
+                                this.health_bar.texture = map.textures["../../static/other/health_bar_red.png"];
                             }
                             if ((this.hp_new>20) & (this.hp_new<=50)) {
-                                this.health_bar.texture = map.textures["static/other/health_bar_yellow.png"];
+                                this.health_bar.texture = map.textures["../../static/other/health_bar_yellow.png"];
                             
                             }  
 
                             if (this.hp_new>50){
-                                this.health_bar.texture = map.textures["static/other/health_bar_green.png"];
+                                this.health_bar.texture = map.textures["../../static/other/health_bar_green.png"];
                             
                             }  
                         
@@ -201,7 +201,8 @@
                     this.objects = {};
                     this.tiles = {};
                     this.particles = {};
-                    this.player_id = 0;
+                    this.player_id = "0";
+                    this.player_obj = null;
                     this.textures = {};
                     this.refresh_time =0.0;
                     this.time_left_until_refresh =1.0;
@@ -239,10 +240,13 @@
                                   }
                             })
                             .then((map_data) => {
+                                
+                                if (map_data['global_params']['status'] != 'running') {
+                                    window.location.replace("/start_game_page");
+                                }
 
-                                this.player_id = map_data['player']['object_id'];
                                 this.time_left_until_refresh = map_data['global_params']['time_left'];
-
+                                
                                 if (this.epoch == map_data['global_params']['epoch']){
                                     console.log("Not doing anything, epoch did not refresh")
                                     return false;
@@ -305,7 +309,12 @@
                                     }  
                                 });
                                 
-                                let nav_map_texture_url = '/static/other/map_image.png';
+
+                                this.player_id = map_data['player']['object_id'];
+                                
+                                this.player_obj = this.objects[this.player_id];
+
+                                let nav_map_texture_url = '../../static/other/map_image.png';
                                 
                                 this.textures[nav_map_texture_url].destroy();
 
@@ -324,9 +333,8 @@
                                 this.nav_map_sprite.width=3/20.0*app.screen.width;
                                 this.nav_map_sprite.anchor.set(0.5);
 
-                                let player_obj = this.objects[this.player_id];
-                                this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*app.screen.width + (player_obj.x/200.0)*3.0/20.0*app.screen.width;
-                                this.nav_cross_sprite.y= (player_obj.y/200.0)*3.0/20.0*app.screen.width;
+                                this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*app.screen.width + (this.player_obj.x/200.0)*3.0/20.0*app.screen.width;
+                                this.nav_cross_sprite.y= (this.player_obj.y/200.0)*3.0/20.0*app.screen.width;
                                 
                                 //map.elapsed = 0.0;
                                 return true;
@@ -371,6 +379,7 @@
                                     // Unauthorized, redirect to login page
                                     window.location.replace("/login_page");
                                     //return response.json(); 
+
                                   } else {
                                     // Other error, handle accordingly
                                     throw new Error('Network response was not ok.');
@@ -379,13 +388,16 @@
 
                             .then((map_data) => {
                                 
+                                if (map_data['global_params']['status'] != 'running') {
+                                    window.location.replace("/start_game_page");
+                                }
+
                                 this.map_data = map_data;
                             });
                     }
 
                     async init_objects() {
 
-                        this.player_id = this.map_data['player']['object_id'];
                         this.refresh_time = this.map_data['global_params']['time_interval'];
 
                         this.epoch = this.map_data['global_params']['epoch'];
@@ -424,9 +436,11 @@
                         });
 
                         console.log("Creating nav map...");
-                        let player_obj = this.objects[this.player_id];
-                        
-                        let nav_map_texture = this.textures['/static/other/map_image.png'];
+
+                        this.player_id = this.map_data['player']['object_id'];
+                        this.player_obj = this.objects[this.player_id];
+
+                        let nav_map_texture = this.textures['../../static/other/map_image.png'];
 
                         this.nav_map_sprite = PIXI.Sprite.from(nav_map_texture);
                         console.log(this.nav_map_sprite.x);
@@ -438,43 +452,39 @@
                         this.nav_map_sprite.width=3/20.0*app.screen.width;
                         this.nav_map_sprite.anchor.set(0.5);
                         
-                        let nav_cross_texture = this.textures['/static/other/red_cross.png'];
+                        let nav_cross_texture = this.textures['../../static/other/red_cross.png'];
 
                         this.nav_cross_sprite = PIXI.Sprite.from(nav_cross_texture);
                         app.stage.addChild(this.nav_cross_sprite);
                         this.nav_cross_sprite.zIndex = 6;
-                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*app.screen.width + (player_obj.x/200.0)*3.0/20.0*app.screen.width;
-                        this.nav_cross_sprite.y= (player_obj.y/200.0)*3.0/20.0*app.screen.width;
+                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*app.screen.width + (0/200.0)*3.0/20.0*app.screen.width;
+                        this.nav_cross_sprite.y= (0/200.0)*3.0/20.0*app.screen.width;
                         this.nav_cross_sprite.height=2/20.0*app.screen.width;
                         this.nav_cross_sprite.width=2/20.0*app.screen.width;
                         this.nav_cross_sprite.anchor.set(0.5);
                         
                                 
-                        
-
                     }
 
                     async update_positions(time_delta) {
                         
-                        let player_obj = this.objects[this.player_id];
-
                         //console.log("Updating " + (Object.keys(this.objects).length) + " objects, "  + ( Object.keys(this.tiles).length) + " tiles")
 
                         Object.entries(this.objects).forEach(([i,my_obj_data]) => {
 
-                            my_obj_data.update_position(time_delta,player_obj);
+                            my_obj_data.update_position(time_delta,this.player_obj);
 
                         });
 
                         Object.entries(this.tiles).forEach(([i,my_obj_data]) => {
 
-                            my_obj_data.update_position(time_delta,player_obj);
+                            my_obj_data.update_position(time_delta,this.player_obj);
 
                         });
 
                         Object.entries(this.particles).forEach(([i,my_obj_data]) => {
 
-                            my_obj_data.update_position(time_delta,player_obj);
+                            my_obj_data.update_position(time_delta,this.player_obj);
 
                         });
                     }
@@ -600,7 +610,7 @@
 
                 app.ticker.add((ticker) => {
                     //console.log("time elapsed");
-                    console.log("Map status is " + map.status);
+                    //console.log("Map status is " + map.status);
 
                     switch (map.status) {
                         case 'running':

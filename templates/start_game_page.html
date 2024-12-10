@@ -1,0 +1,102 @@
+{% extends "_login.html" %}
+
+{% block content %}
+    <p id="message_area"></p>
+    <button id="new_game_button">New game</button>
+
+    <script>
+        console.log("JS executing...")
+        // Get a reference to the form element
+        const new_game_button = document.getElementById('new_game_button');
+        const waring_message = document.getElementById('message_area');
+
+        // Add an event listener for the submit event
+        new_game_button.addEventListener('click', function(event) {
+            console.log("new game pressed...")
+
+            const token = sessionStorage.getItem('token') ;
+
+            fetch('/new_game', {
+                method: 'POST', // or 'POST', 'PUT', 'DELETE', etc.
+                headers: {
+                    'Authorization': 'Bearer ' + token, 
+                    'Content-Type': 'application/json', // Another example header
+                }
+              })
+              .then(response => {
+                if (response.ok) {
+                    // Request successful, handle the response
+                    return response.json(); 
+                  } else if (response.status === 401) {
+                    // Unauthorized, redirect to login page
+                    window.location.replace("/login_page");
+                    throw new Error('Redirect');
+                    //return response.json(); 
+                  } else {
+                    // Other error, handle accordingly
+                    throw new Error('Network response was not ok.');
+                  }
+            })
+                .then(data => {
+
+                    if (data["detail"]) {
+                        waring_message.innerText = data["detail"];
+                    } 
+
+                    if (data["status"]=="success") {
+                        waring_message.innerText = "success";
+                        
+                        poll_map_until_success();
+                    }
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                    waring_message.innerText = error;
+                });
+            
+            event.preventDefault();
+
+        });
+
+
+        async function poll_map_until_success(interval = 100, timeout = 30000) {
+            let startTime = Date.now();
+          
+            while (Date.now() - startTime < timeout) {
+              try {
+                const token = sessionStorage.getItem('token') ;
+                
+                const response = await fetch('/get_map', {
+                    method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
+                    headers: {
+                        'Authorization': 'Bearer ' + token, 
+                        'Content-Type': 'application/json', // Another example header
+                    }
+                  })
+                const data = await response.json();
+          
+                if (data['global_params']['status'] === "running") {
+                    window.location.replace("/play");
+                }
+              } catch (error) {
+                console.error("API request failed:", error);
+              }
+          
+              await new Promise(resolve => setTimeout(resolve, interval));
+            }
+          
+            throw new Error("Polling timeout exceeded");
+          }
+          
+          // Example usage
+          pollApiUntilSuccess("https://your-api-endpoint")
+            .then(data => {
+              console.log("Success:", data);
+            })
+            .catch(error => {
+              console.error("Error:", error);
+            });
+        
+      </script>
+{% endblock %}

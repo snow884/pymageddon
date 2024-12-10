@@ -6,5 +6,4 @@ from dataclasses_json import dataclass_json
 @dataclass_json
 @dataclass
 class BaseEffect:
-
-    variables: dict = None
+    pass

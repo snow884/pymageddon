@@ -1,8 +1,9 @@
+import json
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
 
-from common_utils.common_enums import Actions, Rotations
+from common_utils.common_enums import Actions, EnumEncoder, Rotations
 from singleton import realm
 
 
@@ -21,6 +22,8 @@ class BaseObject:
 
     player_name: str = ""
 
+    family_index: int = 0
+
     image: str = ""
     intent: Actions = None
 
@@ -31,6 +34,8 @@ class BaseObject:
     variables: object = None
 
     effects: object = None
+
+    code: str = ""
 
     def __init__(self, x_new: int, y_new: int, is_player=False, player_name=None):
 
@@ -125,3 +130,19 @@ class BaseObject:
         if self.is_player:
             print(f"Player {self.player_name} died")
             del realm.PLAYER_LIST[self.player_name]
+
+            data = {
+                "global_params": {
+                    "status": "game_over",
+                    "time_interval": realm.TIME_INTERVAL,
+                    "map_view_size": realm.MAP_VIEW_SIZE,
+                    "epoch": realm.EPOCH_COUNTER,
+                },
+                "player": {},
+                "objects": {},
+                "tiles": {},
+                "particles": {},
+            }
+            realm.REDIS_CONNECTION.set(
+                f"map_{self.player_name}", json.dumps(data, cls=EnumEncoder)
+            )

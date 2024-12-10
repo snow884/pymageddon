@@ -5,4 +5,4 @@ class Tile1(BaseTile):
 
     type_name: str = "Tile1"
 
-    image: str = "static/tiles/tile1.png"
+    image: str = "../../static/tiles/tile1.png"

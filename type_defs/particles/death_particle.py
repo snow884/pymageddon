@@ -5,6 +5,6 @@ class DeathParticle(BaseParticle):
 
     type_name: str = "Death"
 
-    image: str = "static/particles/skull.png"
+    image: str = "../../static/particles/skull.png"
 
     lifetime: int = 3

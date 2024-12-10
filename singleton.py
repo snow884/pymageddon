@@ -26,6 +26,7 @@ class Realm:
         self.TIME_INTERVAL = 0.66
         self.EPOCH_COUNTER = 0
         self.MAP = None
+        self.REDIS_CONNECTION = None
 
 
 realm = Realm()

@@ -1,0 +1,32 @@
+
+
+{% extends "_menu_bar.html" %}
+
+{% block content %}
+
+    <!-- START THE FEATURETTES -->
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+      <div class="col-md-12">
+
+        <img id='world_map_image' src="static/other/map_image.png" alt="world map" width="500" height="500">
+        
+    </div>
+
+    <hr class="featurette-divider">
+
+    <!-- /END THE FEATURETTES -->
+
+    <script>
+        var world_map_image = document.getElementById('world_map_image');
+        world_map_image.src = 'static/other/map_image.png?rand=' + Math.random();
+
+        setInterval(function() {
+            var world_map_image = document.getElementById('world_map_image');
+            world_map_image.src = 'static/other/map_image.png?rand=' + Math.random();
+        }, 1000);
+    </script>
+
+{% endblock %}

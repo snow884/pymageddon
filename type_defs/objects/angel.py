@@ -10,7 +10,7 @@ from type_defs.objects.effects.lay_object import LayObject
 class Angel(BaseObject):
 
     type_name: str = "Angel"
-    image = "static/objects/angel.png"
+    image = "../../static/objects/angel.png"
     is_alive = True
 
     effects = [

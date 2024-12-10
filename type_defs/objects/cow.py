@@ -12,13 +12,13 @@ from type_defs.particles.death_particle import DeathParticle
 class Cow(BaseObject):
 
     type_name: str = "Cow"
-    image = "static/objects/cow.png"
+    image = "../../static/objects/cow.png"
     is_alive = True
 
     effects = [
         EatObjectInFront(types_eaten_to_hp_conv={"Seed": 10, "Grass": 20}),
         HpDepletion(),
-        LayObject(object_to_lay="CowEgg", time_to_lay=300),
+        LayObject(object_to_lay="CowEgg", time_to_lay=100),
     ]
 
     def __init__(self, x_new: int, y_new: int, is_player=False, player_name=None):

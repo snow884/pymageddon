@@ -5,11 +5,12 @@ from typing import Annotated
 
 import jwt
 import redis
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -36,6 +37,8 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+templates = Jinja2Templates(directory="templates")
 
 
 class KeysPressed(BaseModel):
@@ -168,42 +171,68 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/login_page")
-def login_page():
-    with open("login.html") as f:
-        html_content = f.read()
+@app.get("/login_page", response_class=HTMLResponse)
+def login_page(request: Request):
 
-    return HTMLResponse(content=html_content, status_code=200)
+    return templates.TemplateResponse(request=request, name="login.html", context={})
 
 
-@app.get("/create_player_page")
-def create_user_page():
-    with open("create_user.html") as f:
-        html_content = f.read()
+@app.get("/create_player_page", response_class=HTMLResponse)
+def create_user_page(request: Request):
 
-    return HTMLResponse(content=html_content, status_code=200)
+    return templates.TemplateResponse(
+        request=request, name="create_user.html", context={}
+    )
 
 
-@app.get("/users/me/", response_model=User)
+@app.post("/new_game")
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):
-    return current_user
+    r.set(f"game_{current_user.username}", "request_play")
+
+    return {"status": "success"}
 
 
-@app.get("/users/me/items/")
-async def read_own_items(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-):
-    return [{"item_id": "Foo", "owner": current_user.username}]
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+
+    return templates.TemplateResponse(request=request, name="index.html", context={})
 
 
-@app.get("/")
-def index():
-    with open("index.html") as f:
-        html_content = f.read()
+@app.get("/explorer", response_class=HTMLResponse)
+async def explorer(request: Request):
 
-    return HTMLResponse(content=html_content, status_code=200)
+    with open("objects_summary.json") as f:
+        objects_summary = json.load(f)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="explorer.html",
+        context={"objects_summary": objects_summary},
+    )
+
+
+@app.get("/world_map", response_class=HTMLResponse)
+async def world_map(request: Request):
+
+    return templates.TemplateResponse(
+        request=request, name="world_map.html", context={}
+    )
+
+
+@app.get("/start_game_page", response_class=HTMLResponse)
+def start_game_page(request: Request):
+
+    return templates.TemplateResponse(
+        request=request, name="start_game_page.html", context={}
+    )
+
+
+@app.get("/play", response_class=HTMLResponse)
+def play(request: Request):
+
+    return templates.TemplateResponse(request=request, name="play.html", context={})
 
 
 @app.post("/create_player")
@@ -226,15 +255,6 @@ def create_player(new_user: UserCreate):
     return {"status": "success"}
 
 
-@app.post("/button")
-def control(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    button: KeysPressed,
-):
-
-    r.set(f"button_{current_user.username}", my_keys.json())
-
-
 @app.post("/control")
 def control(
     current_user: Annotated[User, Depends(get_current_active_user)],
@@ -248,14 +268,34 @@ def control(
 def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
 
     map_data_str = r.get(f"map_{current_user.username}")
+
+    if not map_data_str:
+        map_data = {
+            "global_params": {
+                "status": "stopped",
+                "time_interval": 1,
+                "map_view_size": 11,
+                "epoch": 0,
+            },
+            "player": {},
+            "objects": {},
+            "tiles": {},
+            "particles": {},
+        }
+        return map_data
+
     map_data = json.loads(map_data_str)
 
-    unix_timestamp = time.time()
-    new_map_timestamp = map_data["global_params"]["new_map_timestamp"]
+    status = map_data["global_params"]["status"]
 
-    timestamp = map_data["global_params"]["timestamp"]
-    print(new_map_timestamp - unix_timestamp)
-    map_data["global_params"]["time_left"] = new_map_timestamp - unix_timestamp
+    if status == "running":
+
+        unix_timestamp = time.time()
+        new_map_timestamp = map_data["global_params"]["new_map_timestamp"]
+
+        timestamp = map_data["global_params"]["timestamp"]
+        print(new_map_timestamp - unix_timestamp)
+        map_data["global_params"]["time_left"] = new_map_timestamp - unix_timestamp
 
     return map_data
 

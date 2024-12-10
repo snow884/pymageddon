@@ -7,7 +7,7 @@ from type_defs.objects.effects.turn_into import TurnInto
 
 class ChickenEgg(BaseObject):
     type_name: str = "ChickenEgg"
-    image = "static/objects/egg.png"
+    image = "../../static/objects/egg.png"
 
     effects = [TurnInto(future_object_class="Chicken", time_to_turn=100)]
 

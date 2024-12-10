@@ -5,11 +5,10 @@ from type_defs.objects.effects.base_effect import BaseEffect
 
 class LayObject(BaseEffect):
     def __init__(self, object_to_lay, time_to_lay):
+        super().__init__()
 
         self.object_to_lay = object_to_lay
         self.time_to_lay = time_to_lay
-
-        self.cycle_counter = 0
 
     def description(self):
 
@@ -19,15 +18,19 @@ class LayObject(BaseEffect):
 
     def run_effect(self, parent_object):
 
+        cycle_counter = parent_object.variables.get("lay_object_cycle_counter", 0)
+
         self.object_to_lay = obj_fut(self.object_to_lay)
 
-        self.cycle_counter = self.cycle_counter + 1
+        cycle_counter = cycle_counter + 1
 
-        if self.cycle_counter > self.time_to_lay:
+        if cycle_counter > self.time_to_lay:
 
             x_new, y_new = parent_object.get_next_coords(-1)
             tile = realm.TILES.get((x_new, y_new))
             if tile:
                 if tile.occupied_by is None:
                     self.object_to_lay(x_new=x_new, y_new=y_new)
-                    self.cycle_counter = 0
+                    cycle_counter = 0
+
+        parent_object.variables["lay_object_cycle_counter"] = cycle_counter

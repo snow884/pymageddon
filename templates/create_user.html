@@ -1,9 +1,6 @@
-<!doctype html>
-<html>
-    <head>
-    </head>
-</head>
-<body>
+{% extends "_login.html" %}
+
+{% block content %}
 
     <form id="createPlayerForm">
       <p id="message_area"></p>
@@ -70,7 +67,4 @@
         });
         
       </script>
-
-  </form>
-</body>
-</html>
+{% endblock %}

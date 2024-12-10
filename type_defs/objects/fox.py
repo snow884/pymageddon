@@ -13,7 +13,7 @@ class Fox(BaseObject):
 
     type_name: str = "Fox"
 
-    image = "static/objects/fox.png"
+    image = "../../static/objects/fox.png"
     is_alive = True
 
     effects = [

@@ -5,6 +5,6 @@ class EatingParticle(BaseParticle):
 
     type_name: str = "Eating"
 
-    image: str = "static/particles/eating.png"
+    image: str = "../../static/particles/eating.png"
 
     lifetime: int = 3

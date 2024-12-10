@@ -7,7 +7,7 @@ from type_defs.particles.eating_particle import EatingParticle
 
 class EatObjectInFront(BaseEffect):
     def __init__(self, types_eaten_to_hp_conv):
-
+        super().__init__()
         self.types_eaten_to_hp_conv = types_eaten_to_hp_conv
 
     def description(self):

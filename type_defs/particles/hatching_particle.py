@@ -5,6 +5,6 @@ class HetchingParticle(BaseParticle):
 
     type_name: str = "Eating"
 
-    image: str = "static/particles/hetching.png"
+    image: str = "../../static/particles/hetching.png"
 
     lifetime: int = 3

@@ -9,7 +9,7 @@ class Grass(BaseObject):
 
     type_name: str = "Grass"
 
-    image = "static/objects/grass.png"
+    image = "../../static/objects/grass.png"
 
     def __init__(self, x_new: int, y_new: int):
         super().__init__(x_new, y_new)

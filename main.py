@@ -28,7 +28,7 @@ from type_defs.particles.base_particle import BaseParticle
 from type_defs.tiles.base_tile import BaseTile
 from type_defs.tiles.tile1 import Tile1
 
-r = redis.Redis(host="localhost", port=6379, db=0)
+realm.REDIS_CONNECTION = redis.Redis(host="localhost", port=6379, db=0)
 
 
 @dataclass
@@ -66,23 +66,33 @@ def populate_map():
 
 def handle_players():
 
-    for key in r.keys(pattern="player_*"):
+    for key in realm.REDIS_CONNECTION.keys(pattern="player_*"):
         key_str = key.decode()
 
         player_name = key_str.replace("player_", "")
+        print(player_name)
+        print(realm.PLAYER_LIST.keys())
 
         if player_name not in realm.PLAYER_LIST.keys():
 
-            # control_data_str = r.get(f"control_{player_name}")
+            status_b = realm.REDIS_CONNECTION.get(f"game_{player_name}")
+            if status_b:
+                status = status_b.decode()
 
-            # if (control_data_str):
+                if status == "request_play":
 
-            # control_data = json.loads(control_data_str)
-
-            # if any([value for key, value in control_data.items()]):
-            print(f"Creating player {player_name}")
-            x_new, y_new = get_nearest_free_location(10, 10)
-            Cow(x_new=x_new, y_new=y_new, is_player=True, player_name=player_name)
+                    print(f"Creating player {player_name}")
+                    x_new, y_new = get_nearest_free_location(
+                        random.randint(0, realm.MAP.size_x),
+                        random.randint(0, realm.MAP.size_y),
+                    )
+                    Cow(
+                        x_new=x_new,
+                        y_new=y_new,
+                        is_player=True,
+                        player_name=player_name,
+                    )
+                    realm.REDIS_CONNECTION.delete(f"game_{player_name}")
 
 
 def evaluate_thinking():
@@ -149,10 +159,6 @@ def send_map_data():
 
     for player_name, player_object in realm.PLAYER_LIST.items():
 
-        # print(f"Sending realm.MAPs for player {player_name}")
-
-        map_data = r.get(f"realm.MAP_{player_name}")
-
         objects = find_objects(player_object, rad=realm.MAP_VIEW_SIZE)
         tiles = find_tiles(player_object, rad=realm.MAP_VIEW_SIZE)
         particles = find_particles(player_object, rad=realm.MAP_VIEW_SIZE)
@@ -164,11 +170,11 @@ def send_map_data():
         )
 
         other_images = [
-            "static/other/health_bar_green.png",
-            "static/other/health_bar_red.png",
-            "static/other/health_bar_yellow.png",
-            "/static/other/map_image.png",
-            "/static/other/red_cross.png",
+            "../../static/other/health_bar_green.png",
+            "../../static/other/health_bar_red.png",
+            "../../static/other/health_bar_yellow.png",
+            "../../static/other/map_image.png",
+            "../../static/other/red_cross.png",
         ]
 
         unix_timestamp = time.time()
@@ -183,20 +189,22 @@ def send_map_data():
                 "timestamp": unix_timestamp,
                 "new_map_timestamp": unix_timestamp + realm.TIME_INTERVAL,
             },
-            "player": {"object_id": player_object.index},
-            "objects": {k: o.to_dict() for k, o in objects.items()},
+            "player": {"object_id": str(player_object.index)},
+            "objects": {str(k): o.to_dict() for k, o in objects.items()},
             "tiles": {str(k): t.to_dict() for k, t in tiles.items()},
             "particles": {str(k): t.to_dict() for k, t in particles.items()},
         }
 
-        r.set(f"map_{player_name}", json.dumps(data, cls=EnumEncoder))
+        realm.REDIS_CONNECTION.set(
+            f"map_{player_name}", json.dumps(data, cls=EnumEncoder)
+        )
 
 
 def evaluate_player_control():
 
     for player_name, player_object in realm.PLAYER_LIST.items():
 
-        control_data_str = r.get(f"control_{player_name}")
+        control_data_str = realm.REDIS_CONNECTION.get(f"control_{player_name}")
 
         if not control_data_str:
             player_object.intent = None
@@ -227,7 +235,7 @@ def evaluate_player_control():
         else:
             player_object.intent = None
 
-        r.delete(f"control_{player_name}")
+        realm.REDIS_CONNECTION.delete(f"control_{player_name}")
 
 
 def evaluate_effects():
@@ -258,32 +266,81 @@ def count_object():
         print(f"{type_name} : {cnt}")
 
 
-populate_map()
+def generate_summary():
 
-while True:
+    summary_json = {}
 
-    start_time = time.time()
-    handle_players()
-    evaluate_thinking()
-    evaluate_player_control()
-    evaluate_effects()
-    evaluate_moves()
-    count_object()
-    send_map_data()
-    generate_map()
+    for i, o in realm.OBJECT_LIST.items():
 
-    end_time = time.time()
-    print(
-        "The time of execution of above program is :",
-        (end_time - start_time) * 10**3,
-        "ms",
-    )
+        if o.type_name not in summary_json.keys():
+            summary_json[o.type_name] = {}
+            summary_json[o.type_name]["type_name"] = o.type_name
+            summary_json[o.type_name]["image"] = o.image
+            summary_json[o.type_name]["effects"] = (
+                [e.description() for e in o.effects] if o.effects else []
+            )
+            summary_json[o.type_name]["description"] = ""
+            summary_json[o.type_name]["families"] = {}
 
-    while (end_time - start_time) < realm.TIME_INTERVAL:
+        if o.family_index not in summary_json[o.type_name]["families"].keys():
+            summary_json[o.type_name]["families"][o.family_index] = {}
+            summary_json[o.type_name]["families"][o.family_index]["family_name"] = ""
+            summary_json[o.type_name]["families"][o.family_index]["image"] = o.image
+            summary_json[o.type_name]["families"][o.family_index]["effects"] = (
+                [e.description() for e in o.effects] if o.effects else []
+            )
+            summary_json[o.type_name]["families"][o.family_index]["description"] = ""
+            summary_json[o.type_name]["families"][o.family_index]["code"] = o.code
+            summary_json[o.type_name]["families"][o.family_index]["objects"] = {}
+
+        if (
+            o.index
+            not in summary_json[o.type_name]["families"][o.family_index]["objects"]
+        ):
+            summary_json[o.type_name]["families"][o.family_index]["objects"][
+                o.index
+            ] = o.index
+
+    with open("objects_summary.json", "w") as f:
+        s = json.dumps(summary_json, cls=EnumEncoder)
+        f.write(s)
+
+
+def main_loop():
+
+    populate_map()
+
+    while True:
+
+        start_time = time.time()
+        handle_players()
+        evaluate_thinking()
+        evaluate_player_control()
+        evaluate_effects()
+        evaluate_moves()
+        count_object()
+        send_map_data()
+
+        if realm.EPOCH_COUNTER % 20:
+            generate_map()
+            generate_summary()
+
         end_time = time.time()
-        time.sleep(0.01)
+        print(
+            "The time of execution of above program is :",
+            (end_time - start_time) * 10**3,
+            "ms",
+        )
 
-    end_time = time.time()
-    print("Total epoch time :", (end_time - start_time) * 10**3, "ms")
+        while (end_time - start_time) < realm.TIME_INTERVAL:
+            end_time = time.time()
+            time.sleep(0.01)
 
-    realm.EPOCH_COUNTER = realm.EPOCH_COUNTER + 1
+        end_time = time.time()
+        print("Total epoch time :", (end_time - start_time) * 10**3, "ms")
+
+        realm.EPOCH_COUNTER = realm.EPOCH_COUNTER + 1
+
+
+if __name__ == "__main__":
+    main_loop()
