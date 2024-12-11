@@ -25,19 +25,22 @@ def generate_map():
                 obj = None
 
             if not obj:
-                r = 0
-                g = 0
-                b = 0
+                r = 195
+                g = 168
+                b = 86
             else:
-                if obj.type_name == "Grass":
-
+                if obj.type_name in ("Grass", "Seed"):
                     r = 0
-                    g = 255
+                    g = 240
                     b = 0
+                elif obj.type_name == "Stone":
+                    r = 178
+                    g = 182
+                    b = 167
                 else:
-                    r = 255
-                    g = 255
-                    b = 255
+                    r = 0
+                    g = 0
+                    b = 0
 
             pixels[x, y] = (r, g, b)
 

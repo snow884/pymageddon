@@ -2,9 +2,10 @@
 
 {% block content %}
     <form id="loginForm">
-        <img class="mb-4" src="/static/assets/brand/bootstrap-logo.svg" alt
+        <img class="mb-4" src="../../static/website/assets/brand/bootstrap-logo.svg" alt
             width="72" height="57">
-        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <h1 class="h3 mb-3 fw-normal">Please sign in </h1>
 
         <div class="form-floating">
             <p id="message_area"></p>
@@ -12,6 +13,7 @@
                 placeholder="Username">
             <label for="floatingInput">Username</label>
         </div>
+
         <div class="form-floating">
             <input type="password" class="form-control"
                 id="floatingPassword" name="password"
@@ -19,10 +21,12 @@
             <label for="floatingPassword">Password</label>
         </div>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign
-            in</button>
-        <a href="/create_player_page">Create new player</a>
-        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        
+        <p>If you don't have account please <a href="/create_player_page">sign up</a></p>
+
+        <p><a href="/">Exit the game</a></p>
+        
     </form>
 
     <script>

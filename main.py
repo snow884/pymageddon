@@ -70,8 +70,6 @@ def handle_players():
         key_str = key.decode()
 
         player_name = key_str.replace("player_", "")
-        print(player_name)
-        print(realm.PLAYER_LIST.keys())
 
         if player_name not in realm.PLAYER_LIST.keys():
 
@@ -175,6 +173,8 @@ def send_map_data():
             "../../static/other/health_bar_yellow.png",
             "../../static/other/map_image.png",
             "../../static/other/red_cross.png",
+            "../../static/other/joystick_center.png",
+            "../../static/other/joystick_outside.png",
         ]
 
         unix_timestamp = time.time()
@@ -198,6 +198,7 @@ def send_map_data():
         realm.REDIS_CONNECTION.set(
             f"map_{player_name}", json.dumps(data, cls=EnumEncoder)
         )
+        realm.REDIS_CONNECTION.expire(f"map_{player_name}", 5)
 
 
 def evaluate_player_control():
@@ -318,12 +319,12 @@ def main_loop():
         evaluate_player_control()
         evaluate_effects()
         evaluate_moves()
-        count_object()
         send_map_data()
 
-        if realm.EPOCH_COUNTER % 20:
+        if realm.EPOCH_COUNTER % 20 == 0:
+            count_object()
             generate_map()
-            generate_summary()
+            # generate_summary()
 
         end_time = time.time()
         print(

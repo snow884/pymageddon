@@ -4,6 +4,7 @@
         <script src="https://pixijs.download/release/pixi.js"></script>
     </head>
     <body scroll="no" style="overflow: hidden">
+        
         <script>
             theCanvas.onkeydown = function (e) {
                 if (["ArrowRight","ArrowLeft","ArrowDown", "ArrowUp"].includes(`${e.code}`)) {
@@ -12,11 +13,12 @@
             }
         </script>
         <script type="module">
+            
             (async () =>
         {
 
             const app = new PIXI.Application();
-            await app.init({ width: 1024, height: 1024 });
+            await app.init({ resizeTo: window });
             document.body.appendChild(app.canvas);
 
             function check_token() {
@@ -73,6 +75,137 @@
 
             async function run_game() {
 
+
+
+                class JoyStick {
+                    constructor(){
+
+                        function joystick_to_keys(dragtarget){
+
+                            const x_diff = dragtarget.x-app.screen.width/2;
+                            const y_diff = dragtarget.y-app.screen.height*0.8;
+
+                            const angle = Math.atan2(x_diff, y_diff)/3.14*180;
+
+                            const dist = Math.sqrt(x_diff * x_diff + y_diff * y_diff)
+                            
+
+                            if (dist>5){
+
+                                if ((angle > (90-45))&(angle <= (90+45))){
+                                    keys_pressed["ArrowUp"] = false;
+                                    keys_pressed["ArrowLeft"] = false;
+                                    keys_pressed["ArrowDown"] = false;
+                                    keys_pressed["ArrowRight"] = true;
+                                }
+                                if ((angle > (180-45))&(angle <= (180+45))){
+                                    keys_pressed["ArrowUp"] = true;
+                                    keys_pressed["ArrowLeft"] = false;
+                                    keys_pressed["ArrowDown"] = false;
+                                    keys_pressed["ArrowRight"] = false;
+
+                                }
+                                if ((angle > (-90-45))&(angle <= (-90+45))){
+                                    keys_pressed["ArrowUp"] = false;
+                                    keys_pressed["ArrowLeft"] = true;
+                                    keys_pressed["ArrowDown"] = false;
+                                    keys_pressed["ArrowRight"] = false;
+
+                                }
+                                if ((angle > (0-45)) & (angle <= (0+45))){
+                                    keys_pressed["ArrowUp"] = false;
+                                    keys_pressed["ArrowLeft"] = false;
+                                    keys_pressed["ArrowDown"] = true;
+                                    keys_pressed["ArrowRight"] = false;
+                                }
+
+                            } else {
+                                keys_pressed["ArrowUp"] = false;
+                                keys_pressed["ArrowLeft"] = false;
+                                keys_pressed["ArrowDown"] = false;
+                                keys_pressed["ArrowRight"] = false;
+                            }
+                        }
+
+                        function onDragMove(event)
+                        {
+                            console.log("onDragMove");
+
+                            console.log(dragtarget);
+                            if (dragtarget)
+                            {
+                                dragtarget.parent.toLocal(event.global, null, dragtarget.position);
+                                joystick_to_keys(dragtarget);
+                            }
+                        }
+    
+                        function onDragStart()
+                        {
+                            console.log("onDragStart");
+                            // Store a reference to the data
+                            // * The reason for this is because of multitouch *
+                            // * We want to track the movement of this particular touch *
+                            dragtarget.alpha = 0.5;
+                            app.stage.on('pointermove', onDragMove);
+                            joystick_to_keys(dragtarget)
+                        }
+                    
+                        function onDragEnd()
+                        {
+                            console.log("onDragEnd");
+                            if (dragtarget)
+                            {
+                                app.stage.off('pointermove', onDragMove);
+                                dragtarget.alpha = 1;
+                                dragtarget.x = app.screen.width/2;
+                                dragtarget.y = app.screen.height*0.8;
+                                joystick_to_keys(dragtarget)
+                            }
+                        }
+
+                        let texture = map.textures['../../static/other/joystick_center.png'];
+                        let texture_outside = map.textures['../../static/other/joystick_outside.png'];
+
+                        this.sprite = PIXI.Sprite.from(texture);
+                        this.sprite_outside = PIXI.Sprite.from(texture_outside);
+                        
+                        this.sprite.anchor.set(0.5);
+                        this.sprite_outside.anchor.set(0.5);
+
+                        let dragtarget = this.sprite;
+
+                        app.stage.addChild(this.sprite);
+                        app.stage.addChild(this.sprite_outside);
+
+                        app.stage.eventMode = 'static';
+                        app.stage.hitArea = app.screen;
+
+                        app.stage.on('pointerdown', onDragStart, this.sprite);
+                        app.stage.on('pointerup', onDragEnd);
+                        app.stage.on('pointerupoutside', onDragEnd);
+
+                        this.sprite.x = app.screen.width/2;
+                        this.sprite.y = app.screen.height*0.8;
+                        this.sprite.zIndex = 6;
+                        this.sprite.height=app.screen.width*0.4;
+                        this.sprite.width=app.screen.width*0.4;
+
+                        this.sprite_outside.x = app.screen.width/2;
+                        this.sprite_outside.y = app.screen.height*0.8;
+                        this.sprite_outside.zIndex = 5;
+                        this.sprite_outside.height=app.screen.width*0.4;
+                        this.sprite_outside.width=app.screen.width*0.4;
+                        this.sprite_outside.alpha = 0.5;
+
+                        // This button mode will mean the hand cursor appears when you roll over the bunny with your mouse
+                        this.sprite.cursor = 'pointer';
+
+
+                    }
+
+
+                }
+
                 class MyObject {
                     constructor(obj_data, map, z_index) {
 
@@ -83,8 +216,8 @@
                         this.sprite = PIXI.Sprite.from(texture);
                         app.stage.addChild(this.sprite);
                         this.sprite.anchor.set(0.5);
-                        this.sprite.height=1/20.0*app.screen.width;
-                        this.sprite.width=1/20.0*app.screen.width;
+                        this.sprite.height=1/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.sprite.width=1/20.0*Math.max(app.screen.width,app.screen.height);
 
                         this.sprite.zIndex = z_index;
 
@@ -156,12 +289,12 @@
 
                     update_position(time_delta, player_obj) {
 
-                        let player_obj_x = (((player_obj.x_new - player_obj.x)*time_delta)+player_obj.x)/20*app.screen.width ;
-                        let player_obj_y = (((player_obj.y_new - player_obj.y)*time_delta)+player_obj.y)/20*app.screen.height ;
+                        let player_obj_x = (((player_obj.x_new - player_obj.x)*time_delta)+player_obj.x)/20*Math.max(app.screen.width,app.screen.height) ;
+                        let player_obj_y = (((player_obj.y_new - player_obj.y)*time_delta)+player_obj.y)/20*Math.max(app.screen.width,app.screen.height) ;
 
-                        this.sprite.x = (((this.x_new - this.x)*time_delta)+this.x)/20*app.screen.width - player_obj_x + app.screen.width/2;
+                        this.sprite.x = (((this.x_new - this.x)*time_delta)+this.x)/20*Math.max(app.screen.width,app.screen.height) - player_obj_x + app.screen.width/2;
                         //console.log((((this.x_new - this.x)*time_delta/500)+this.x)/100*app.screen.width)
-                        this.sprite.y = (((this.y_new - this.y)*time_delta)+this.y)/20*app.screen.height - player_obj_y + app.screen.height/2;
+                        this.sprite.y = (((this.y_new - this.y)*time_delta)+this.y)/20*Math.max(app.screen.width,app.screen.height) - player_obj_y + app.screen.height/2;
                         this.sprite.angle = ((((this.rotation_new - this.rotation)*time_delta) + this.rotation)-1)*90.0;
                         
                         if (this.is_particle){
@@ -327,14 +460,14 @@
                                 app.stage.addChild(this.nav_map_sprite);
                                 
                                 this.nav_map_sprite.zIndex = 5;
-                                this.nav_map_sprite.x=app.screen.width - 1.5/20.0*app.screen.width;
-                                this.nav_map_sprite.y=1.5/20.0*app.screen.width;
-                                this.nav_map_sprite.height=3/20.0*app.screen.width;
-                                this.nav_map_sprite.width=3/20.0*app.screen.width;
+                                this.nav_map_sprite.x=app.screen.width - 1.5/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.nav_map_sprite.y=1.5/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.nav_map_sprite.height=3/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.nav_map_sprite.width=3/20.0*Math.max(app.screen.width,app.screen.height);
                                 this.nav_map_sprite.anchor.set(0.5);
 
-                                this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*app.screen.width + (this.player_obj.x/200.0)*3.0/20.0*app.screen.width;
-                                this.nav_cross_sprite.y= (this.player_obj.y/200.0)*3.0/20.0*app.screen.width;
+                                this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (this.player_obj.x/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.nav_cross_sprite.y= (this.player_obj.y/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
                                 
                                 //map.elapsed = 0.0;
                                 return true;
@@ -446,10 +579,10 @@
                         console.log(this.nav_map_sprite.x);
                         app.stage.addChild(this.nav_map_sprite);
                         this.nav_map_sprite.zIndex = 5;
-                        this.nav_map_sprite.x=app.screen.width - 1.5/20.0*app.screen.width;
-                        this.nav_map_sprite.y=1.5/20.0*app.screen.width;
-                        this.nav_map_sprite.height=3/20.0*app.screen.width;
-                        this.nav_map_sprite.width=3/20.0*app.screen.width;
+                        this.nav_map_sprite.x=app.screen.width - 1.5/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_map_sprite.y=1.5/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_map_sprite.height=3/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_map_sprite.width=3/20.0*Math.max(app.screen.width,app.screen.height);
                         this.nav_map_sprite.anchor.set(0.5);
                         
                         let nav_cross_texture = this.textures['../../static/other/red_cross.png'];
@@ -457,10 +590,10 @@
                         this.nav_cross_sprite = PIXI.Sprite.from(nav_cross_texture);
                         app.stage.addChild(this.nav_cross_sprite);
                         this.nav_cross_sprite.zIndex = 6;
-                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*app.screen.width + (0/200.0)*3.0/20.0*app.screen.width;
-                        this.nav_cross_sprite.y= (0/200.0)*3.0/20.0*app.screen.width;
-                        this.nav_cross_sprite.height=2/20.0*app.screen.width;
-                        this.nav_cross_sprite.width=2/20.0*app.screen.width;
+                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (0/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.y= (0/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.height=2/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.width=2/20.0*Math.max(app.screen.width,app.screen.height);
                         this.nav_cross_sprite.anchor.set(0.5);
                         
                                 
@@ -526,11 +659,11 @@
                 app.stage.addChild(screen_title_small);
                 screen_title_small.visible = false;
 
-                console.log("Loading map");
-
-                console.log(MyMap);
+                console.log("Loading map...");
 
                 const map = new MyMap();
+
+                
 
                 console.log("Init objects");
 
@@ -538,7 +671,11 @@
                 await map.load_textures();
                 await map.init_objects();
 
-                console.log(map.textures);
+                if (  (typeof window.orientation !== "undefined") || ( navigator.userAgent.indexOf('IEMobile') !== -1 )  ){
+
+                    const joystick = new JoyStick();
+
+                }
 
                 console.log("Start ticker");
 
@@ -548,6 +685,7 @@
                 let refresh_started = false;
                 
                 document.addEventListener('keydown', logKey);
+                document.addEventListener("keyup", clearKey);
 
                 let keys_pressed = {
                     "ArrowRight":false,
@@ -558,8 +696,15 @@
 
                 function logKey(e) {
 
-                    if (["ArrowRight","ArrowLeft","ArrowDown", "ArrowUp"].includes(`${e.code}`)) {
+                    if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(`${e.code}`)) {
                         keys_pressed[`${e.code}`] = true;
+                    }
+                }
+                
+                function clearKey(e) {
+
+                    if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(`${e.code}`)) {
+                        keys_pressed[`${e.code}`] = false;
                     }
                 }
 
@@ -600,7 +745,7 @@
                         })
                         .then(data => {
                         // Do something with the response data
-                        console.log(data);
+                        //console.log(data);
                         })
                         .catch(error => {
                         // Handle any errors
@@ -632,7 +777,7 @@
                                             
                                             map.elapsed = 0.0;
 
-                                            clear_keys();
+                                            //clear_keys();
                                             
                                         }
                                         
@@ -653,8 +798,9 @@
                                 
 
                                 map.elapsed += ticker.elapsedMS/1000;
-                            }
                             
+                            }
+
                             break;
                         default:
 
