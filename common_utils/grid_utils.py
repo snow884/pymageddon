@@ -54,12 +54,12 @@ def find_nearest(obj, type_in, rad: int = 10):
     return min_obj
 
 
-def find_objects(obj: BaseObject, rad: int = 30):
+def find_objects_location(x: int, y: int, rad: int = 30):
 
     objects_found = {}
 
-    for i in range(max(0, obj.x - rad), min(obj.x + rad, realm.MAP.size_x)):
-        for j in range(max(0, obj.y - rad), min(obj.y + rad, realm.MAP.size_x)):
+    for i in range(max(0, x - rad), min(x + rad, realm.MAP.size_x)):
+        for j in range(max(0, y - rad), min(y + rad, realm.MAP.size_x)):
             obj_index_found = realm.TILES[(i, j)].occupied_by
 
             if obj_index_found:
@@ -69,25 +69,35 @@ def find_objects(obj: BaseObject, rad: int = 30):
     return objects_found
 
 
-def find_tiles(obj: BaseObject, rad: int = 30):
+def find_objects(obj: BaseObject, rad: int = 30):
+
+    return find_objects_location(obj.x, obj.y, rad=rad)
+
+
+def find_tiles_location(x: int, y: int, rad: int = 30):
 
     tiles = {}
 
-    for i in range(max(0, obj.x - rad), min(obj.x + rad, realm.MAP.size_x)):
-        for j in range(max(0, obj.y - rad), min(obj.y + rad, realm.MAP.size_x)):
+    for i in range(max(0, x - rad), min(x + rad, realm.MAP.size_x)):
+        for j in range(max(0, y - rad), min(y + rad, realm.MAP.size_x)):
             tiles[(i, j)] = realm.TILES[(i, j)]
 
     return tiles
 
 
-def find_particles(obj, rad: int = 30):
+def find_tiles(obj: BaseObject, rad: int = 30):
 
     obj = obj_fut(obj)
 
+    return find_tiles_location(obj.x, obj.y, rad)
+
+
+def find_particles_location(x: int, y: int, rad: int = 30):
+
     particles_found = {}
 
-    for i in range(max(0, obj.x - rad), min(obj.x + rad, realm.MAP.size_x)):
-        for j in range(max(0, obj.y - rad), min(obj.y + rad, realm.MAP.size_x)):
+    for i in range(max(0, x - rad), min(x + rad, realm.MAP.size_x)):
+        for j in range(max(0, y - rad), min(y + rad, realm.MAP.size_x)):
 
             particles_index_found = realm.TILES[(i, j)].occupied_by_particles
 
@@ -101,6 +111,11 @@ def find_particles(obj, rad: int = 30):
     return particles_found
 
 
+def find_particles(obj, rad: int = 30):
+
+    return find_particles_location(obj.x, obj.y, rad)
+
+
 def get_nearest_free_location(x, y):
 
     rad = 1
@@ -108,13 +123,13 @@ def get_nearest_free_location(x, y):
     while rad < realm.MAP.size_x:
 
         for i in [max(0, x - rad), min(x + rad, realm.MAP.size_x)]:
-            for j in range(max(0, y - rad), min(y + rad, realm.MAP.size_x)):
+            for j in range(max(0, y - rad), min(y + rad, realm.MAP.size_y)):
                 tile = realm.TILES[(i, j)]
                 if not tile.occupied_by:
                     return i, j
 
         for i in range(max(0, x - rad), min(x + rad, realm.MAP.size_x)):
-            for j in [max(0, y - rad), min(y + rad, realm.MAP.size_x)]:
+            for j in [max(0, y - rad), min(y + rad, realm.MAP.size_y)]:
                 tile = realm.TILES[(i, j)]
                 if not tile.occupied_by:
                     return i, j

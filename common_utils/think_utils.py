@@ -45,7 +45,7 @@ def simple_chase(parent_object, chase_after=[], chase_from=[]):
         if (last_x == parent_object.x) or (last_y == parent_object.y):
             stuck_num = stuck_num + 1
 
-        if (run_away_num > 50) or (stuck_num > 5):
+        if (run_away_num > 50) or (stuck_num > 2):
             stuck_num = 0
             chasing_num = 0
             mode = "random"
@@ -99,7 +99,7 @@ def simple_chase(parent_object, chase_after=[], chase_from=[]):
         if (last_x == parent_object.x) or (last_y == parent_object.y):
             stuck_num = stuck_num + 1
 
-        if (chasing_num > 50) or (stuck_num > 5):
+        if (chasing_num > 50) or (stuck_num > 2):
             stuck_num = 0
             chasing_num = 0
             mode = "random"

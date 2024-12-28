@@ -1,16 +1,17 @@
 import json
 import random
 import time
-from dataclasses import dataclass
 
 import redis
-from dataclasses_json import dataclass_json
 
 from common_utils.common_enums import Actions, EnumEncoder, Rotations
 from common_utils.grid_utils import (
     find_objects,
+    find_objects_location,
     find_particles,
+    find_particles_location,
     find_tiles,
+    find_tiles_location,
     get_nearest_free_location,
 )
 from common_utils.image_utils import generate_map
@@ -27,24 +28,14 @@ from type_defs.objects.stone import Stone
 from type_defs.particles.base_particle import BaseParticle
 from type_defs.tiles.base_tile import BaseTile
 from type_defs.tiles.tile1 import Tile1
+from type_defs.utils.utils import Map, Spectator
 
 realm.REDIS_CONNECTION = redis.Redis(host="localhost", port=6379, db=0)
 
 
-@dataclass
-class Map:
-
-    size_x: int = 0
-    size_y: int = 0
-
-
-@dataclass_json
-@dataclass
-class Player:
-    name = ""
-
-
 realm.MAP = Map(size_x=200, size_y=200)
+
+realm.SCORE_LIST = {"players": {}, "ranking": {}}
 
 
 def populate_map():
@@ -52,14 +43,14 @@ def populate_map():
     for i in range(0, realm.MAP.size_x):
         for j in range(0, realm.MAP.size_y):
             realm.TILES[(i, j)] = Tile1(x=i, y=j)
-            if random.randint(0, 5) == 4:
+            if random.randint(0, 10) == 9:
                 random.choice([Cow, Grass, Seed, Stone, Chicken, ChickenEgg, Fox])(
                     x_new=i, y_new=j
                 )
 
             else:
 
-                if random.randint(0, 500) == 499:
+                if random.randint(0, 1000) == 999:
 
                     Angel(x_new=i, y_new=j)
 
@@ -73,16 +64,18 @@ def handle_players():
 
         if player_name not in realm.PLAYER_LIST.keys():
 
-            status_b = realm.REDIS_CONNECTION.get(f"game_{player_name}")
-            if status_b:
-                status = status_b.decode()
+            data_str = realm.REDIS_CONNECTION.get(f"game_{player_name}")
 
-                if status == "request_play":
+            if data_str:
+
+                data = json.loads(data_str)
+
+                if data["request_type"] == "player":
 
                     print(f"Creating player {player_name}")
                     x_new, y_new = get_nearest_free_location(
-                        random.randint(0, realm.MAP.size_x),
-                        random.randint(0, realm.MAP.size_y),
+                        random.randint(0, realm.MAP.size_x - 1),
+                        random.randint(0, realm.MAP.size_y - 1),
                     )
                     Cow(
                         x_new=x_new,
@@ -91,6 +84,43 @@ def handle_players():
                         player_name=player_name,
                     )
                     realm.REDIS_CONNECTION.delete(f"game_{player_name}")
+
+        if player_name not in realm.SPECTATOR_LIST.keys():
+
+            data_str = realm.REDIS_CONNECTION.get(f"game_{player_name}")
+
+            if data_str:
+
+                data = json.loads(data_str)
+
+                if data["request_type"] == "spectator":
+                    spectator_follow_type = data["spectator_follow_type"]
+                    spectator_follow_index = data["spectator_follow_index"]
+
+                    obj = None
+
+                    if spectator_follow_type == "object":
+                        if spectator_follow_index in realm.OBJECT_LIST:
+                            obj = realm.OBJECT_LIST[spectator_follow_index]
+                        else:
+                            print(
+                                f"Cant find index {spectator_follow_index} for"
+                                " spectator"
+                            )
+
+                    if spectator_follow_type == "tile":
+                        if spectator_follow_index in realm.TILES:
+                            obj = realm.TILES[spectator_follow_index]
+                        else:
+                            print(
+                                f"Cant find index {spectator_follow_index} for"
+                                " spectator"
+                            )
+
+                    if obj:
+                        Spectator(player_name=player_name, obj=obj)
+
+                realm.REDIS_CONNECTION.delete(f"game_{player_name}")
 
 
 def evaluate_thinking():
@@ -153,52 +183,109 @@ def evaluate_moves():
             # print(f"Rotating {obj} to rotation {obj.intent}")
 
 
-def send_map_data():
+def find_all_types(obj):
+
+    if isinstance(obj, BaseObject):
+        objects = find_objects(obj, rad=realm.MAP_VIEW_SIZE)
+        tiles = find_tiles(obj, rad=realm.MAP_VIEW_SIZE)
+        particles = find_particles(obj, rad=realm.MAP_VIEW_SIZE)
+
+    if isinstance(obj, BaseTile):
+
+        objects = find_objects_location(obj.x, obj.y, rad=realm.MAP_VIEW_SIZE)
+        tiles = find_tiles_location(obj.x, obj.y, rad=realm.MAP_VIEW_SIZE)
+        particles = find_particles_location(obj.x, obj.y, rad=realm.MAP_VIEW_SIZE)
+
+    return objects, tiles, particles
+
+
+def send_map_data(
+    player_object, player_name, large_message, object_type, objects, tiles, particles
+):
+    all_images = (
+        [inheritor.image for inheritor in BaseObject.__subclasses__()]
+        + [inheritor.image for inheritor in BaseTile.__subclasses__()]
+        + [inheritor.image for inheritor in BaseParticle.__subclasses__()]
+    )
+
+    other_images = [
+        "../../static/other/health_bar_green.png",
+        "../../static/other/health_bar_red.png",
+        "../../static/other/health_bar_yellow.png",
+        "../../static/other/map_image.png",
+        "../../static/other/red_cross.png",
+        "../../static/other/joystick_center.png",
+        "../../static/other/joystick_outside.png",
+    ]
+
+    unix_timestamp = time.time()
+
+    data = {
+        "global_params": {
+            "status": "running",
+            "time_interval": realm.TIME_INTERVAL,
+            "map_view_size": realm.MAP_VIEW_SIZE,
+            "epoch": realm.EPOCH_COUNTER,
+            "textures": all_images + other_images,
+            "timestamp": unix_timestamp,
+            "new_map_timestamp": unix_timestamp + realm.TIME_INTERVAL,
+            "large_message": large_message,
+        },
+        "player": {"object_id": str(player_object.index), "object_type": object_type},
+        "objects": {str(k): o.to_dict() for k, o in objects.items()},
+        "tiles": {str(k): t.to_dict() for k, t in tiles.items()},
+        "particles": {str(k): t.to_dict() for k, t in particles.items()},
+    }
+
+    realm.REDIS_CONNECTION.set(f"map_{player_name}", json.dumps(data, cls=EnumEncoder))
+    realm.REDIS_CONNECTION.expire(f"map_{player_name}", 5)
+
+
+def send_score_data(player_name):
+
+    data = {
+        "player_scores": realm.SCORE_LIST["players"].get(player_name, {}),
+        "global_ranking": realm.SCORE_LIST["ranking"],
+    }
+    realm.REDIS_CONNECTION.set(
+        f"score_{player_name}", json.dumps(data, cls=EnumEncoder)
+    )
+
+
+def send_map_data_all():
 
     for player_name, player_object in realm.PLAYER_LIST.items():
 
-        objects = find_objects(player_object, rad=realm.MAP_VIEW_SIZE)
-        tiles = find_tiles(player_object, rad=realm.MAP_VIEW_SIZE)
-        particles = find_particles(player_object, rad=realm.MAP_VIEW_SIZE)
+        objects, tiles, particles = find_all_types(player_object)
 
-        all_images = (
-            [inheritor.image for inheritor in BaseObject.__subclasses__()]
-            + [inheritor.image for inheritor in BaseTile.__subclasses__()]
-            + [inheritor.image for inheritor in BaseParticle.__subclasses__()]
+        send_map_data(
+            player_object,
+            player_object.player_name,
+            None,
+            "object",
+            objects,
+            tiles,
+            particles,
         )
 
-        other_images = [
-            "../../static/other/health_bar_green.png",
-            "../../static/other/health_bar_red.png",
-            "../../static/other/health_bar_yellow.png",
-            "../../static/other/map_image.png",
-            "../../static/other/red_cross.png",
-            "../../static/other/joystick_center.png",
-            "../../static/other/joystick_outside.png",
-        ]
+    for i, spectator in realm.SPECTATOR_LIST.items():
+        objects, tiles, particles = find_all_types(spectator.obj)
 
-        unix_timestamp = time.time()
-
-        data = {
-            "global_params": {
-                "status": "running",
-                "time_interval": realm.TIME_INTERVAL,
-                "map_view_size": realm.MAP_VIEW_SIZE,
-                "epoch": realm.EPOCH_COUNTER,
-                "textures": all_images + other_images,
-                "timestamp": unix_timestamp,
-                "new_map_timestamp": unix_timestamp + realm.TIME_INTERVAL,
-            },
-            "player": {"object_id": str(player_object.index)},
-            "objects": {str(k): o.to_dict() for k, o in objects.items()},
-            "tiles": {str(k): t.to_dict() for k, t in tiles.items()},
-            "particles": {str(k): t.to_dict() for k, t in particles.items()},
-        }
-
-        realm.REDIS_CONNECTION.set(
-            f"map_{player_name}", json.dumps(data, cls=EnumEncoder)
+        send_map_data(
+            spectator.obj,
+            spectator.player_name,
+            spectator.large_message,
+            spectator.object_type,
+            objects,
+            tiles,
+            particles,
         )
-        realm.REDIS_CONNECTION.expire(f"map_{player_name}", 5)
+
+    for player_name in list(
+        set(realm.PLAYER_LIST.keys()).union(set(realm.SPECTATOR_LIST.keys()))
+    ):
+
+        send_score_data(player_name)
 
 
 def evaluate_player_control():
@@ -236,7 +323,7 @@ def evaluate_player_control():
         else:
             player_object.intent = None
 
-        realm.REDIS_CONNECTION.delete(f"control_{player_name}")
+        # realm.REDIS_CONNECTION.delete(f"control_{player_name}")
 
 
 def evaluate_effects():
@@ -248,11 +335,24 @@ def evaluate_effects():
                 for e in obj.effects:
                     e.run_effect(obj)
 
+            if obj.is_alive:
+
+                if not obj.score:
+                    obj.score = 0
+
+                obj.score += 1
+
     for i, par in list(realm.PARTICLE_LIST.items()):
 
         if i in realm.PARTICLE_LIST.keys():
 
             par.effects()
+
+    for i, spec in list(realm.SPECTATOR_LIST.items()):
+
+        if i in realm.SPECTATOR_LIST.keys():
+
+            spec.effects()
 
 
 def count_object():
@@ -267,7 +367,7 @@ def count_object():
         print(f"{type_name} : {cnt}")
 
 
-def generate_summary():
+def generate_summary_yaml():
 
     summary_json = {}
 
@@ -319,7 +419,7 @@ def main_loop():
         evaluate_player_control()
         evaluate_effects()
         evaluate_moves()
-        send_map_data()
+        send_map_data_all()
 
         if realm.EPOCH_COUNTER % 20 == 0:
             count_object()

@@ -14,11 +14,19 @@ class Angel(BaseObject):
     is_alive = True
 
     effects = [
-        LayObject(object_to_lay="CowEgg", time_to_lay=101),
-        LayObject(object_to_lay="ChickenEgg", time_to_lay=103),
-        LayObject(object_to_lay="FoxEgg", time_to_lay=50),
-        LayObject(object_to_lay="Seed", time_to_lay=50),
-        EatObjectInFront(types_eaten_to_hp_conv={"Grass": 0, "Seed": 0}),
+        LayObject(object_to_lay="CowEgg", time_to_lay=51),
+        LayObject(object_to_lay="ChickenEgg", time_to_lay=52),
+        LayObject(object_to_lay="FoxEgg", time_to_lay=53),
+        LayObject(object_to_lay="Seed", time_to_lay=54),
+        EatObjectInFront(
+            types_eaten_to_hp_conv={
+                "Grass": 0,
+                "Seed": 0,
+                "CowEgg": 0,
+                "ChickenEgg": 0,
+                "FoxEgg": 0,
+            }
+        ),
     ]
 
     def __init__(self, x_new: int, y_new: int, is_player=False, player_name=None):

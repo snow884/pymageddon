@@ -256,11 +256,41 @@
                             this.health_bar.height=this.sprite.height*0.05;
                             this.health_bar.width=this.sprite.width;
                             this.health_bar.zIndex = z_index;
-                            this.health_bar.pivot.set(0, 90)
+                            this.health_bar.pivot.set(0, 90);
                             
                         } else {
                             this.health_bar = null;
                         }
+                        
+                        let name_to_display = "";
+
+                        if (obj_data['is_alive']) {
+                            if (obj_data['player_name']) {
+                                name_to_display = "🙋‍♂️" + obj_data['player_name'];
+                            } else {
+                                if (obj_data['family_name']) {
+                                    name_to_display = "🧠" + obj_data['family_name'] + " " + obj_data['index'];
+                                } else {
+                                    //name_to_display = obj_data['type_name'] + " " + obj_data['index'];
+                                }
+                            }
+                        }
+                        
+
+                        this.name_text = new PIXI.Text(
+                            {
+                                "text":name_to_display,
+                                "anchor":0.5,
+                                "zIndex":z_index,
+                                "style": new PIXI.TextStyle({
+                                    "fontFamily": "Roboto",
+                                    "fontSize": 16,
+                                    "fill": "white",
+                            })
+                        });
+                        this.name_text.pivot.set(0, -50);
+                        app.stage.addChild(this.name_text);
+
                     }
 
                     update_data(obj_data) {
@@ -316,16 +346,23 @@
                             
                             }  
                         
-                            this.health_bar.x = this.sprite.x 
-                            this.health_bar.y = this.sprite.y
+                            this.health_bar.x = this.sprite.x;
+                            this.health_bar.y = this.sprite.y;
 
                             this.health_bar.width = (((this.hp_new - this.hp)*time_delta) + this.hp)/100 * this.sprite.width;
+
+                            this.name_text.x = this.sprite.x;
+                            this.name_text.y = this.sprite.y;
                         }
                     }
 
                     delete() {
                         app.stage.removeChild(this.sprite);
                         app.stage.removeChild(this.health_bar);
+                        
+                        if (this.name_text){
+                            app.stage.removeChild(this.name_text);
+                        }
                     }
                 }
 
@@ -339,141 +376,127 @@
                     this.textures = {};
                     this.refresh_time =0.0;
                     this.time_left_until_refresh =1.0;
+                    this.map_request_running = false;
                     this.epoch = 0;
                     this.elapsed = 0.0;
                     this.nav_map_sprite = null;
                     this.nav_cross_sprite = null;
+                    this.map_server_response_time = 0.0;
+                    }
+
+                    get_player_obj(){
+                        this.player_id = this.map_data['player']['object_id'];
+
+                        if (this.map_data['player']['object_type']=='object'){
+                            this.player_obj = this.objects[this.player_id];
+                        }
+                        if (this.map_data['player']['object_type']=='tile'){
+                            this.player_obj = this.tiles[this.player_id];
+                        }
+                        if (this.map_data['global_params']['large_message']){
+                            this.large_message = this.map_data['global_params']['large_message'];
+                        }
                     }
 
                     async refresh_data() {
 
-                        const token = sessionStorage.getItem('token') ;
 
-                        return fetch(
-                            "/get_map",
-                            {
-                                method: 'GET',
-                                headers: {
-                                    'Authorization': 'Bearer ' + token, 
-                                    'Content-Type': 'application/json', // Another example header
-                                }
-                            })
-                            .then(response => {
-                                if (response.ok) {
-                                    // Request successful, handle the response
-                                    return response.json(); 
-                                  } else if (response.status === 401) {
-                                    // Unauthorized, redirect to login page
-                                    window.location.replace("/login_page");
-                                    throw new Error('Redirect');
-                                    //return response.json(); 
-                                  } else {
-                                    // Other error, handle accordingly
-                                    throw new Error('Network response was not ok.');
-                                  }
-                            })
-                            .then((map_data) => {
-                                
-                                if (map_data['global_params']['status'] != 'running') {
-                                    window.location.replace("/start_game_page");
-                                }
-
-                                this.time_left_until_refresh = map_data['global_params']['time_left'];
-                                
-                                if (this.epoch == map_data['global_params']['epoch']){
-                                    console.log("Not doing anything, epoch did not refresh")
-                                    return false;
-                                }
-
-                                this.epoch = map_data['global_params']['epoch'];
-        
-                                Object.entries(map_data['objects']).forEach(([i,my_obj_data]) => {
-                                    
-                                    if (!(this.objects.hasOwnProperty(i))) {
-                                        let my_obj = new MyObject(my_obj_data, this, 2);
-                                        this.objects[i] = my_obj;
-                                    } else {
-                                        this.objects[i].update_data(my_obj_data);
-                                    }
-                                });
-
-                                Object.entries(this.objects).forEach(([i,my_obj_data]) => {
-                                    
-                                    if (!(map_data['objects'].hasOwnProperty(i))) {
-                                        this.objects[i].delete();
-                                        delete this.objects[i];
-                                    }  
-                                });
-
-                                Object.entries(map_data['tiles']).forEach(([i,my_obj_data]) => {
-                                    
-                                    if (!(this.tiles.hasOwnProperty(i))) {
-                                        let my_obj = new MyObject(my_obj_data, this, 0);
-                                        this.tiles[i] = my_obj;
-                                    } else {
-                                        this.tiles[i].update_data(my_obj_data);
-                                    }
-                                });
-
-                                Object.entries(this.tiles).forEach(([i,my_obj_data]) => {
-                                    
-                                    if (!(map_data['tiles'].hasOwnProperty(i))) {
-                                        this.tiles[i].delete();
-                                        delete this.tiles[i];
-                                    }  
-                                });
-
-
-                                Object.entries(map_data['particles']).forEach(([i,my_obj_data]) => {
-                                    
-                                    if (!(this.particles.hasOwnProperty(i))) {
-                                        let my_obj = new MyObject(my_obj_data, this, 3);
-                                        this.particles[i] = my_obj;
-                                    } else {
-                                        this.particles[i].update_data(my_obj_data);
-                                    }
-                                });
-
-                                Object.entries(this.particles).forEach(([i,my_obj_data]) => {
-                                    
-                                    if (!(map_data['particles'].hasOwnProperty(i))) {
-                                        this.particles[i].delete();
-                                        delete this.particles[i];
-                                    }  
-                                });
-                                
-
-                                this.player_id = map_data['player']['object_id'];
-                                
-                                this.player_obj = this.objects[this.player_id];
-
-                                let nav_map_texture_url = '../../static/other/map_image.png';
-                                
-                                this.textures[nav_map_texture_url].destroy();
-
-                                PIXI.Assets.load(nav_map_texture_url).then(texture => {this.textures[nav_map_texture_url] = texture}).catch(err => console.error(err));
-                                
-                                this.nav_map_sprite.destroy();
-
-                                this.nav_map_sprite = PIXI.Sprite.from(nav_map_texture_url);
-                                
-                                app.stage.addChild(this.nav_map_sprite);
-                                
-                                this.nav_map_sprite.zIndex = 5;
-                                this.nav_map_sprite.x=app.screen.width - 1.5/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.nav_map_sprite.y=1.5/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.nav_map_sprite.height=3/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.nav_map_sprite.width=3/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.nav_map_sprite.anchor.set(0.5);
-
-                                this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (this.player_obj.x/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.nav_cross_sprite.y= (this.player_obj.y/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
-                                
-                                //map.elapsed = 0.0;
-                                return true;
-
-                        }).catch(err => console.error(err));
                         
+                        if (this.map_data['global_params']['status'] != 'running') {
+                            window.location.replace("/start_game_page");
+                        }
+
+                        this.time_left_until_refresh = this.map_data['global_params']['time_left'];
+                        
+                        if (this.epoch == this.map_data['global_params']['epoch']){
+                            console.log("Not doing anything, epoch did not refresh")
+                            return false;
+                        }
+
+                        this.epoch = this.map_data['global_params']['epoch'];
+
+                        Object.entries(this.map_data['objects']).forEach(([i,my_obj_data]) => {
+                            
+                            if (!(this.objects.hasOwnProperty(i))) {
+                                let my_obj = new MyObject(my_obj_data, this, 2);
+                                this.objects[i] = my_obj;
+                            } else {
+                                this.objects[i].update_data(my_obj_data);
+                            }
+                        });
+
+                        Object.entries(this.objects).forEach(([i,my_obj_data]) => {
+                            
+                            if (!(this.map_data['objects'].hasOwnProperty(i))) {
+                                this.objects[i].delete();
+                                delete this.objects[i];
+                            }  
+                        });
+
+                        Object.entries(this.map_data['tiles']).forEach(([i,my_obj_data]) => {
+                            
+                            if (!(this.tiles.hasOwnProperty(i))) {
+                                let my_obj = new MyObject(my_obj_data, this, 0);
+                                this.tiles[i] = my_obj;
+                            } else {
+                                this.tiles[i].update_data(my_obj_data);
+                            }
+                        });
+
+                        Object.entries(this.tiles).forEach(([i,my_obj_data]) => {
+                            
+                            if (!(this.map_data['tiles'].hasOwnProperty(i))) {
+                                this.tiles[i].delete();
+                                delete this.tiles[i];
+                            }  
+                        });
+
+
+                        Object.entries(this.map_data['particles']).forEach(([i,my_obj_data]) => {
+                            
+                            if (!(this.particles.hasOwnProperty(i))) {
+                                let my_obj = new MyObject(my_obj_data, this, 3);
+                                this.particles[i] = my_obj;
+                            } else {
+                                this.particles[i].update_data(my_obj_data);
+                            }
+                        });
+
+                        Object.entries(this.particles).forEach(([i,my_obj_data]) => {
+                            
+                            if (!(this.map_data['particles'].hasOwnProperty(i))) {
+                                this.particles[i].delete();
+                                delete this.particles[i];
+                            }  
+                        });
+                        
+                        this.get_player_obj();
+
+                        let nav_map_texture_url = '../../static/other/map_image.png';
+                        
+                        this.textures[nav_map_texture_url].destroy();
+
+                        PIXI.Assets.load(nav_map_texture_url).then(texture => {this.textures[nav_map_texture_url] = texture}).catch(err => console.error(err));
+                        
+                        this.nav_map_sprite.destroy();
+
+                        this.nav_map_sprite = PIXI.Sprite.from(nav_map_texture_url);
+                        
+                        app.stage.addChild(this.nav_map_sprite);
+                        
+                        this.nav_map_sprite.zIndex = 5;
+                        this.nav_map_sprite.x=app.screen.width - 1.5/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_map_sprite.y=1.5/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_map_sprite.height=3/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_map_sprite.width=3/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_map_sprite.anchor.set(0.5);
+
+                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (this.player_obj.x/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.y= (this.player_obj.y/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                        
+                        //map.elapsed = 0.0;
+                        return true;
+
                     }
 
                     async load_textures() {
@@ -491,9 +514,13 @@
                     }
 
                     async fetch_data_objects() {
-                        console.log("Run init objects...");
+                        console.log("Fetching data objects...");
 
                         const token = sessionStorage.getItem('token') ;
+                        
+                        const startTime = performance.now();
+
+                        this.map_request_running = true;
 
                         await fetch(
                             "/get_map",
@@ -505,6 +532,7 @@
                                 }
                             })
                             .then(response => {
+
                                 if (response.ok) {
                                     // Request successful, handle the response
                                     return response.json(); 
@@ -526,6 +554,11 @@
                                 }
 
                                 this.map_data = map_data;
+
+                                const endTime = performance.now();
+                                this.map_server_response_time = endTime - startTime;
+                                this.map_request_running = false;
+
                             });
                     }
 
@@ -570,8 +603,7 @@
 
                         console.log("Creating nav map...");
 
-                        this.player_id = this.map_data['player']['object_id'];
-                        this.player_obj = this.objects[this.player_id];
+                        this.get_player_obj();
 
                         let nav_map_texture = this.textures['../../static/other/map_image.png'];
 
@@ -629,13 +661,13 @@
                 let screen_title_big = new PIXI.Text(
                     {
                         "text":"Game over !",
-                        "x":512,
-                        "y":512,
+                        "x":app.screen.width/2,
+                        "y":app.screen.height/2,
                         "anchor":0.5,
                         "zIndex":5,
                         "style": new PIXI.TextStyle({
                             "fontFamily": "Roboto",
-                            "fontSize": 150,
+                            "fontSize": 60,
                             "fill": "white",
                     })
                 });
@@ -680,12 +712,13 @@
                 console.log("Start ticker");
 
                 let refresh_time = 0.33;
+                let control_refresh_elapsed = 0.0;
                 let elapsed = 0.0;
                 let cnt = 0.0;
                 let refresh_started = false;
                 
                 document.addEventListener('keydown', logKey);
-                document.addEventListener("keyup", clearKey);
+                //document.addEventListener("keyup", clearKey);
 
                 let keys_pressed = {
                     "ArrowRight":false,
@@ -760,46 +793,67 @@
                     switch (map.status) {
                         case 'running':
                     
-                            if (map.elapsed>map.refresh_time) { 
+                            if (
+                                (map.elapsed>(map.refresh_time-map.map_server_response_time))
+                                & (!(map.map_request_running))
+                                & (!(refresh_started))
+                            ){
+                                
+                                map.fetch_data_objects();
+                                refresh_started = true;
+                            }
 
-                                if (!(refresh_started)) {
-                                    refresh_started = true;
+                            if (
+                                (map.elapsed>(map.refresh_time))
+                                &(!(map.map_request_running))
+                                &(refresh_started)
+                            ) { 
+
+                                map.refresh_data().then((refresh_success) => {
                                     
-                                    update_control();
+                                    if (map.time_left_until_refresh>0.0) {
+                                        map.elapsed = map.refresh_time-map.time_left_until_refresh;
+                                    } 
 
-                                    map.refresh_data().then((refresh_success) => {
+                                    if (refresh_success){
                                         
-                                        if (map.time_left_until_refresh>0.0) {
-                                            map.elapsed = map.refresh_time-map.time_left_until_refresh;
-                                        } 
+                                        map.elapsed = 0.0;
 
-                                        if (refresh_success){
-                                            
-                                            map.elapsed = 0.0;
-
-                                            //clear_keys();
-                                            
-                                        }
+                                        clear_keys();
                                         
-                                        
-
-                                        refresh_started = false;
-                                        
-                                    });
-                                }
+                                    }
+                                    
+                                    refresh_started = false;
+                                    
+                                });
 
                             } else {
                                 
                                 //console.log("update positions");
                                 
-                                update_control();
+                                
 
                                 map.update_positions(map.elapsed/map.refresh_time);
                                 
 
                                 map.elapsed += ticker.elapsedMS/1000;
+                                
                             
                             }
+                            
+                            if (control_refresh_elapsed<0.2){
+                                control_refresh_elapsed += ticker.elapsedMS/1000;
+                            } else {
+                                update_control();
+                                control_refresh_elapsed = 0.0;
+                            }
+                            if (map.large_message){
+                                screen_title_big.text = map.large_message;
+                                screen_title_big.visible = true;
+                            } else {
+                                screen_title_big.visible = false;
+                            }
+
 
                             break;
                         default:

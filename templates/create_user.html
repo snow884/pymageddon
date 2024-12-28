@@ -2,21 +2,41 @@
 
 {% block content %}
 
-    <form id="createPlayerForm">
-      <p id="message_area"></p>
-      <label for="uname"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" name="username" required>
-  
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="password" required>
-  
-      <label for="psw"><b>Verify password</b></label>
-      <input type="password" placeholder="Enter Password" name="verify_password" required>
-  
-      <button type="submit">Create user</button>
 
-    </form>
-  
+<form id="createPlayerForm">
+    <img class="mb-4" src="../../static/website/assets/brand/bootstrap-logo.svg" alt
+        width="72" height="57">
+
+    <h1 class="h3 mb-3 fw-normal">Create player </h1>
+
+    <div class="form-floating">
+        <p id="message_area"></p>
+        <input id="floatingUsername" type="username" class="form-control" name="username"
+            placeholder="Username">
+        <label for="floatingUsername">Username</label>
+    </div>
+
+    <div class="form-floating">
+        <input type="password" class="form-control"
+            id="floatingPassword" name="password"
+            placeholder="Password">
+        <label for="floatingPassword">Password</label>
+    </div>
+
+    <div class="form-floating">
+        <input type="password" class="form-control"
+            id="floatingPassword2" name="verify_password"
+            placeholder="Password">
+        <label for="floatingPassword2">Verify password</label>
+    </div>
+
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Create user</button>
+</form>
+
+    <p>If you already have an account please <a href="/login_page">log in</a></p>
+
+    <p><a href="/">Exit the game</a></p>
+
     <script>
         console.log("JS executing...")
         // Get a reference to the form element

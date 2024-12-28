@@ -1,7 +1,7 @@
 import json
 import time
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
+from typing import Annotated, Optional
 
 import jwt
 import redis
@@ -188,8 +188,31 @@ def create_user_page(request: Request):
 @app.post("/new_game")
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
+    spectator_follow_index: Optional[str] = None,
+    spectator_follow_type: Optional[str] = None,
 ):
-    r.set(f"game_{current_user.username}", "request_play")
+    if spectator_follow_index:
+        r.set(
+            f"game_{current_user.username}",
+            json.dumps(
+                {
+                    "request_type": "spectator",
+                    "spectator_follow_index": spectator_follow_index,
+                    "spectator_follow_type": spectator_follow_type,
+                }
+            ),
+        )
+    else:
+        r.set(
+            f"game_{current_user.username}",
+            json.dumps(
+                {
+                    "request_type": "player",
+                    "spectator_follow_index": None,
+                    "spectator_follow_type": None,
+                }
+            ),
+        )
 
     return {"status": "success"}
 
@@ -262,6 +285,18 @@ def control(
 ):
 
     r.set(f"control_{current_user.username}", my_keys.json())
+
+    return {"status": "success"}
+
+
+@app.get("/score")
+def scores(current_user: Annotated[User, Depends(get_current_active_user)]):
+
+    scores_str = r.get(f"score_{current_user.username}")
+
+    scores = json.loads(scores_str)
+
+    return scores
 
 
 @app.get("/get_map")

@@ -18,9 +18,11 @@ class LayObject(BaseEffect):
 
     def run_effect(self, parent_object):
 
-        cycle_counter = parent_object.variables.get("lay_object_cycle_counter", 0)
-
         self.object_to_lay = obj_fut(self.object_to_lay)
+
+        cycle_counter = parent_object.variables.get(
+            "lay_object_cycle_counter_" + self.object_to_lay.type_name, 0
+        )
 
         cycle_counter = cycle_counter + 1
 
@@ -33,4 +35,6 @@ class LayObject(BaseEffect):
                     self.object_to_lay(x_new=x_new, y_new=y_new)
                     cycle_counter = 0
 
-        parent_object.variables["lay_object_cycle_counter"] = cycle_counter
+        parent_object.variables[
+            "lay_object_cycle_counter_" + self.object_to_lay.type_name
+        ] = cycle_counter

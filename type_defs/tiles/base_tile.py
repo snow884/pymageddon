@@ -25,4 +25,6 @@ class BaseTile:
         self.x = x
         self.y = y
 
+        self.index = (x, y)
+
         self.occupied_by_particles = []

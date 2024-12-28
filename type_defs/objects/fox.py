@@ -19,7 +19,7 @@ class Fox(BaseObject):
     effects = [
         EatObjectInFront(types_eaten_to_hp_conv={"Cow": 30, "Chicken": 10}),
         HpDepletion(),
-        LayObject(object_to_lay="FoxEgg", time_to_lay=300),
+        LayObject(object_to_lay="FoxEgg", time_to_lay=350),
     ]
 
     def __init__(self, x_new: int, y_new: int, is_player=False, player_name=None):

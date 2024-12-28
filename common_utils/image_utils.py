@@ -37,6 +37,10 @@ def generate_map():
                     r = 178
                     g = 182
                     b = 167
+                elif obj.is_player:
+                    r = 0
+                    g = 0
+                    b = 255
                 else:
                     r = 0
                     g = 0

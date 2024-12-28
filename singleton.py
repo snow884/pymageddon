@@ -8,6 +8,8 @@ class Realm:
     TIME_INTERVAL = 0.66
     EPOCH_COUNTER = 0
     MAP = None
+    SCORE_LIST = None
+    REDIS_CONNECTION = None
 
     _instance = None
 
@@ -19,13 +21,15 @@ class Realm:
     def __init__(self):
         self.TILES = {}
         self.OBJECT_LIST = {}
+        self.SPECTATOR_LIST = {}
         self.PLAYER_LIST = {}
         self.PARTICLE_LIST = {}
         self.OBJ_COUNTER = 0
         self.MAP_VIEW_SIZE = 11
-        self.TIME_INTERVAL = 0.66
+        self.TIME_INTERVAL = 0.50
         self.EPOCH_COUNTER = 0
         self.MAP = None
+        self.SCORE_LIST = None
         self.REDIS_CONNECTION = None
 
 
