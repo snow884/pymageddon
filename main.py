@@ -30,15 +30,15 @@ from type_defs.tiles.base_tile import BaseTile
 from type_defs.tiles.tile1 import Tile1
 from type_defs.utils.utils import Map, Spectator
 
-realm.REDIS_CONNECTION = redis.Redis(host="localhost", port=6379, db=0)
+if realm.MODE == "full":
+    realm.REDIS_CONNECTION = redis.Redis(host="localhost", port=6379, db=0)
 
 
-realm.MAP = Map(size_x=200, size_y=200)
+def populate_map_full(sz=200):
 
-realm.SCORE_LIST = {"players": {}, "ranking": {}}
+    realm.MAP = Map(size_x=sz, size_y=sz)
 
-
-def populate_map():
+    realm.SCORE_LIST = {"players": {}, "ranking": {}}
 
     for i in range(0, realm.MAP.size_x):
         for j in range(0, realm.MAP.size_y):
@@ -407,19 +407,26 @@ def generate_summary_yaml():
         f.write(s)
 
 
-def main_loop():
+def main_loop(steps=None):
 
-    populate_map()
+    if realm.MODE == "full":
+        populate_map_full()
+    else:
+        populate_map_full(15)
 
     while True:
 
         start_time = time.time()
         handle_players()
         evaluate_thinking()
-        evaluate_player_control()
+
+        if realm.MODE == "full":
+            evaluate_player_control()
+
         evaluate_effects()
         evaluate_moves()
-        send_map_data_all()
+        if realm.MODE == "full":
+            send_map_data_all()
 
         if realm.EPOCH_COUNTER % 20 == 0:
             count_object()
@@ -441,6 +448,9 @@ def main_loop():
         print("Total epoch time :", (end_time - start_time) * 10**3, "ms")
 
         realm.EPOCH_COUNTER = realm.EPOCH_COUNTER + 1
+
+        if realm.EPOCH_COUNTER > steps:
+            return
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 
 from common_utils.common_enums import Actions, Rotations
+from sandboxed_language.sandboxed_language import evaluate_code
 from singleton import realm
 from type_defs.utils.utils import Spectator
 
@@ -39,7 +40,9 @@ class BaseObject:
 
     code: str = ""
 
-    def __init__(self, x_new: int, y_new: int, is_player=False, player_name=None):
+    def __init__(
+        self, x_new: int, y_new: int, is_player=False, player_name=None, code=None
+    ):
 
         super().__init__()
 
@@ -64,6 +67,7 @@ class BaseObject:
         self.x = x_new
         self.y = y_new
         self.is_player = is_player
+        self.code = code
 
     def __str__(self) -> str:
 
@@ -119,7 +123,10 @@ class BaseObject:
             return x_new, y_new
 
     def think(self):
-        pass
+        if self.code:
+            return evaluate_code(
+                code_in=self.code, user_variables=self.variables, current_object=self
+            )
 
     def run_effects(self):
         self.score += 1

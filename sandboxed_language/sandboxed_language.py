@@ -1,6 +1,10 @@
 import ast
 import operator as op
 
+from common_utils.common_enums import Actions
+from common_utils.grid_utils import find_nearest_xy
+from common_utils.utils import get_index, set_index
+
 # supported operators
 binary_operators = {
     ast.Add: op.add,
@@ -24,6 +28,12 @@ comparison_operators = {
     ast.In: op.contains,
 }
 
+function_operators = {
+    "find_nearest": find_nearest_xy,
+    "get_index": get_index,
+    "set_index": set_index,
+}
+
 my_variables = {}
 steps = 0
 
@@ -45,10 +55,12 @@ def evaluate_expression(expression, variables):
 
 
 class CodeVisitor(ast.NodeVisitor):
-    def __init__(self, user_variables={}, max_steps=1000):
+    def __init__(self, user_variables={}, max_steps=1000, code_in=""):
         self.max_steps = max_steps
         self.step_num = 0
         self.user_variables = user_variables
+        self.code_in = code_in.split("\n")
+
         super(CodeVisitor).__init__()
 
     def check_steps(self):
@@ -109,7 +121,20 @@ class CodeVisitor(ast.NodeVisitor):
 
         # print(my_variables)
 
-        # self.generic_visit(node)
+    def generic_visit(self, node):
+
+        self.check_steps()
+
+        print("generic visit")
+
+        if type(node).__name__ != "Module":
+
+            raise Exception(
+                f"Unknown expression {self.code_in[node.lineno-1]} on line"
+                f" {node.lineno}"
+            )
+
+        ast.NodeVisitor.generic_visit(self, node)
 
 
 class MathVisitor(ast.NodeVisitor):
@@ -174,14 +199,29 @@ class MathVisitor(ast.NodeVisitor):
     def visit_Expr(self, node):
         return self.visit(node.value)
 
-    # def visit_Call(self, node):
-    #     if isinstance(node.func, ast.Name) and node.func.id == 'f':
-    #         # Evaluate literal expressions within the eval call
+    def visit_Call(self, node):
 
-    #         expr = ast.literal_eval(node.args[0])
-    #         return expr
+        print("Calling function " + node.func.id)
 
-    #     self.generic_visit(node)
+        if node.func.id in function_operators.keys():
+            # Evaluate literal expressions within the eval call
+
+            args_evaluated = [self.visit(arg) for arg in node.args]
+            print(args_evaluated)
+
+            return function_operators[node.func.id](*args_evaluated)
+
+    def generic_visit(self, node):
+
+        self.check_steps()
+
+        print("generic visit")
+
+        if type(node).__name__ != "Module":
+
+            raise Exception(f"Unknown expression {node.value} on line {node.lineno}")
+
+        ast.NodeVisitor.generic_visit(self, node)
 
 
 def eval_math(expr):
@@ -190,32 +230,59 @@ def eval_math(expr):
     return visitor.visit(tree.body)
 
 
-def evaluate_code(code_in, user_variables={}):
+def evaluate_code(code_in, user_variables={}, current_object=None):
 
     tree = ast.parse(code_in)
-    visitor = CodeVisitor()
+    current_object_dict = {current_object.x, current_object.y}
+    visitor = CodeVisitor(
+        {
+            "user_vars": user_variables,
+            "intent": "",
+            "current_object": current_object_dict,
+        },
+        code_in=code_in,
+    )
     visitor.visit(tree)
 
-    print(visitor.user_variables)
+    if visitor.user_variables["intent"]:
+
+        if visitor.user_variables["intent"] == "ROTATE_UP":
+            return Actions.ROTATE_UP
+        elif visitor.user_variables["intent"] == "ROTATE_RIGHT":
+            return Actions.ROTATE_RIGHT
+        elif visitor.user_variables["intent"] == "ROTATE_DOWN":
+            return Actions.ROTATE_DOWN
+        elif visitor.user_variables["intent"] == "ROTATE_LEFT":
+            return Actions.ROTATE_LEFT
+        elif visitor.user_variables["intent"] == "MOVE_FORWARD":
+            return Actions.MOVE_FORWARD
+        else:
+            if visitor.user_variables["intent"]:
+                raise Exception(
+                    f"Incorrect intent returned '{visitor.user_variables['intent']}'"
+                )
 
 
-code = """
+# code = """
 
-a = "a"
-b = "b"
-x = 1
-y = 4
+# a = "a"
+# b = "b"
+# x = 1
+# z = {'x':1,'y':3}
 
-if (x < 10 ):
-    y = x + asd
-    
-    if x==1:
-        a = 3
-else:
-    y = 20
+# #s = find_nearest(8, 2,'Cow')
+# m = get_index(z,'x')
 
-c = 'c'
+# if (x < 10 ):
+#     y = x + (x*2)
 
-"""
-# print(eval_math('3 == 0'))
-evaluate_code(code)
+#     if x==1:
+#         a = 3
+# else:
+#     y = 20
+
+# c = 'c'
+
+# """
+# # print(eval_math('3 == 0'))
+# evaluate_code(code)

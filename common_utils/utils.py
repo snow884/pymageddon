@@ -1,6 +1,16 @@
 import sys
 
 
+def set_index(list_in, index, val):
+
+    list_in[index] = val
+
+
+def get_index(list_in, index):
+
+    return list_in[index]
+
+
 def obj_fut(str_in):
 
     if not isinstance(str_in, str):

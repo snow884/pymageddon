@@ -185,6 +185,14 @@ def create_user_page(request: Request):
     )
 
 
+@app.get("/create_bot_page", response_class=HTMLResponse)
+def create_bot_page(request: Request):
+
+    return templates.TemplateResponse(
+        request=request, name="create_bot_page.html", context={}
+    )
+
+
 @app.post("/new_game")
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
@@ -279,6 +287,17 @@ def create_player(new_user: UserCreate):
 
 
 @app.post("/control")
+def control(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    my_keys: KeysPressed,
+):
+
+    r.set(f"control_{current_user.username}", my_keys.json())
+
+    return {"status": "success"}
+
+
+@app.post("/create_bot")
 def control(
     current_user: Annotated[User, Depends(get_current_active_user)],
     my_keys: KeysPressed,

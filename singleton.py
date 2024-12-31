@@ -1,4 +1,5 @@
 class Realm:
+    MODE = "full"
     TILES = {}
     OBJECT_LIST = {}
     PLAYER_LIST = {}
