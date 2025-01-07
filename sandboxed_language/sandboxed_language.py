@@ -2,8 +2,7 @@ import ast
 import operator as op
 
 from common_utils.common_enums import Actions
-from common_utils.grid_utils import find_nearest_xy
-from common_utils.utils import get_index, set_index
+from sandboxed_language.utils import find_nearest_xy, get_index, set_index
 
 # supported operators
 binary_operators = {

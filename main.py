@@ -95,17 +95,27 @@ def handle_players():
 
                 if data["request_type"] == "spectator":
                     spectator_follow_type = data["spectator_follow_type"]
-                    spectator_follow_index = data["spectator_follow_index"]
+                    spectator_follow_index = data.get("spectator_follow_index")
 
                     obj = None
 
                     if spectator_follow_type == "object":
+
                         if spectator_follow_index in realm.OBJECT_LIST:
                             obj = realm.OBJECT_LIST[spectator_follow_index]
                         else:
-                            print(
-                                f"Cant find index {spectator_follow_index} for"
-                                " spectator"
+                            code = data["code"]
+
+                            x_new, y_new = get_nearest_free_location(
+                                random.randint(0, realm.MAP.size_x - 1),
+                                random.randint(0, realm.MAP.size_y - 1),
+                            )
+                            obj = Cow(
+                                x_new=x_new,
+                                y_new=y_new,
+                                is_player=False,
+                                player_name=player_name,
+                                code=code,
                             )
 
                     if spectator_follow_type == "tile":
@@ -118,7 +128,13 @@ def handle_players():
                             )
 
                     if obj:
-                        Spectator(player_name=player_name, obj=obj)
+                        Spectator(
+                            obj=obj,
+                            player_name=player_name,
+                            object_type="object",
+                            lifetime=1000,
+                            large_message="Following bot",
+                        )
 
                 realm.REDIS_CONNECTION.delete(f"game_{player_name}")
 
@@ -236,6 +252,7 @@ def send_map_data(
         "tiles": {str(k): t.to_dict() for k, t in tiles.items()},
         "particles": {str(k): t.to_dict() for k, t in particles.items()},
     }
+    print(data["player"])
 
     realm.REDIS_CONNECTION.set(f"map_{player_name}", json.dumps(data, cls=EnumEncoder))
     realm.REDIS_CONNECTION.expire(f"map_{player_name}", 5)
@@ -449,8 +466,9 @@ def main_loop(steps=None):
 
         realm.EPOCH_COUNTER = realm.EPOCH_COUNTER + 1
 
-        if realm.EPOCH_COUNTER > steps:
-            return
+        if steps:
+            if realm.EPOCH_COUNTER > steps:
+                return
 
 
 if __name__ == "__main__":

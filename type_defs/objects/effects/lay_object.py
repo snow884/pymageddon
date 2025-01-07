@@ -32,7 +32,9 @@ class LayObject(BaseEffect):
             tile = realm.TILES.get((x_new, y_new))
             if tile:
                 if tile.occupied_by is None:
-                    self.object_to_lay(x_new=x_new, y_new=y_new)
+                    self.object_to_lay(
+                        x_new=x_new, y_new=y_new, code_store=parent_object.code
+                    )
                     cycle_counter = 0
 
         parent_object.variables[

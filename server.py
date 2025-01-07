@@ -48,6 +48,10 @@ class KeysPressed(BaseModel):
     ArrowUp: bool
 
 
+class BotCode(BaseModel):
+    code_str: str
+
+
 def fake_hash_password(password: str):
     return "fakehashed" + password
 
@@ -64,6 +68,12 @@ class UserCreate(BaseModel):
     username: str
     password: str
     verify_password: str
+
+
+class BotCreate(BaseModel):
+    request_type: str
+    spectator_follow_type: str
+    code: str
 
 
 class UserLogin(BaseModel):
@@ -298,12 +308,16 @@ def control(
 
 
 @app.post("/create_bot")
-def control(
+def create_bot(
     current_user: Annotated[User, Depends(get_current_active_user)],
-    my_keys: KeysPressed,
+    code: BotCode,
 ):
-
-    r.set(f"control_{current_user.username}", my_keys.json())
+    print(code.code_str)
+    new_bot_data = BotCreate(
+        request_type="spectator", spectator_follow_type="object", code=code.code_str
+    )
+    print(new_bot_data.json())
+    r.set(f"game_{current_user.username}", new_bot_data.json())
 
     return {"status": "success"}
 

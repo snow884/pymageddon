@@ -28,6 +28,8 @@ class TurnInto(BaseEffect):
             y_new = parent_object.y
 
             parent_object.die()
-            self.future_object_class(x_new=x_new, y_new=y_new)
+            self.future_object_class(
+                x_new=x_new, y_new=y_new, code=parent_object.code_store
+            )
 
         parent_object.variables["turn_into_cycle_counter"] = cycle_counter

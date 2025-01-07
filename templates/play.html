@@ -17,7 +17,13 @@
             (async () =>
         {
 
-            const app = new PIXI.Application();
+            const app = new PIXI.Application(
+                {
+                    antialias: true,
+                    autoDensity: true, // !!!
+                    resolution: 2,
+                }
+            );
             await app.init({ resizeTo: window });
             document.body.appendChild(app.canvas);
 
@@ -74,8 +80,6 @@
             }
 
             async function run_game() {
-
-
 
                 class JoyStick {
                     constructor(){
@@ -718,7 +722,7 @@
                 let refresh_started = false;
                 
                 document.addEventListener('keydown', logKey);
-                //document.addEventListener("keyup", clearKey);
+                document.addEventListener("keyup", clearKey);
 
                 let keys_pressed = {
                     "ArrowRight":false,
@@ -818,8 +822,8 @@
                                     if (refresh_success){
                                         
                                         map.elapsed = 0.0;
-
-                                        clear_keys();
+                                        //update_control();
+                                        //clear_keys();
                                         
                                     }
                                     

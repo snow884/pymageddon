@@ -22,9 +22,22 @@ class Fox(BaseObject):
         LayObject(object_to_lay="FoxEgg", time_to_lay=350),
     ]
 
-    def __init__(self, x_new: int, y_new: int, is_player=False, player_name=None):
+    def __init__(
+        self,
+        x_new: int,
+        y_new: int,
+        is_player=False,
+        player_name=None,
+        code: str = None,
+        code_store: str = None,
+    ):
         super().__init__(
-            x_new=x_new, y_new=y_new, is_player=is_player, player_name=player_name
+            x_new=x_new,
+            y_new=y_new,
+            is_player=is_player,
+            player_name=player_name,
+            code=code,
+            code_store=code_store,
         )
         self.rotation = random.choice(
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]

@@ -39,9 +39,16 @@ class BaseObject:
     effects: object = None
 
     code: str = ""
+    code_store: str = ""
 
     def __init__(
-        self, x_new: int, y_new: int, is_player=False, player_name=None, code=None
+        self,
+        x_new: int,
+        y_new: int,
+        is_player=False,
+        player_name=None,
+        code=None,
+        code_store=None,
     ):
 
         super().__init__()
@@ -68,6 +75,7 @@ class BaseObject:
         self.y = y_new
         self.is_player = is_player
         self.code = code
+        self.code_store = code_store
 
     def __str__(self) -> str:
 
