@@ -3,6 +3,7 @@
 .cert
 .db
 .log
+.xcf
 seed_phrase
 terraform/.terraform/*
 terraform/*

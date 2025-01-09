@@ -1,0 +1,47 @@
+
+
+{% extends "_menu_bar.html" %}
+
+{% block content %}
+    <!-- START THE FEATURETTES -->
+    <br>
+
+    <div class="row featurette">
+      <div class="col-md-7">
+        <h2 class="featurette-heading">
+          PyMagedon is a massive multiplayer, survival strategy game. 
+          <span class="text-muted">It is free to play.</span>
+        </h2>
+        <p class="lead">
+          You play as a part of the ecosystem that constantly evolves and obeys 
+          predator-pray relationship dynamics that is found in nature. The game only has the 
+          number of predators that the ecosystem can support.
+        </p>
+        <p class="lead">
+          <a class="btn btn-lg btn-primary" href="{{ url_for('play') }}" role="button">Play »</a>
+        </p>
+
+      </div>
+      <div class="col-md-5">
+        <iframe width="500" height="500" src="https://www.youtube.com/embed/qxT1w_PX9YI?si=Z376fLlnmQZ4cJxE?&autoplay=1&mute=1&loop=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+      <div class="col-md-7 order-md-2">
+        <h2 class="featurette-heading">Enemies aren't there just to get you. <span class="text-muted">They have to fight for survival as well.</span></h2>
+        <p class="lead">The game has its own ecosystem. All bots require sufficient nutrition regardless if they are a plant, herbivore ot a predator.</p>
+      </div>
+      <div class="col-md-5 order-md-1">
+        <img src="static/website/assets/pics/fox_chasing_cow_image.jpg" alt="fox_chasing_cow_image" width="500" height="500">
+        
+      </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <!-- /END THE FEATURETTES -->
+
+{% endblock %}
