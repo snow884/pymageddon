@@ -9,19 +9,20 @@ export AWS_ACCOUNT_ID=143858405180
 
 #export AWS_ACCOUNT_ID=143858405180
 export CLUSTER_NAME=web-app-cluster
-export REPOSITORY_NAME=handle_usda
-export SERVICE_NAME=other-loads-app-service
+export REPOSITORY_NAME=pymageddon-webserver
+export SERVICE_NAME=pymageddon-webserver-web-app-service
 
 export DOCKER_TAG=latest
+
+cp -r ../../app/ ./app/
 
 docker rmi $DOCKER_TAG || echo "no image found, skipping deletion..."
 docker rmi $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME\:$DOCKER_TAG || echo "no image found, skipping deletion..."
 
 echo "building image..."
-docker build --platform=linux/amd64 -t $DOCKER_TAG .
+docker build --platform=linux/amd64 -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME\:$DOCKER_TAG .
 
-echo "tagging image..."
-docker tag $DOCKER_TAG $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME\:$DOCKER_TAG
+rm -r ./app/  
 
 echo "logging in..."
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com

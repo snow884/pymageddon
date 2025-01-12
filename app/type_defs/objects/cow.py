@@ -53,7 +53,7 @@ class Cow(BaseObject):
             return simple_chase(
                 self,
                 chase_after=["Seed", "CarnivorousFlowerSeed", "Grass"],
-                chase_from=["Fox"],
+                chase_from=["Fox", "CarnivorousFlower"],
             )
         else:
             return super().think()

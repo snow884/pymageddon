@@ -1,8 +1,8 @@
-FROM python:3.10
+FROM python:3.12
 
 RUN pip install --upgrade pip
 
-ADD ./requirements.txt /app/requirements.txt
+ADD ./app/requirements.txt /app/requirements.txt
 
 RUN pip3 install -r /app/requirements.txt
 
@@ -13,6 +13,6 @@ EXPOSE 5000
 ENV PYTHONPATH=/app/
 
 WORKDIR "/app"
-uvicorn server:app --reload
-ENTRYPOINT [ "uvicorn","server:app", "--reload"]
+
+ENTRYPOINT [ "uvicorn", "server:app", "--reload"]
 

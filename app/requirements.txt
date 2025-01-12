@@ -1,4 +1,9 @@
 redis
 passlib
 python-multipart
-fastapi==0.115.
+uvicorn
+pyjwt
+jinja2
+fastapi==0.115
+dataclasses-json
+pillow

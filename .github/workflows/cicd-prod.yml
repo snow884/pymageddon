@@ -1,0 +1,97 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: CICD prod
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  check_python_code:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4 
+        with:
+          python-version: 'pypy3.10' 
+      - run: echo "Update pip..."
+      - run: pip install --upgrade pip
+      - run: echo "Checking that the code for correctness..."
+      - run: echo "Checking that the code is formatted correctly..."
+      - run: pip install pre-commit==2.20.0
+      - run: pre-commit run --all-files 
+
+  run_unit_tests:
+    needs: [check_python_code]
+
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4 
+        with:
+          python-version: 'pypy3.10' 
+      - run: echo "Running unit django tests..."
+      - run: pip install --upgrade pip
+      - run: sudo apt-get install -y gcc
+      #- run: pip install -r  tarowallet/requirements.txt
+      - run: cd tarowallet && echo "test"
+#      - run: cd tarowallet && python manage.py test
+
+  upload_static_files:
+
+    needs: [run_unit_tests]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4 
+      with:
+        python-version: 'pypy3.10' 
+
+    - run: pip install --upgrade pip
+    - run: sudo apt-get install -y gcc
+    - run: pip install -r  tarowallet/requirements.txt
+
+    # - name: Upload static files to S3
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+    #     AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    #     AWS_REGION: us-east-1
+    #     AWS_DEFAULT_REGION: us-east-1
+    #     PG_PASSWORD: c5cVbJ9eE70VcKZWNOSQRsOLVZKLsD
+    #     PG_USERNAME: pgadmin
+    #     SECRET_KEY: ez0gcr2PGa4N56LnIyGGwoeShRNVFTUnXzcSBven5iUmHk7yHuteRBRPFw5vNVdp1s
+    #     DEV_ENV: PROD
+    #     POSTGER_URL: terraform-20231014195518499300000002.cqn4xtypecec.us-east-1.rds.amazonaws.com:5432
+    #   run: |
+    #     cd tarowallet && python manage.py collectstatic --noinput && python manage.py s3_sync_meta django.core.files.storage.default_storage
+
+    # - name: Uploaded to S3 !
+    #   run: echo Uploaded to S3
+
+  build:
+
+    needs: [run_unit_tests]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Docker
+      uses: docker-practice/actions-setup-docker@master
+
+    - name: Deploy service into ECS
+      env:
+        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        AWS_REGION: us-east-1
+        AWS_DEFAULT_REGION: us-east-1
+        REPOSITORY_NAME: tiramisu-wallet-web-app-prod
+        SERVICE_NAME: tiramisu-wallet-web-app-service
+      run: |
+        cd tarowallet && sh build.sh
+
+    - name: Deployed!
+      run: echo App successfully deployed 
+
