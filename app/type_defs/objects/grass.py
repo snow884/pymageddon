@@ -20,3 +20,5 @@ class Grass(BaseObject):
         )
 
     effects = [EmitObject(object_to_emit="Seed", time_to_emit=80)]
+
+    rgb_map = (0, 204, 0)

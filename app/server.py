@@ -5,7 +5,7 @@ from typing import Annotated, Optional
 
 import jwt
 import redis
-from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordBearer
@@ -260,6 +260,17 @@ async def world_map(request: Request):
     return templates.TemplateResponse(
         request=request, name="world_map.html", context={}
     )
+
+
+@app.get("/map_image.png", response_class=Response)
+async def get_map_image(request: Request):
+
+    map_image = r.get(f"map_image")
+    headers = {
+        "Cache-Control": "no-cache",
+        "Content-Disposition": "inline; filename=my_image.jpg",
+    }
+    return Response(content=map_image, media_type="image/png", headers=headers)
 
 
 @app.get("/start_game_page", response_class=HTMLResponse)

@@ -1,6 +1,7 @@
 from common_utils.utils import obj_fut
 from singleton import realm
 from type_defs.objects.effects.base_effect import BaseEffect
+from type_defs.particles.laying_particle import LayingParticle
 
 
 class LayObject(BaseEffect):
@@ -32,6 +33,7 @@ class LayObject(BaseEffect):
             tile = realm.TILES.get((x_new, y_new))
             if tile:
                 if tile.occupied_by is None:
+                    LayingParticle(parent_object.x, parent_object.y)
                     self.object_to_lay(
                         x_new=x_new, y_new=y_new, code_store=parent_object.code
                     )

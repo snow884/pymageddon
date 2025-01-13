@@ -1,6 +1,15 @@
 <!doctype html>
 <html>
     <head>
+        <!-- Clarity tracking -->
+        <script type="text/javascript">
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "ptabw2rs3n");
+        </script>
+
         <script src="https://pixijs.download/release/pixi.js"></script>
     </head>
     <body scroll="no" style="overflow: hidden">
@@ -475,7 +484,7 @@
                         
                         this.get_player_obj();
 
-                        let nav_map_texture_url = '../../static/other/map_image.png';
+                        let nav_map_texture_url = '../../map_image.png';
                         
                         this.textures[nav_map_texture_url].destroy();
 
@@ -608,7 +617,7 @@
 
                         this.get_player_obj();
 
-                        let nav_map_texture = this.textures['../../static/other/map_image.png'];
+                        let nav_map_texture = this.textures['../../map_image.png'];
 
                         this.nav_map_sprite = PIXI.Sprite.from(nav_map_texture);
                         console.log(this.nav_map_sprite.x);

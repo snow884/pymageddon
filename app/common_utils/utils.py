@@ -11,15 +11,40 @@ def obj_fut(str_in):
             from type_defs.objects.seed import Seed
         return Seed
 
+    elif str_in == "Seed2":
+        if "Seed2" not in sys.modules:
+            from type_defs.objects.seed2 import Seed2
+        return Seed2
+
+    elif str_in == "Seed3":
+        if "Seed3" not in sys.modules:
+            from type_defs.objects.seed3 import Seed3
+        return Seed3
+
     elif str_in == "Grass":
         if "Grass" not in sys.modules:
             from type_defs.objects.grass import Grass
         return Grass
 
+    elif str_in == "Grass2":
+        if "Grass2" not in sys.modules:
+            from type_defs.objects.grass2 import Grass2
+        return Grass2
+
+    elif str_in == "Grass3":
+        if "Grass" not in sys.modules:
+            from type_defs.objects.grass3 import Grass3
+        return Grass3
+
     elif str_in == "Stone":
         if "Stone" not in sys.modules:
             from type_defs.objects.stone import Stone
         return Stone
+
+    elif str_in == "Stone2":
+        if "Stone2" not in sys.modules:
+            from type_defs.objects.stone2 import Stone2
+        return Stone2
 
     elif str_in == "Chicken":
         if "Chicken" not in sys.modules:

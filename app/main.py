@@ -24,8 +24,13 @@ from type_defs.objects.chicken_egg import ChickenEgg
 from type_defs.objects.cow import Cow
 from type_defs.objects.fox import Fox
 from type_defs.objects.grass import Grass
+from type_defs.objects.grass2 import Grass2
+from type_defs.objects.grass3 import Grass3
 from type_defs.objects.seed import Seed
+from type_defs.objects.seed2 import Seed2
+from type_defs.objects.seed3 import Seed3
 from type_defs.objects.stone import Stone
+from type_defs.objects.stone2 import Stone2
 from type_defs.particles.base_particle import BaseParticle
 from type_defs.tiles.base_tile import BaseTile
 from type_defs.tiles.tile1 import Tile1
@@ -49,8 +54,13 @@ def populate_map_full(sz=200):
                     [
                         Cow,
                         Grass,
+                        Grass2,
+                        Grass3,
                         Seed,
+                        Seed2,
+                        Seed3,
                         Stone,
+                        Stone2,
                         Chicken,
                         ChickenEgg,
                         Fox,
@@ -239,7 +249,7 @@ def send_map_data(
         "../../static/other/health_bar_green.png",
         "../../static/other/health_bar_red.png",
         "../../static/other/health_bar_yellow.png",
-        "../../static/other/map_image.png",
+        "../../map_image.png",
         "../../static/other/red_cross.png",
         "../../static/other/joystick_center.png",
         "../../static/other/joystick_outside.png",

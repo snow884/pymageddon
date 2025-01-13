@@ -29,6 +29,8 @@ class Fox(BaseObject):
         LayObject(object_to_lay="FoxEgg", time_to_lay=152),
     ]
 
+    rgb_map = (255, 153, 000)
+
     def __init__(
         self,
         x_new: int,

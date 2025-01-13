@@ -11,6 +11,8 @@ class ChickenEgg(BaseObject):
 
     effects = [TurnInto(future_object_class="Chicken", time_to_turn=100)]
 
+    rgb_map = (255, 255, 255)
+
     def __init__(
         self, x_new: int, y_new: int, code: str = None, code_store: str = None
     ):

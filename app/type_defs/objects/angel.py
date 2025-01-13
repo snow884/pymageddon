@@ -18,11 +18,17 @@ class Angel(BaseObject):
         LayObject(object_to_lay="ChickenEgg", time_to_lay=52),
         LayObject(object_to_lay="FoxEgg", time_to_lay=53),
         LayObject(object_to_lay="Seed", time_to_lay=54),
-        LayObject(object_to_lay="CarnivorousFlowerSeed", time_to_lay=54),
+        LayObject(object_to_lay="Seed2", time_to_lay=55),
+        LayObject(object_to_lay="Seed3", time_to_lay=56),
+        LayObject(object_to_lay="CarnivorousFlowerSeed", time_to_lay=57),
         EatObjectInFront(
             types_eaten_to_hp_conv={
                 "Grass": 0,
+                "Grass2": 0,
+                "Grass3": 0,
                 "Seed": 0,
+                "Seed2": 0,
+                "Seed3": 0,
                 "CowEgg": 0,
                 "ChickenEgg": 0,
                 "FoxEgg": 0,
@@ -31,6 +37,8 @@ class Angel(BaseObject):
             }
         ),
     ]
+
+    rgb_map = (51, 102, 255)
 
     def __init__(
         self,

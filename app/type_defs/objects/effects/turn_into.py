@@ -1,5 +1,6 @@
 from common_utils.utils import obj_fut
 from type_defs.objects.effects.base_effect import BaseEffect
+from type_defs.particles.hatching_particle import HetchingParticle
 
 
 class TurnInto(BaseEffect):
@@ -26,6 +27,8 @@ class TurnInto(BaseEffect):
         if cycle_counter > self.time_to_turn:
             x_new = parent_object.x
             y_new = parent_object.y
+
+            HetchingParticle(parent_object.x, parent_object.y)
 
             parent_object.die()
             self.future_object_class(

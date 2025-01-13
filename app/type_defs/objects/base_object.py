@@ -31,6 +31,9 @@ class BaseObject:
 
     x: int = 0
     y: int = 0
+
+    rgb_map: object = (0, 0, 0)
+
     rotation: int = Rotations.UP
 
     variables: object = None

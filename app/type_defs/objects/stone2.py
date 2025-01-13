@@ -4,9 +4,9 @@ from common_utils.common_enums import Rotations
 from type_defs.objects.base_object import BaseObject
 
 
-class Stone(BaseObject):
-    type_name: str = "Stone"
-    image = "../../static/objects/stone.png"
+class Stone2(BaseObject):
+    type_name: str = "Stone2"
+    image = "../../static/objects/stone2.png"
 
     rgb_map = (153, 153, 153)
 

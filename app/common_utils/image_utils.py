@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from PIL import Image
 from singleton import realm
 
@@ -28,24 +30,17 @@ def generate_map():
                 g = 168
                 b = 86
             else:
-                if obj.type_name in ("Grass", "Seed"):
-                    r = 0
-                    g = 240
-                    b = 0
-                elif obj.type_name == "Stone":
-                    r = 178
-                    g = 182
-                    b = 167
-                elif obj.is_player:
-                    r = 0
-                    g = 0
-                    b = 255
-                else:
-                    r = 0
-                    g = 0
-                    b = 0
+                r = obj.rgb_map[0]
+                g = obj.rgb_map[1]
+                b = obj.rgb_map[2]
 
             pixels[x, y] = (r, g, b)
 
     # Save the image
-    image.save("static/other/map_image.png")
+
+    f = BytesIO()
+
+    # image.save("static/other/map_image.png")
+    image.save(f, format="PNG")
+
+    realm.REDIS_CONNECTION.set(f"map_image", f.getvalue())

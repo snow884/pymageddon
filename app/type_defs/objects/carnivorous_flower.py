@@ -30,3 +30,5 @@ class CarnivorousFlower(BaseObject):
         ),
         HpDepletion(hp_loss_per_cycle=1, skip_cycles=20),
     ]
+
+    rgb_map = (204, 0, 0)

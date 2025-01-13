@@ -23,6 +23,8 @@ class Chicken(BaseObject):
         LayObject(object_to_lay=ChickenEgg, time_to_lay=350),
     ]
 
+    rgb_map = (255, 204, 51)
+
     def __init__(
         self,
         x_new: int,
@@ -47,7 +49,9 @@ class Chicken(BaseObject):
     def think(self):
 
         return simple_chase(
-            self, chase_after=["Seed"], chase_from=["Fox", "CarnivorousFlower"]
+            self,
+            chase_after=["Seed", "Seed2", "Seed3"],
+            chase_from=["Fox", "CarnivorousFlower"],
         )
 
     def die(self):

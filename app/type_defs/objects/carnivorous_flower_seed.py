@@ -11,6 +11,8 @@ class CarnivorousFlowerSeed(BaseObject):
 
     effects = [TurnInto(future_object_class="CarnivorousFlower", time_to_turn=30)]
 
+    rgb_map = (255, 204, 0)
+
     def __init__(
         self, x_new: int, y_new: int, code: str = None, code_store: str = None
     ):

@@ -5,13 +5,13 @@ from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.turn_into import TurnInto
 
 
-class CowEgg(BaseObject):
-    type_name: str = "CowEgg"
-    image = "../../static/objects/egg.png"
+class Seed2(BaseObject):
+    type_name: str = "Seed2"
+    image = "../../static/objects/seed2.png"
 
-    effects = [TurnInto(future_object_class="Cow", time_to_turn=100)]
+    effects = [TurnInto(future_object_class="Grass2", time_to_turn=30)]
 
-    rgb_map = (255, 255, 255)
+    rgb_map = (255, 204, 0)
 
     def __init__(
         self, x_new: int, y_new: int, code: str = None, code_store: str = None
