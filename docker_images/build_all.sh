@@ -4,7 +4,7 @@ set -e
 export AWS_ACCOUNT_ID=143858405180
 
 #export AWS_ACCOUNT_ID=143858405180
-export REPOSITORY_NAME=pymageddon-webserver
+export CLUSTER_NAME=web-app-cluster
 export SERVICE_NAME=pymageddon-webserver-web-app-service
 
 for folder in game-node redis-server server
