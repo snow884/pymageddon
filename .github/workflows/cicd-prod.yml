@@ -26,7 +26,7 @@ jobs:
 
   build:
 
-    needs: [run_unit_tests]
+    needs: [check_python_code]
     runs-on: ubuntu-latest
 
     steps:
