@@ -561,19 +561,18 @@
                             'https://pixijs.com/assets/circle.png',
                         ]);
 
-                        
+                        const balls = [];
+                        const container = new PIXI.Container();
 
                         const generateSpinner2 = (position) =>
                         {
-                            const container = new PIXI.Container();
                             
                             container.position = position;
                             app.stage.addChild(container);
 
                             const size = 300;
                             const ballAmount = 7;
-                            const balls = [];
-
+                            
                             for (let i = 0; i < ballAmount; i++)
                             {
                                 const ball = PIXI.Sprite.from('https://pixijs.com/assets/circle.png');
@@ -629,6 +628,13 @@
                         }
 
                         spinner_ticker.destroy();
+
+                        balls.forEach((b, i) =>
+                        {
+                            b.destroy();
+                        });
+
+                        container.destroy();
 
                     }
 
