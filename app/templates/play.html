@@ -566,7 +566,7 @@
                         const generateSpinner2 = (position) =>
                         {
                             const container = new PIXI.Container();
-
+                            
                             container.position = position;
                             app.stage.addChild(container);
 
@@ -608,7 +608,7 @@
                         
                         console.log("scheduling spinner...");
 
-                        let spinner = generateSpinner2(new PIXI.Point(app.screen.width/2,app.screen.height/2));
+                        let spinner = generateSpinner2(new PIXI.Point(app.screen.width/2-150,app.screen.height/2-150));
                         
                         const spinner_ticker = new PIXI.Ticker();
 
