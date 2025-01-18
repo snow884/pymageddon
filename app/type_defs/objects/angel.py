@@ -5,6 +5,7 @@ from common_utils.grid_utils import find_nearest
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
 from type_defs.objects.effects.lay_object import LayObject
+from type_defs.particles.track_particle import TrackParticle
 
 
 class Angel(BaseObject):
@@ -20,7 +21,7 @@ class Angel(BaseObject):
         LayObject(object_to_lay="Seed", time_to_lay=54),
         LayObject(object_to_lay="Seed2", time_to_lay=55),
         LayObject(object_to_lay="Seed3", time_to_lay=56),
-        LayObject(object_to_lay="CarnivorousFlowerSeed", time_to_lay=57),
+        # LayObject(object_to_lay="CarnivorousFlowerSeed", time_to_lay=57),
         EatObjectInFront(
             types_eaten_to_hp_conv={
                 "Grass": 0,
@@ -32,8 +33,8 @@ class Angel(BaseObject):
                 "CowEgg": 0,
                 "ChickenEgg": 0,
                 "FoxEgg": 0,
-                "CarnivorousFlowerSeed": 0,
-                "CarnivorousFlower": 0,
+                # "CarnivorousFlowerSeed": 0,
+                # "CarnivorousFlower": 0,
             }
         ),
     ]
@@ -163,3 +164,13 @@ class Angel(BaseObject):
         self.variables["mode"] = mode
 
         return intent
+
+    def move_to_position(self, x_new: int, y_new: int):
+        x_old = self.x
+        y_old = self.y
+        res = super().move_to_position(x_new, y_new)
+
+        if res:
+            TrackParticle(x_old, y_old, rotation=self.rotation)
+
+        return res

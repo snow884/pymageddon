@@ -19,6 +19,8 @@ class BaseParticle:
 
     type_name: str = "Undefined"
 
+    motion: str = "up"
+
     image: str = ""
 
     lifetime: int = 3

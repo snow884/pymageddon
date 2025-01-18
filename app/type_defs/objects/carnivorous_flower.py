@@ -26,7 +26,7 @@ class CarnivorousFlower(BaseObject):
     effects = [
         EmitObject(object_to_emit="CarnivorousFlowerSeed", time_to_emit=101),
         EatObjectSteppingIn(
-            types_eaten_to_hp_conv={"Cow": 100, "Chicken": 100, "Fox": 100}
+            types_eaten_to_hp_conv={"Cow": 50, "Chicken": 50, "Fox": 50}
         ),
         HpDepletion(hp_loss_per_cycle=1, skip_cycles=20),
     ]

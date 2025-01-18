@@ -9,6 +9,7 @@ from type_defs.objects.effects.hp_depletion import HpDepletion
 from type_defs.objects.effects.lay_object import LayObject
 from type_defs.objects.seed import Seed
 from type_defs.particles.death_particle import DeathParticle
+from type_defs.particles.track_particle import TrackParticle
 
 
 class Chicken(BaseObject):
@@ -53,6 +54,16 @@ class Chicken(BaseObject):
             chase_after=["Seed", "Seed2", "Seed3"],
             chase_from=["Fox", "CarnivorousFlower"],
         )
+
+    def move_to_position(self, x_new: int, y_new: int):
+        x_old = self.x
+        y_old = self.y
+        res = super().move_to_position(x_new, y_new)
+
+        if res:
+            TrackParticle(x_old, y_old, rotation=self.rotation)
+
+        return res
 
     def die(self):
         DeathParticle(x_new=self.x, y_new=self.y)

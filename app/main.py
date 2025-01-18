@@ -17,8 +17,6 @@ from common_utils.image_utils import generate_map
 from singleton import realm
 from type_defs.objects.angel import Angel
 from type_defs.objects.base_object import BaseObject
-from type_defs.objects.carnivorous_flower import CarnivorousFlower
-from type_defs.objects.carnivorous_flower_seed import CarnivorousFlowerSeed
 from type_defs.objects.chicken import Chicken
 from type_defs.objects.chicken_egg import ChickenEgg
 from type_defs.objects.cow import Cow
@@ -64,8 +62,8 @@ def populate_map_full(sz=200):
                         Chicken,
                         ChickenEgg,
                         Fox,
-                        CarnivorousFlowerSeed,
-                        CarnivorousFlower,
+                        # CarnivorousFlowerSeed,
+                        # CarnivorousFlower,
                     ]
                 )(x_new=i, y_new=j)
 

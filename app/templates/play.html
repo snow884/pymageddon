@@ -233,6 +233,9 @@
                         this.sprite = PIXI.Sprite.from(texture);
                         app.stage.addChild(this.sprite);
                         this.sprite.anchor.set(0.5);
+
+                        this.height=1/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.width=1/20.0*Math.max(app.screen.width,app.screen.height);
                         this.sprite.height=1/20.0*Math.max(app.screen.width,app.screen.height);
                         this.sprite.width=1/20.0*Math.max(app.screen.width,app.screen.height);
 
@@ -242,13 +245,30 @@
                         this.y = obj_data["y"];
                         this.rotation = obj_data["rotation"];
                         this.is_particle = obj_data["is_particle"];
+                        this.motion = obj_data["motion"];
 
                         if (this.is_particle) {
                             this.x_new = obj_data["x"];
-                            this.y_new = obj_data["y"]-(obj_data["life"]/obj_data["lifetime"]);
+                            this.y_new = obj_data["y"];
                             this.alpha = 1-(obj_data["life"]/obj_data["lifetime"]);
                             this.alpha_new = 1-(obj_data["life"]/obj_data["lifetime"]);
                             this.sprite.alpha = this.alpha;
+
+                            if (this.motion == 'up') {
+                                this.y_new = obj_data["y"]-(obj_data["life"]/obj_data["lifetime"]);
+                            }
+                            
+                            if (this.motion == 'scale') {
+                                this.height_new = ((obj_data["life"]/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.width_new = ((obj_data["life"]/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.height = (((obj_data["life"]-1)/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.width = (((obj_data["life"]-1)/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
+                            }
+
+                            if (this.motion == 'ground_stuck') {
+                                this.sprite.zIndex = 1;
+                                this.alpha =0.0;
+                            } 
 
                         } else {
                             this.x_new = obj_data["x"];
@@ -317,7 +337,19 @@
                         
                         if (this.is_particle) {
                             this.x_new = obj_data["x"];
-                            this.y_new = obj_data["y"]-(obj_data["life"]/obj_data["lifetime"]);
+                            this.y_new = obj_data["y"];
+
+                            if (this.motion == 'up') {
+                                this.y_new = obj_data["y"]-(obj_data["life"]/obj_data["lifetime"]);
+                            } 
+
+                            if (this.motion == 'scale') {
+                                this.height = this.height_new;
+                                this.width = this.width_new;
+                                this.height_new = ((obj_data["life"]/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.width_new = ((obj_data["life"]/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
+                            }
+
                             this.alpha = this.alpha_new;
                             this.alpha_new = 1-(obj_data["life"]/obj_data["lifetime"]);
                         } else {
@@ -346,6 +378,11 @@
                         
                         if (this.is_particle){
                             this.sprite.alpha = (((this.alpha_new - this.alpha)*time_delta)+this.alpha);
+
+                            if (this.motion == 'scale') {
+                                this.sprite.height = (((this.height_new - this.height)*time_delta)+this.height);
+                                this.sprite.width = (((this.width_new - this.width)*time_delta)+this.width);
+                            }
                         }
 
                         if (this.health_bar) {

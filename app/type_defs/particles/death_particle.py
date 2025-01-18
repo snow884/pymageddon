@@ -8,3 +8,5 @@ class DeathParticle(BaseParticle):
     image: str = "../../static/particles/skull.png"
 
     lifetime: int = 3
+
+    motion: str = "up"

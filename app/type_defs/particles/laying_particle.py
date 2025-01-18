@@ -8,3 +8,5 @@ class LayingParticle(BaseParticle):
     image: str = "../../static/particles/laying.png"
 
     lifetime: int = 3
+
+    motion: str = "up"

@@ -109,7 +109,7 @@ def simple_chase(parent_object, chase_after=[], chase_from=[]):
             run_away_num = 0
             mode = "random"
 
-        found_obj = find_nearest(parent_object, chase_after, rad=20)
+        found_obj = find_nearest(parent_object, chase_after, rad=10)
 
         if found_obj:
 

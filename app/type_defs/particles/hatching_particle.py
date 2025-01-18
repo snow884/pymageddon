@@ -8,3 +8,5 @@ class HetchingParticle(BaseParticle):
     image: str = "../../static/particles/hetching.png"
 
     lifetime: int = 3
+
+    motion: str = "up"
