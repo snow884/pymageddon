@@ -5,7 +5,7 @@
         <!-- Search console -->
         <meta name="google-site-verification" content="evmqjYRoTrRgw6tZvMG4eEVPDgUvSTFBpCkXOeOMdqA" />
 
-        <!-- Clarity tracking -->
+        <!-- Clarity tracking 
         <script type="text/javascript">
             (function(c,l,a,r,i,t,y){
                 c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -13,8 +13,10 @@
                 y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
             })(window, document, "clarity", "script", "ptabw2rs3n");
         </script>
+        -->
 
-        <script src="https://pixijs.download/release/pixi.js"></script>
+        <script src="../../static/website/pixi/pixi.js"></script>
+        
     </head>
     <body scroll="no" style="overflow: hidden">
         
@@ -450,6 +452,10 @@
                         if (this.map_data['global_params']['large_message']){
                             this.large_message = this.map_data['global_params']['large_message'];
                         }
+                        if (this.map_data['global_params']['dashboard_message']){
+                            this.dashboard_message = this.map_data['global_params']['dashboard_message'];
+                        }
+                        
                     }
 
                     async refresh_data() {
@@ -558,7 +564,7 @@
                         
                         // Load the textures
                         await PIXI.Assets.load([
-                            'https://pixijs.com/assets/circle.png',
+                            '../../static/other/circle.png',
                         ]);
 
                         const balls = [];
@@ -575,14 +581,17 @@
                             
                             for (let i = 0; i < ballAmount; i++)
                             {
-                                const ball = PIXI.Sprite.from('https://pixijs.com/assets/circle.png');
-
+                                const ball = PIXI.Sprite.from('../../static/other/circle.png');
                                 ball.anchor.set(0.5);
                                 container.addChild(ball);
                                 ball.position.set(
                                     size / 2 + (Math.cos((i / ballAmount) * Math.PI * 2) * size) / 3,
                                     size / 2 + (Math.sin((i / ballAmount) * Math.PI * 2) * size) / 3,
                                 );
+                                
+                                ball.width = 1/20.0*Math.max(app.screen.width,app.screen.height);
+                                ball.height = 1/20.0*Math.max(app.screen.width,app.screen.height);
+
                                 balls.push(ball);
                             }
 
@@ -600,7 +609,7 @@
                                     const sin = Math.sin((i / ballAmount) * Math.PI - phase);
                                     // Multiply sin with itself to get more steeper edge.
 
-                                    b.scale.set(Math.abs(sin * sin * sin * 2) + 2);
+                                    b.scale.set(Math.abs(sin * sin * sin * 0.05) + 0.05);
                                 });
                             };
                         };
@@ -785,7 +794,7 @@
                 // TEXT
                 let screen_title_big = new PIXI.Text(
                     {
-                        "text":"Game over !",
+                        "text":"",
                         "x":app.screen.width/2,
                         "y":app.screen.height/2,
                         "anchor":0.5,
@@ -798,6 +807,22 @@
                 });
                 app.stage.addChild(screen_title_big);
                 screen_title_big.visible = false;
+
+                let screen_title_dashboard = new PIXI.Text(
+                    {
+                        "text":"",
+                        "x":app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height),
+                        "y":3/20.0*Math.max(app.screen.width,app.screen.height),//+3/20.0*Math.max(app.screen.width,app.screen.height),
+                        "anchor":0.0,
+                        "zIndex":5,
+                        "style": new PIXI.TextStyle({
+                            "fontFamily": "Roboto",
+                            "fontSize": 20,
+                            "fill": "white",
+                    })
+                });
+                app.stage.addChild(screen_title_dashboard);
+                screen_title_dashboard.visible = false;
 
                 // TEXT
                 let screen_title_small = new PIXI.Text(
@@ -972,6 +997,7 @@
                                 update_control();
                                 control_refresh_elapsed = 0.0;
                             }
+                            
                             if (map.large_message){
                                 screen_title_big.text = map.large_message;
                                 screen_title_big.visible = true;
@@ -979,6 +1005,12 @@
                                 screen_title_big.visible = false;
                             }
 
+                            if (map.dashboard_message){
+                                screen_title_dashboard.text = map.dashboard_message;
+                                screen_title_dashboard.visible = true;
+                            } else {
+                                screen_title_dashboard.visible = false;
+                            }
 
                             break;
                         default:

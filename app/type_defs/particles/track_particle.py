@@ -7,7 +7,7 @@ class TrackParticle(BaseParticle):
 
     image: str = "../../static/particles/tracks.png"
 
-    lifetime: int = 10
+    lifetime: int = 20
 
     motion: str = "ground_stuck"
 

@@ -4,6 +4,11 @@ from common_utils.common_enums import Actions, Rotations
 from dataclasses_json import dataclass_json
 from sandboxed_language.sandboxed_language import evaluate_code
 from singleton import realm
+from type_defs.particles.score20_effect import Score20Particle
+from type_defs.particles.score100_effect import Score100Particle
+from type_defs.particles.score200_effect import Score200Particle
+from type_defs.particles.score500_effect import Score500Particle
+from type_defs.particles.score1000_effect import Score1000Particle
 from type_defs.utils.utils import Spectator
 
 
@@ -139,10 +144,27 @@ class BaseObject:
             )
 
     def run_effects(self):
-        self.score += 1
+
+        if self.is_player:
+            self.score += 1
+
+            if self.score == 20:
+                Score20Particle(x_new=self.x, y_new=self.y)
+
+            if self.score == 100:
+                Score100Particle(x_new=self.x, y_new=self.y)
+
+            if self.score == 200:
+                Score200Particle(x_new=self.x, y_new=self.y)
+
+            if self.score == 500:
+                Score500Particle(x_new=self.x, y_new=self.y)
+
+            if self.score == 1000:
+                Score1000Particle(x_new=self.x, y_new=self.y)
 
         for e in self.effects:
-            e.run_effect()
+            e.run_effect(self)
 
     def update_score(self):
 

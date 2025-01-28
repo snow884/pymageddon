@@ -129,6 +129,7 @@ def handle_players():
                                 random.randint(0, realm.MAP.size_x - 1),
                                 random.randint(0, realm.MAP.size_y - 1),
                             )
+
                             obj = Cow(
                                 x_new=x_new,
                                 y_new=y_new,
@@ -247,6 +248,7 @@ def send_map_data(
         "../../static/other/health_bar_green.png",
         "../../static/other/health_bar_red.png",
         "../../static/other/health_bar_yellow.png",
+        "../../static/other/circle.png",
         "../../map_image.png",
         "../../static/other/red_cross.png",
         "../../static/other/joystick_center.png",
@@ -254,6 +256,14 @@ def send_map_data(
     ]
 
     unix_timestamp = time.time()
+    print(object_type)
+    if object_type == "object":
+        if player_object.is_player:
+            dashboard_message = f"Score: {player_object.score}"
+        else:
+            dashboard_message = ""
+    else:
+        dashboard_message = ""
 
     data = {
         "global_params": {
@@ -265,6 +275,7 @@ def send_map_data(
             "timestamp": unix_timestamp,
             "new_map_timestamp": unix_timestamp + realm.TIME_INTERVAL,
             "large_message": large_message,
+            "dashboard_message": dashboard_message,
         },
         "player": {"object_id": str(player_object.index), "object_type": object_type},
         "objects": {str(k): o.to_dict() for k, o in objects.items()},
@@ -367,15 +378,12 @@ def evaluate_effects():
 
         if i in realm.OBJECT_LIST.keys():
             if obj.effects:
-                for e in obj.effects:
-                    e.run_effect(obj)
+                obj.run_effects()
 
             if obj.is_alive:
 
                 if not obj.score:
                     obj.score = 0
-
-                obj.score += 1
 
     for i, par in list(realm.PARTICLE_LIST.items()):
 

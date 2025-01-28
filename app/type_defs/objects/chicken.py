@@ -8,6 +8,7 @@ from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
 from type_defs.objects.effects.hp_depletion import HpDepletion
 from type_defs.objects.effects.lay_object import LayObject
 from type_defs.objects.seed import Seed
+from type_defs.particles.blood_mark_particle import BlookMarkParticle
 from type_defs.particles.death_particle import DeathParticle
 from type_defs.particles.track_particle import TrackParticle
 
@@ -67,4 +68,5 @@ class Chicken(BaseObject):
 
     def die(self):
         DeathParticle(x_new=self.x, y_new=self.y)
+        BlookMarkParticle(x_new=self.x, y_new=self.y)
         super().die()
