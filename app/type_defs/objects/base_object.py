@@ -139,13 +139,21 @@ class BaseObject:
 
     def think(self):
         if self.code:
-            return evaluate_code(
-                code_in=self.code, user_variables=self.variables, current_object=self
+            intent, user_variables, error = evaluate_code(
+                code_in=self.code, user_variables=self.variables, parent_object=self
             )
+
+            if error:
+                self.variables = {"error": error}
+                return None
+
+            self.variables = user_variables
+
+            return intent
 
     def run_effects(self):
 
-        if self.is_player:
+        if self.is_alive:
             self.score += 1
 
             if self.score == 20:
@@ -235,6 +243,15 @@ class BaseObject:
         del realm.OBJECT_LIST[self.index]
 
         if self.index in realm.SPECTATOR_LIST:
+
+            Spectator(
+                obj=realm.TILES[(self.x, self.y)],
+                player_name=realm.SPECTATOR_LIST[self.index].player_name,
+                object_type="tile",
+                lifetime=10,
+                large_message="The bot has been killed !",
+            )
+
             del realm.SPECTATOR_LIST[self.index]
 
         if self.is_player:

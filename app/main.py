@@ -258,10 +258,17 @@ def send_map_data(
     unix_timestamp = time.time()
     print(object_type)
     if object_type == "object":
-        if player_object.is_player:
+        if player_object.is_player or player_object.code:
             dashboard_message = f"Score: {player_object.score}"
         else:
             dashboard_message = ""
+
+        if player_object.code:
+            vars_str = "\n".join(
+                [f"{k}={v}" for k, v in player_object.variables.items()][:10]
+            )
+            dashboard_message += "\n" + vars_str
+
     else:
         dashboard_message = ""
 

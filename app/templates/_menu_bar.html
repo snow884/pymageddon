@@ -5,6 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="/static/website/assets/pics/favicon_logo_small.png">
+
     <meta name="description" content="{% block description %}{% endblock %}">
     <meta name="keywords" content="{% block keywords %}{% endblock %}">
     <meta name="author" content="Adam">
@@ -16,9 +20,6 @@
     <meta name="twitter:description" content="description here" />
     <meta name="twitter:url" content="https://pymageddon.ai-mmo-games.de" />
     <meta name="twitter:image" content="https://pymageddon.ai-mmo-games.de" />
-
-    <title>{% block title %}{% endblock %}</title>
-    
 
     <!-- Bootstrap core CSS -->
     <link href="/static/website/assets/dist/css/bootstrap.min.css" rel="stylesheet">

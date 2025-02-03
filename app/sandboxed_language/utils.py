@@ -1,3 +1,4 @@
+from common_utils.common_enums import Rotations
 from common_utils.utils import obj_fut
 from singleton import realm
 
@@ -58,4 +59,18 @@ def find_nearest_xy(x, y, type_in, rad: int = 10):
                         min_j = j
                         min_obj = realm.OBJECT_LIST[obj_index_found]
 
-    return [min_obj.x, min_obj.y]
+    if not min_obj:
+        return None
+
+    if min_obj.rotation == Rotations.UP:
+        rotation = "UP"
+    elif min_obj.rotation == Rotations.RIGHT:
+        rotation = "RIGHT"
+    elif min_obj.rotation == Rotations.DOWN:
+        rotation = "DOWN"
+    elif min_obj.rotation == Rotations.LEFT:
+        rotation = "LEFT"
+
+    min_obj_dict = {"x": min_obj.x, "y": min_obj.y, "rotation": rotation}
+
+    return min_obj_dict
