@@ -50,7 +50,7 @@ def populate_map_full(sz=200):
             if random.randint(0, 10) == 9:
                 random.choice(
                     [
-                        # Cow,
+                        Cow,
                         Grass,
                         Grass2,
                         Grass3,
@@ -257,7 +257,7 @@ def send_map_data(
     ]
 
     unix_timestamp = time.time()
-    print(object_type)
+
     if object_type == "object":
         if player_object.is_player or player_object.code:
             dashboard_message = f"Score: {player_object.score}"
