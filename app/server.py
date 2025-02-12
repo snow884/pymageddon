@@ -1,5 +1,6 @@
 import json
 import time
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Optional
 
@@ -18,7 +19,7 @@ from pydantic import BaseModel
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 31
 
 app = FastAPI()
 r = redis.Redis(host="localhost", port=6379, db=0)
@@ -78,8 +79,9 @@ class BotCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
-    username: str
-    password: str
+    username: Optional[str] = ""
+    password: Optional[str] = ""
+    is_guest: Optional[bool] = False
 
 
 class Token(BaseModel):
@@ -168,7 +170,27 @@ async def get_current_active_user(
 async def login_for_access_token(
     form_data: UserLogin,
 ) -> Token:
-    user = authenticate_user(form_data.username, form_data.password)
+
+    if form_data.is_guest:
+
+        username = "guest_" + str(uuid.uuid4().hex[0:8])
+        password = "guest_" + str(uuid.uuid4().hex[0:8])
+
+        res = create_player(
+            UserCreate(username=username, password=password, verify_password=password)
+        )
+
+        if res["status"] == "success":
+            user = authenticate_user(username, password)
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Cant create guest user",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+    else:
+        user = authenticate_user(form_data.username, form_data.password)
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

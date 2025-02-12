@@ -154,7 +154,7 @@ def handle_players():
                             player_name=player_name,
                             object_type="object",
                             lifetime=1000,
-                            large_message="Following bot",
+                            title_indicative_message="Following bot",
                         )
 
                 realm.REDIS_CONNECTION.delete(f"game_{player_name}")
@@ -237,7 +237,14 @@ def find_all_types(obj):
 
 
 def send_map_data(
-    player_object, player_name, large_message, object_type, objects, tiles, particles
+    player_object,
+    player_name,
+    large_message,
+    title_indicative_message,
+    object_type,
+    objects,
+    tiles,
+    particles,
 ):
     all_images = (
         [inheritor.image for inheritor in BaseObject.__subclasses__()]
@@ -283,6 +290,7 @@ def send_map_data(
             "timestamp": unix_timestamp,
             "new_map_timestamp": unix_timestamp + realm.TIME_INTERVAL,
             "large_message": large_message,
+            "title_indicative_message": title_indicative_message,
             "dashboard_message": dashboard_message,
         },
         "player": {"object_id": str(player_object.index), "object_type": object_type},
@@ -316,6 +324,7 @@ def send_map_data_all():
             player_object,
             player_object.player_name,
             None,
+            None,
             "object",
             objects,
             tiles,
@@ -329,6 +338,7 @@ def send_map_data_all():
             spectator.obj,
             spectator.player_name,
             spectator.large_message,
+            spectator.title_indicative_message,
             spectator.object_type,
             objects,
             tiles,

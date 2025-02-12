@@ -320,7 +320,7 @@
                             {
                                 "text":name_to_display,
                                 "anchor":0.5,
-                                "zIndex":z_index,
+                                "zIndex":4,
                                 "style": new PIXI.TextStyle({
                                     "fontFamily": "Roboto",
                                     "fontSize": 16,
@@ -455,7 +455,10 @@
                         if (this.map_data['global_params']['dashboard_message']){
                             this.dashboard_message = this.map_data['global_params']['dashboard_message'];
                         }
-                        
+
+                        if (this.map_data['global_params']['title_indicative_message']){
+                            this.title_indicative_message = this.map_data['global_params']['title_indicative_message'];
+                        }
                     }
 
                     async refresh_data() {
@@ -808,6 +811,22 @@
                 app.stage.addChild(screen_title_big);
                 screen_title_big.visible = false;
 
+                let screen_title_indicative = new PIXI.Text(
+                    {
+                        "text":"",
+                        "x":app.screen.width/2,
+                        "y":app.screen.height/4,
+                        "anchor":0.5,
+                        "zIndex":5,
+                        "style": new PIXI.TextStyle({
+                            "fontFamily": "Roboto",
+                            "fontSize": 60,
+                            "fill": "white",
+                    })
+                });
+                app.stage.addChild(screen_title_indicative);
+                screen_title_indicative.visible = false;
+
                 let screen_title_dashboard = new PIXI.Text(
                     {
                         "text":"",
@@ -1011,7 +1030,13 @@
                             } else {
                                 screen_title_dashboard.visible = false;
                             }
-
+                            
+                            if (map.title_indicative_message){
+                                screen_title_indicative.text = map.title_indicative_message;
+                                screen_title_indicative.visible = true;
+                            } else {
+                                screen_title_indicative.visible = false;
+                            }
                             break;
                         default:
 

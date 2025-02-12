@@ -35,16 +35,19 @@
 
         <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
         
-        <p>If you don't have account please <a href="/create_player_page">sign up</a></p>
-
-        <p><a href="/">Exit the game</a></p>
-        
     </form>
+    
+    <br>
+
+    <button id='log_in_as_guest_button' class="w-100 btn btn-lg btn-primary">Log in as guest</button>
+    <p>If you don't have account and you want to create one please <a href="/create_player_page">sign up</a></p>
+    <p><a href="/">Exit the game</a></p>
 
     <script>
         console.log("JS executing...")
         // Get a reference to the form element
         const form = document.getElementById('loginForm');
+        const log_in_as_guest_button = document.getElementById('log_in_as_guest_button');
         const waring_message = document.getElementById('message_area');
         // Add an event listener for the submit event
         form.addEventListener('submit', function(event) {
@@ -59,7 +62,46 @@
                 },
                 body: JSON.stringify({
                     "username":username,
-                    "password":password
+                    "password":password,
+                    "is_guest":false
+                }),
+            })
+                .then(response => {
+                    // Handle the response
+                    return response.json(); // Assuming JSON response
+                })
+                .then(data => {
+                    if (data["detail"]) {
+                        waring_message.innerText = data["detail"];
+                    } 
+                    if (data["token_type"]=="bearer") {
+                        console.log(data)
+                        waring_message.innerText = "success";
+                        sessionStorage.setItem('token', data["access_token"]);
+                        window.location.replace("/play");
+                    } 
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                });
+            event.preventDefault();
+
+        });
+
+
+        log_in_as_guest_button.addEventListener('click', function(event) {
+            console.log("Event submitted")
+
+            fetch('/token', {
+                method: 'POST', // or 'POST', 'PUT', 'DELETE', etc.
+                headers: {
+                'Content-Type': 'application/json', // Another example header
+                },
+                body: JSON.stringify({
+                    "username":"",
+                    "password":"",
+                    "is_guest":true
                 }),
             })
                 .then(response => {

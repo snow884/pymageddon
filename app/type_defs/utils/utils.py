@@ -34,13 +34,11 @@ class Spectator:
     counter: int = 0
     lifetime: int = 0
     large_message: str = ""
+    title_indicative_message: str = ""
 
     def __post_init__(self):
 
         realm.SPECTATOR_LIST[self.obj.index] = self
-
-        print(self.obj.index)
-        print(self.object_type)
 
     def effects(self):
         self.counter = self.counter + 1
