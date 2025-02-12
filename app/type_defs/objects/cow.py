@@ -43,6 +43,7 @@ class Cow(BaseObject):
         player_name=None,
         code: str = None,
         code_store: str = None,
+        family_name: str = None,
     ):
         super().__init__(
             x_new=x_new,
@@ -51,6 +52,7 @@ class Cow(BaseObject):
             player_name=player_name,
             code=code,
             code_store=code_store,
+            family_name=family_name,
         )
         self.rotation = random.choice(
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
@@ -88,3 +90,10 @@ class Cow(BaseObject):
         DeathParticle(x_new=self.x, y_new=self.y)
         BlookMarkParticle(x_new=self.x, y_new=self.y)
         super().die()
+
+    def get_description_short(self) -> str:
+
+        return (
+            "Animal representing a cow that moves, eats plants, eat seeds and lays"
+            " eggs. A cow can be eaten by a fox."
+        )

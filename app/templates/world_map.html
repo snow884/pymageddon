@@ -4,29 +4,58 @@
 
 {% block content %}
 
-    <!-- START THE FEATURETTES -->
 
-    <hr class="featurette-divider">
-
-    <div class="row featurette">
-      <div class="col-md-12">
-
-        <img id='world_map_image' src="/get_map_image" alt="world map" width="500" height="500">
+    <article>
+        <br>
+        <div class="bd-heading sticky-xl-top align-self-start mt-5 mb-3 mt-xl-0 mb-xl-2">
+            <h3>World map</h3>
+        </div>
+  
+        <div>
+            <div class="bd-example-snippet bd-code-snippet">
+            <div class="bd-example m-0 border-0">
         
-    </div>
+          <div class="row  row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+              <div class="card">
+                <img id='world_map_image' src="/map_image.png" alt="world map" width="100%" style="image-rendering: pixelated;">
+                <div class="card-body">
+                  <h5 class="card-title">Live view of Pymageddon map</h5>
+                  <p class="card-text">Pixels on the map represent different animals and plants. See the map legend to see what is what. The map is refreshed about every 10 seconds.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Legend</h5>
+                      <p class="card-text">Map color to animal / plant color.</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for key, value in types_dict.items() %}
+                        <li class="list-group-item"><div style="width: 15px; height: 15px; display:inline-block; background-color: rgb{{ value.rgb_map }};"></div>  
+                          <a href={{ url_for('explorer_type', type_name=key) }}>{{ key }}</a> 
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="card-body">
+                    </div>
+                  </div>
+            </div>  
+        </div>
+    </article>
 
-    <hr class="featurette-divider">
-
-    <!-- /END THE FEATURETTES -->
 
     <script>
         var world_map_image = document.getElementById('world_map_image');
-        world_map_image.src = 'static/other/map_image.png?rand=' + Math.random();
+        world_map_image.src = '/map_image.png?rand=' + Math.random();
 
         setInterval(function() {
             var world_map_image = document.getElementById('world_map_image');
-            world_map_image.src = 'static/other/map_image.png?rand=' + Math.random();
+            world_map_image.src = '/map_image.png?rand=' + Math.random();
         }, 1000);
     </script>
+
+    <hr class="featurette-divider">
 
 {% endblock %}

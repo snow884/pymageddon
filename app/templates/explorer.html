@@ -1,56 +1,43 @@
 {% extends "_menu_bar.html" %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-4">
-            <br>
-            <div class="accordion" id="accordionType">
 
-                {% for object_type_name, object_type_dict in objects_summary.items() %}
+<article>
+    <br>
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Explorer</li>
+        </ol>
+      </nav>
+
+    <div class="row  row-cols-1 row-cols-md-2 g-4">
+        {% for key, value in objects_summary.items() %}
+        <div class="col">
             
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseType{{object_type_name}}" aria-expanded="true" aria-controls="collapseType{{object_type_name}}">
-                        Object type {{object_type_name}}
-                        </button>
-                    </h2>
-                    <div id="collapseType{{object_type_name}}" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionType">
-                        <div class="accordion-body">
-
-                            <p>test</p>
-                            
-                            <div class="accordion" id="accordionFamily{{object_type_name}}">
-
-                                {% for family_name, family_dict in object_type_dict["families"].items() %}
-                                
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFamily{{object_type_name}}{{family_name}}" aria-expanded="true" aria-controls="collapseFamily{{object_type_name}}{{family_name}}">
-                                        Family {{family_name}}
-                                        </button>
-                                    </h2>
-                                    <div id="collapseFamily{{object_type_name}}{{family_name}}" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFamily">
-                                        <div class="accordion-body">
-                                            <p>test</p>
-                                        </div>
-                                    </div>
-                                </div>
-            
-                                {% endfor %}
-
-                            </div>
-
-                        </div>
+            <div class="card">
+                <div class="row g-0">
+                <div class="col-md-4">
+                    <img id='{{key}}_image' src="{{value.image}}" alt="{{key}}" width="100%" style="image-rendering: pixelated;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                    <h5 class="card-title"><a href="{{ url_for('explorer_type', type_name=key) }}">{{ key }}</a></h5>
+                    <p class="card-text">{{ value.description_short }}</p>
+                    <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
                     </div>
                 </div>
-
-                {% endfor %}
+                </div>
             </div>
+            
         </div>
-        <div class="col-8">
-            <br>
-            Column
-        </div>
+        {% endfor %}
+
     </div>
+
+</article>
+
+<hr class="featurette-divider">
 
 {% endblock %}

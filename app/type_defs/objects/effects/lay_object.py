@@ -5,16 +5,19 @@ from type_defs.particles.laying_particle import LayingParticle
 
 
 class LayObject(BaseEffect):
-    def __init__(self, object_to_lay, time_to_lay):
+    effect_name = "Can lay object behind it"
+
+    def __init__(self, object_to_lay, time_to_lay, effect_name=effect_name):
         super().__init__()
 
         self.object_to_lay = object_to_lay
         self.time_to_lay = time_to_lay
+        self.effect_name = effect_name
 
     def description(self):
 
         return f"""
-        Every {self.time_to_lay} cycles lays a {self.object_to_lay}.
+        Every {self.time_to_lay} cycles lays a {self.object_to_lay.type_name}.
         """
 
     def run_effect(self, parent_object):
@@ -35,7 +38,10 @@ class LayObject(BaseEffect):
                 if tile.occupied_by is None:
                     LayingParticle(parent_object.x, parent_object.y)
                     self.object_to_lay(
-                        x_new=x_new, y_new=y_new, code_store=parent_object.code
+                        x_new=x_new,
+                        y_new=y_new,
+                        code_store=parent_object.code,
+                        family_name=parent_object.family_name,
                     )
                     cycle_counter = 0
 

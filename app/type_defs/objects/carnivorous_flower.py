@@ -32,3 +32,9 @@ class CarnivorousFlower(BaseObject):
     ]
 
     rgb_map = (204, 0, 0)
+
+    def get_description_short(self) -> str:
+
+        return (
+            "A flower that has the ability to eat other animals when they walk into it."
+        )

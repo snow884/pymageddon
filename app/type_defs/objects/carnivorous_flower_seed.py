@@ -20,3 +20,7 @@ class CarnivorousFlowerSeed(BaseObject):
         self.rotation = random.choice(
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
         )
+
+    def get_description_short(self) -> str:
+
+        return "A seed of carnivorous flower"

@@ -27,7 +27,7 @@ class BaseObject:
 
     player_name: str = ""
 
-    family_name: str = ""
+    family_name: str = "default"
 
     image: str = ""
     intent: Actions = None
@@ -56,6 +56,7 @@ class BaseObject:
         player_name=None,
         code=None,
         code_store=None,
+        family_name=None,
     ):
 
         super().__init__()
@@ -83,10 +84,27 @@ class BaseObject:
         self.is_player = is_player
         self.code = code
         self.code_store = code_store
+        self.family_name = family_name
 
     def __str__(self) -> str:
 
         return self.type_name + f" (ID {self.index})"
+
+    def get_description_short(self) -> str:
+
+        return ""
+
+    def get_description_long(self) -> str:
+
+        if self.effects:
+            for eff in self.effects:
+                print(eff.description())
+
+            effects_str = "".join(eff.description() for eff in self.effects)
+        else:
+            effects_str = ""
+
+        return self.get_description_short() + "\n" + effects_str
 
     def move_to_position(self, x_new: int, y_new: int) -> bool:
 

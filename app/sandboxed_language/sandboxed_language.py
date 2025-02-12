@@ -5,6 +5,8 @@ import random
 from common_utils.common_enums import Actions, Rotations
 from sandboxed_language.utils import find_nearest_xy, get_index, set_index
 
+DEBUG = False
+
 # supported operators
 binary_operators = {
     ast.Add: op.add,
@@ -64,7 +66,8 @@ def evaluate_expression(expression, variables):
     tree = ast.parse(expression, mode="eval")
     tree = ExpressionEvaluator().visit(tree)
     substituted_expression = str(ast.unparse(tree))
-    print(f"Substituting {expression} -> {substituted_expression}")
+    if DEBUG:
+        print(f"Substituting {expression} -> {substituted_expression}")
     return eval_math(substituted_expression)
 
 
@@ -85,25 +88,26 @@ class CodeVisitor(ast.NodeVisitor):
             )
 
         self.step_num = self.step_num + 1
-
-        print(self.step_num)
+        if DEBUG:
+            print(self.step_num)
 
     def visit_If(self, node):
 
         self.check_steps()
-
-        print("If statement found:")
-        print("  Condition:", ast.unparse(node.test))
-        print("  Body:", ast.unparse(node.body[0]))
+        if DEBUG:
+            print("If statement found:")
+            print("  Condition:", ast.unparse(node.test))
+            print("  Body:", ast.unparse(node.body[0]))
 
         if node.orelse:
-            print("  Else body:", ast.unparse(node.orelse[0]))
+            if DEBUG:
+                print("  Else body:", ast.unparse(node.orelse[0]))
 
         expression = ast.unparse(node.test)
 
         result = evaluate_expression(expression, self.user_variables)
-
-        print(f"Condition {expression} evaluates to {result}")
+        if DEBUG:
+            print(f"Condition {expression} evaluates to {result}")
 
         if result:
             for body_none in node.body:
@@ -121,11 +125,11 @@ class CodeVisitor(ast.NodeVisitor):
     def visit_Assign(self, node):
 
         self.check_steps()
+        if DEBUG:
+            print("Assignment found:")
 
-        print("Assignment found:")
-
-        print("  Target:", ast.unparse(node.targets[0]))
-        print("  Value:", ast.unparse(node.value))
+            print("  Target:", ast.unparse(node.targets[0]))
+            print("  Value:", ast.unparse(node.value))
 
         expression = ast.unparse(node.value)
 
@@ -146,8 +150,8 @@ class CodeVisitor(ast.NodeVisitor):
     def generic_visit(self, node):
 
         self.check_steps()
-
-        print("generic visit")
+        if DEBUG:
+            print("generic visit")
 
         if type(node).__name__ != "Module":
 
@@ -207,11 +211,11 @@ class MathVisitor(ast.NodeVisitor):
         #     return left / right
 
         for op_ast_type, funct in comparison_operators.items():
-
-            print(op_ast_type)
-            print(op)
-            print(left)
-            print(right)
+            if DEBUG:
+                print(op_ast_type)
+                print(op)
+                print(left)
+                print(right)
             if isinstance(op, op_ast_type):
 
                 return funct(left, right)
@@ -246,14 +250,13 @@ class MathVisitor(ast.NodeVisitor):
         return self.visit(node.value)
 
     def visit_Call(self, node):
-
-        print("Calling function " + node.func.id + " with args " + str(node.args))
+        if DEBUG:
+            print("Calling function " + node.func.id + " with args " + str(node.args))
 
         if node.func.id in function_operators.keys():
             # Evaluate literal expressions within the eval call
 
             args_evaluated = [self.visit(arg) for arg in node.args]
-            print(args_evaluated)
 
             return function_operators[node.func.id](*args_evaluated)
 
@@ -264,13 +267,13 @@ class MathVisitor(ast.NodeVisitor):
             )
 
     def generic_visit(self, node):
-
-        print("generic visit")
+        if DEBUG:
+            print("generic visit")
 
         if type(node).__name__ != "Module":
-
-            print(node.__class__)
-            print(node.__dict__)
+            if DEBUG:
+                print(node.__class__)
+                print(node.__dict__)
 
             raise Exception(f"Unknown expression {node} on line {node.lineno}")
 
@@ -286,6 +289,7 @@ def eval_math(expr):
 def evaluate_code(code_in, user_variables={}, parent_object=None):
 
     tree = ast.parse(code_in)
+
     if parent_object:
 
         if parent_object.rotation == Rotations.UP:

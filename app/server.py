@@ -5,6 +5,7 @@ from typing import Annotated, Optional
 
 import jwt
 import redis
+from common_utils.utils import get_types_dict
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
@@ -244,13 +245,43 @@ async def index(request: Request):
 @app.get("/explorer", response_class=HTMLResponse)
 async def explorer(request: Request):
 
-    with open("objects_summary.json") as f:
-        objects_summary = json.load(f)
+    all_objects_summary = json.loads(r.get(f"all_objects_summary"))
 
     return templates.TemplateResponse(
         request=request,
         name="explorer.html",
-        context={"objects_summary": objects_summary},
+        context={"objects_summary": all_objects_summary},
+    )
+
+
+@app.get("/explorer/type/{type_name}/", response_class=HTMLResponse)
+async def explorer_type(request: Request, type_name: str):
+
+    all_objects_summary = json.loads(r.get(f"all_objects_summary"))
+
+    type_summary = all_objects_summary[type_name]
+
+    print(type_summary["effects"])
+
+    return templates.TemplateResponse(
+        request=request,
+        name="explorer_type.html",
+        context={"type_summary": type_summary},
+    )
+
+
+@app.get("/explorer/family/{family}", response_class=HTMLResponse)
+async def explorer_family(request: Request):
+
+    with open("objects_summary.json") as f:
+        objects_summary = json.load(f)
+
+    map_image = r.get(f"objects_summary")
+
+    return templates.TemplateResponse(
+        request=request,
+        name="explorer.html",
+        context={"all_objects_summary": all_objects_summary},
     )
 
 
@@ -258,7 +289,7 @@ async def explorer(request: Request):
 async def world_map(request: Request):
 
     return templates.TemplateResponse(
-        request=request, name="world_map.html", context={}
+        request=request, name="world_map.html", context={"types_dict": get_types_dict()}
     )
 
 

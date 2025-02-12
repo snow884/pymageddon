@@ -2,11 +2,14 @@ from type_defs.objects.effects.base_effect import BaseEffect
 
 
 class HpDepletion(BaseEffect):
-    def __init__(self, hp_loss_per_cycle=1, skip_cycles=3):
+    effect_name = "Loses HP over time"
+
+    def __init__(self, hp_loss_per_cycle=1, skip_cycles=3, effect_name=effect_name):
         super().__init__()
 
         self.hp_loss_per_cycle = hp_loss_per_cycle
         self.skip_cycles = skip_cycles
+        self.effect_name = effect_name
 
     def description(self):
 

@@ -50,7 +50,7 @@ def populate_map_full(sz=200):
             if random.randint(0, 10) == 9:
                 random.choice(
                     [
-                        Cow,
+                        # Cow,
                         Grass,
                         Grass2,
                         Grass3,
@@ -69,7 +69,7 @@ def populate_map_full(sz=200):
 
             else:
 
-                if random.randint(0, 1000) == 999:
+                if random.randint(0, 3000) == 2999:
 
                     Angel(x_new=i, y_new=j)
 
@@ -135,6 +135,7 @@ def handle_players():
                                 y_new=y_new,
                                 is_player=False,
                                 player_name=player_name,
+                                family_name=player_name,
                                 code=code,
                             )
 
@@ -423,38 +424,73 @@ def generate_summary_yaml():
 
     for i, o in realm.OBJECT_LIST.items():
 
-        if o.type_name not in summary_json.keys():
+        if not summary_json.get(o.type_name):
             summary_json[o.type_name] = {}
-            summary_json[o.type_name]["type_name"] = o.type_name
-            summary_json[o.type_name]["image"] = o.image
-            summary_json[o.type_name]["effects"] = (
-                [e.description() for e in o.effects] if o.effects else []
-            )
-            summary_json[o.type_name]["description"] = ""
+
+        summary_json[o.type_name]["type_name"] = o.type_name
+        summary_json[o.type_name]["image"] = o.image
+        summary_json[o.type_name]["hp"] = o.hp
+        summary_json[o.type_name]["total_objects"] = (
+            summary_json[o.type_name].get("total_objects", 0) + 1
+        )
+        summary_json[o.type_name]["rgb_map"] = str(o.rgb_map)
+        summary_json[o.type_name]["effects"] = (
+            [
+                {"description": e.description(), "effect_name": e.effect_name}
+                for e in o.effects
+            ]
+            if o.effects
+            else []
+        )
+        summary_json[o.type_name]["description_long"] = o.get_description_long()
+        summary_json[o.type_name]["description_short"] = o.get_description_short()
+        summary_json[o.type_name]["families"] = {}
+
+        if not summary_json[o.type_name].get("objects"):
+            summary_json[o.type_name]["objects"] = {}
+
+        summary_json[o.type_name]["objects"][o.index] = {
+            "hp": o.hp,
+            "score": o.score,
+            "player_name": o.player_name,
+            "family_name": o.family_name,
+            "code": o.code,
+        }
+        if not summary_json[o.type_name].get("families"):
             summary_json[o.type_name]["families"] = {}
 
-        if o.family_index not in summary_json[o.type_name]["families"].keys():
-            summary_json[o.type_name]["families"][o.family_index] = {}
-            summary_json[o.type_name]["families"][o.family_index]["family_name"] = ""
-            summary_json[o.type_name]["families"][o.family_index]["image"] = o.image
-            summary_json[o.type_name]["families"][o.family_index]["effects"] = (
-                [e.description() for e in o.effects] if o.effects else []
-            )
-            summary_json[o.type_name]["families"][o.family_index]["description"] = ""
-            summary_json[o.type_name]["families"][o.family_index]["code"] = o.code
-            summary_json[o.type_name]["families"][o.family_index]["objects"] = {}
+        if o.family_name:
 
-        if (
-            o.index
-            not in summary_json[o.type_name]["families"][o.family_index]["objects"]
-        ):
-            summary_json[o.type_name]["families"][o.family_index]["objects"][
-                o.index
-            ] = o.index
+            summary_json[o.type_name]["families"][o.family_name] = {
+                "hp": o.hp,
+                "score": o.score,
+                "player_name": o.player_name,
+                "family_name": o.family_name,
+                "code": o.code,
+            }
 
-    with open("objects_summary.json", "w") as f:
-        s = json.dumps(summary_json, cls=EnumEncoder)
-        f.write(s)
+        # if o.family_index not in summary_json[o.type_name]["families"].keys():
+        #     summary_json[o.type_name]["families"][o.family_index] = {}
+        #     summary_json[o.type_name]["families"][o.family_index]["family_name"] = ""
+        #     summary_json[o.type_name]["families"][o.family_index]["image"] = o.image
+        #     summary_json[o.type_name]["families"][o.family_index]["effects"] = (
+        #         [e.description() for e in o.effects] if o.effects else []
+        #     )
+        #     summary_json[o.type_name]["families"][o.family_index]["description"] = ""
+        #     summary_json[o.type_name]["families"][o.family_index]["code"] = o.code
+        #     summary_json[o.type_name]["families"][o.family_index]["objects"] = {}
+
+        # if (
+        #     o.index
+        #     not in summary_json[o.type_name]["families"][o.family_index]["objects"]
+        # ):
+        #     summary_json[o.type_name]["families"][o.family_index]["objects"][
+        #         o.index
+        #     ] = o.index
+
+    realm.REDIS_CONNECTION.set(
+        f"all_objects_summary", json.dumps(summary_json, cls=EnumEncoder)
+    )
 
 
 def main_loop(steps=None):
@@ -481,7 +517,7 @@ def main_loop(steps=None):
         if realm.EPOCH_COUNTER % 20 == 0:
             count_object()
             generate_map()
-            # generate_summary()
+            generate_summary_yaml()
 
         end_time = time.time()
         print(

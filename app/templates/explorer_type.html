@@ -1,0 +1,76 @@
+{% extends "_menu_bar.html" %}
+
+{% block content %}
+<article>
+    <br>
+    
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('explorer') }}">Explorer</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{type_summary.type_name}}</li>
+      </ol>
+    </nav>
+
+    <div class="row  row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+          <div class="card">
+            <img id='{{type_summary.type_name}}_image' src="../{{type_summary.image}}" alt="{{type_summary.type_name}}" width="100%" style="image-rendering: pixelated;">
+            <div class="card-body">
+              <h5 class="card-title">{{type_summary.type_name}}</h5>
+              <p class="card-text">{{type_summary.description_short}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Abilities and effects</h5>
+              <p class="card-text">List of all abilities that {{type_summary.type_name}} has.</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <h5>Total health / HP</h5>
+                {{ type_summary.hp }} 
+              </li>
+              <li class="list-group-item">
+                <h5>Color on map</h5>
+                <div style="width: 15px; height: 15px; display:inline-block; background-color: rgb{{ type_summary.rgb_map }};"></div>
+              </li>
+              {% for effect in type_summary.effects %}
+              <li class="list-group-item">
+                <h5>{{ effect.effect_name }}</h5>
+                {{ effect.description | safe }} 
+              </li>
+              {% endfor %}
+            </ul>
+            <div class="card-body">
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      
+      <hr class="featurette-divider">
+
+      <div class="bd-example m-0 border-0">
+    
+        <ul class="list-group">
+          
+          <li class="list-group-item disabled" aria-disabled="true">List of animals of this type</li>
+          {% for object_index, object in type_summary.objects.items() %}
+          <li class="list-group-item">
+            <h6>{{type_summary.type_name}} bot {{object_index}}</h6>
+              HP: {{object.hp}} / 100 | SCORE: {{object.score}}  | FAMILY: {{object.family_name}} 
+          </li>
+          {% endfor %}
+        </ul>
+        
+      </div>
+
+</article>
+
+<hr class="featurette-divider">
+
+{% endblock %}

@@ -174,3 +174,10 @@ class Angel(BaseObject):
             TrackParticle(x_old, y_old, rotation=self.rotation)
 
         return res
+
+    def get_description_short(self) -> str:
+
+        return (
+            "An angel acts as randomizer in the game. It has the ability to randomly"
+            " lay eggs of all animal spices as well as seeds of all plants."
+        )

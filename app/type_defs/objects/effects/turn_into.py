@@ -4,16 +4,19 @@ from type_defs.particles.hatching_particle import HetchingParticle
 
 
 class TurnInto(BaseEffect):
-    def __init__(self, future_object_class, time_to_turn):
+    effect_name = "Will turn into a different object"
+
+    def __init__(self, future_object_class, time_to_turn, effect_name=effect_name):
         super().__init__()
 
         self.future_object_class = future_object_class
         self.time_to_turn = time_to_turn
+        self.effect_name = effect_name
 
     def description(self):
 
         return f"""
-        After {self.time_to_turn} cycles turns into {self.future_object_class}.
+        After {self.time_to_turn} cycles turns into {self.future_object_class.type_name}.
         """
 
     def run_effect(self, parent_object):
@@ -32,7 +35,10 @@ class TurnInto(BaseEffect):
 
             parent_object.die()
             self.future_object_class(
-                x_new=x_new, y_new=y_new, code=parent_object.code_store
+                x_new=x_new,
+                y_new=y_new,
+                code=parent_object.code_store,
+                family_name=parent_object.family_name,
             )
 
         parent_object.variables["turn_into_cycle_counter"] = cycle_counter

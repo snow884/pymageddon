@@ -5,9 +5,12 @@ from type_defs.particles.eating_particle import EatingParticle
 
 
 class EatObjectSteppingIn(BaseEffect):
-    def __init__(self, types_eaten_to_hp_conv):
+    effect_name = "Can eat objects stepping into its location"
+
+    def __init__(self, types_eaten_to_hp_conv, effect_name=effect_name):
         super().__init__()
         self.types_eaten_to_hp_conv = types_eaten_to_hp_conv
+        self.effect_name = effect_name
 
     def description(self):
 
@@ -15,11 +18,13 @@ class EatObjectSteppingIn(BaseEffect):
 
         for obj_type, reward in self.types_eaten_to_hp_conv.items():
 
-            type_to_hp_str = type_to_hp_str + f"* {obj_type} - receives {reward} hp \n"
+            type_to_hp_str = (
+                type_to_hp_str + f"* {obj_type} - receives {reward} hp <br>"
+            )
 
         return (
             f"""
-        Can eat the the following types that step in:
+        Can eat the the following types that step in:<br>
         """
             + type_to_hp_str
         )

@@ -1,4 +1,32 @@
+import re
 import sys
+
+
+def replace_with_html(text):
+    # text = text.replace("**", "<b>")
+    # text = re.sub(r"_(.+?)_", r"<i>\1</i>", text)
+    text = re.sub(r"\n", "<br>", text)
+    return text
+
+
+OBJ_TYPE_LIST = [
+    "Seed",
+    "Seed2",
+    "Seed3",
+    "Grass",
+    "Grass2",
+    "Grass3",
+    "Stone",
+    "Stone2",
+    "Chicken",
+    "Cow",
+    "Fox",
+    "ChickenEgg",
+    "CowEgg",
+    "FoxEgg",
+    "CarnivorousFlowerSeed",
+    "CarnivorousFlower",
+]
 
 
 def obj_fut(str_in):
@@ -88,3 +116,8 @@ def obj_fut(str_in):
 
     else:
         raise Exception(f"class name {str_in} not found")
+
+
+def get_types_dict():
+
+    return {obj_str: obj_fut(obj_str) for obj_str in OBJ_TYPE_LIST}

@@ -6,11 +6,14 @@ from type_defs.objects.effects.base_effect import BaseEffect
 
 
 class EmitObject(BaseEffect):
-    def __init__(self, object_to_emit, time_to_emit):
+    effect_name = "Can emit object in a location next to it"
+
+    def __init__(self, object_to_emit, time_to_emit, effect_name=effect_name):
         super().__init__()
 
         self.object_to_emit = object_to_emit
         self.time_to_emit = time_to_emit
+        self.effect_name = effect_name
 
     def description(self):
 
