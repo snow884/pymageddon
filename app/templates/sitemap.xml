@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	<url>
+		<loc>https://pymageddon.ai-mmo-games.de/</loc>
+		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
+	</url>
+	<url>
+		<loc>https://pymageddon.ai-mmo-games.de/explorer</loc>
+		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
+	</url>
+	<url>
+		<loc>https://pymageddon.ai-mmo-games.de/world_map</loc>
+		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
+	</url>
+	<url>
+		<loc>https://pymageddon.ai-mmo-games.de/play</loc>
+		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
+	</url>
+    {% for key, value in objects_summary.items() %}
+	<url>
+		<loc>https://pymageddon.ai-mmo-games.de{{ url_for('explorer_type', type_name=key) }}</loc>
+		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
+	</url>
+    {% endfor %}
+
+
+</urlset>
