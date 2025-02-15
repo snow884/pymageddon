@@ -97,8 +97,6 @@ class BaseObject:
     def get_description_long(self) -> str:
 
         if self.effects:
-            for eff in self.effects:
-                print(eff.description())
 
             effects_str = "".join(eff.description() for eff in self.effects)
         else:

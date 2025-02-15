@@ -21,6 +21,8 @@ class Angel(BaseObject):
         LayObject(object_to_lay="Seed", time_to_lay=54),
         LayObject(object_to_lay="Seed2", time_to_lay=55),
         LayObject(object_to_lay="Seed3", time_to_lay=56),
+        LayObject(object_to_lay="Spore", time_to_lay=57),
+        LayObject(object_to_lay="BadgerEgg", time_to_lay=57),
         # LayObject(object_to_lay="CarnivorousFlowerSeed", time_to_lay=57),
         EatObjectInFront(
             types_eaten_to_hp_conv={
@@ -33,6 +35,9 @@ class Angel(BaseObject):
                 "CowEgg": 0,
                 "ChickenEgg": 0,
                 "FoxEgg": 0,
+                "BadgerEgg": 0,
+                "Spore": 0,
+                "Mushroom": 0,
                 # "CarnivorousFlowerSeed": 0,
                 # "CarnivorousFlower": 0,
             }

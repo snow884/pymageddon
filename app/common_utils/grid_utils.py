@@ -10,17 +10,22 @@ def find_nearest(obj, type_in, rad: int = 10):
     else:
         type_in = obj_fut(type_in)
 
-    min_obj = None
-    min_dist = -1
-    min_i = -1
-    min_j = -1
+    rad_check = 0
 
-    for i in range(max(0, obj.x - rad), min(obj.x + rad, realm.MAP.size_x)):
-        for j in range(max(0, obj.y - rad), min(obj.y + rad, realm.MAP.size_x)):
-            obj_index_found = realm.TILES[(i, j)].occupied_by
-            if obj_index_found:
-                if type_in:
+    while rad_check < rad:
+        rad_check += 1
 
+        for i in [
+            max(0, obj.x - rad_check),
+            min(obj.x + rad_check, realm.MAP.size_x - 1),
+        ]:
+            for j in range(
+                max(0, obj.y - rad_check), min(obj.y + rad_check, realm.MAP.size_y)
+            ):
+                tile = realm.TILES[(i, j)]
+                if tile.occupied_by:
+                    obj_index_found = tile.occupied_by
+                    obj_in_type = False
                     if isinstance(type_in, list):
                         obj_in_type = any(
                             [
@@ -34,24 +39,35 @@ def find_nearest(obj, type_in, rad: int = 10):
                         )
 
                     if obj_in_type:
-                        if (
-                            min_dist > abs(obj.x - i) + abs(obj.y - j)
-                        ) or min_dist == -1:
-                            min_dist = abs(obj.x - i) + abs(obj.y - j)
+                        return realm.OBJECT_LIST[obj_index_found]
 
-                            min_i = i
-                            min_j = j
-                            min_obj = realm.OBJECT_LIST[obj_index_found]
-                else:
+        for i in range(
+            max(0, obj.x - rad_check), min(obj.x + rad_check, realm.MAP.size_x)
+        ):
+            for j in [
+                max(0, obj.y - rad_check),
+                min(obj.y + rad_check, realm.MAP.size_y - 1),
+            ]:
+                tile = realm.TILES[(i, j)]
+                if tile.occupied_by:
+                    obj_index_found = tile.occupied_by
+                    obj_in_type = False
+                    if isinstance(type_in, list):
+                        obj_in_type = any(
+                            [
+                                isinstance(realm.OBJECT_LIST[obj_index_found], t)
+                                for t in type_in
+                            ]
+                        )
+                    else:
+                        obj_in_type = isinstance(
+                            realm.OBJECT_LIST[obj_index_found], type_in
+                        )
 
-                    if (min_dist > abs(obj.x - i) + abs(obj.y - j)) or min_dist == -1:
-                        min_dist = abs(obj.x - i) + abs(obj.y - j)
+                    if obj_in_type:
+                        return realm.OBJECT_LIST[obj_index_found]
 
-                        min_i = i
-                        min_j = j
-                        min_obj = realm.OBJECT_LIST[obj_index_found]
-
-    return min_obj
+    return None
 
 
 def find_objects_location(x: int, y: int, rad: int = 30):

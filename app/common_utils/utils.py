@@ -10,6 +10,7 @@ def replace_with_html(text):
 
 
 OBJ_TYPE_LIST = [
+    "Angel",
     "Seed",
     "Seed2",
     "Seed3",
@@ -26,6 +27,10 @@ OBJ_TYPE_LIST = [
     "FoxEgg",
     "CarnivorousFlowerSeed",
     "CarnivorousFlower",
+    "Mushroom",
+    "Spore",
+    "Badger",
+    "BadgerEgg",
 ]
 
 
@@ -33,6 +38,10 @@ def obj_fut(str_in):
 
     if not isinstance(str_in, str):
         return str_in
+    elif str_in == "Angel":
+        if "Angel" not in sys.modules:
+            from type_defs.objects.angel import Angel
+        return Angel
 
     elif str_in == "Seed":
         if "Seed" not in sys.modules:
@@ -113,6 +122,25 @@ def obj_fut(str_in):
         if "CarnivorousFlower" not in sys.modules:
             from type_defs.objects.carnivorous_flower import CarnivorousFlower
         return CarnivorousFlower
+
+    elif str_in == "Spore":
+        if "Spore" not in sys.modules:
+            from type_defs.objects.spore import Spore
+        return Spore
+
+    elif str_in == "Mushroom":
+        if "Mushroom" not in sys.modules:
+            from type_defs.objects.mushroom import Mushroom
+        return Mushroom
+
+    elif str_in == "Badger":
+        if "Badger" not in sys.modules:
+            from type_defs.objects.badger import Badger
+        return Badger
+    elif str_in == "BadgerEgg":
+        if "BadgerEgg" not in sys.modules:
+            from type_defs.objects.badger_egg import BadgerEgg
+        return BadgerEgg
 
     else:
         raise Exception(f"class name {str_in} not found")

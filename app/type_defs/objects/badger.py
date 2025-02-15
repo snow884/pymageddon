@@ -11,28 +11,24 @@ from type_defs.particles.death_particle import DeathParticle
 from type_defs.particles.track_particle import TrackParticle
 
 
-class Fox(BaseObject):
+class Badger(BaseObject):
 
-    type_name: str = "Fox"
-
-    image = "../../static/objects/fox.png"
+    type_name: str = "Badger"
+    image = "../../static/objects/badger.png"
     is_alive = True
 
     effects = [
         EatObjectInFront(
             types_eaten_to_hp_conv={
-                "Cow": 50,
-                "Chicken": 50,
-                "Badger": 50,
-                "CowEgg": 25,
-                "ChickenEgg": 25,
+                "Mushroom": 50,
+                "Spore": 5,
             }
         ),
-        HpDepletion(),
-        LayObject(object_to_lay="FoxEgg", time_to_lay=152),
+        HpDepletion(hp_loss_per_cycle=1, skip_cycles=1),
+        LayObject(object_to_lay="BadgerEgg", time_to_lay=50),
     ]
 
-    rgb_map = (255, 153, 000)
+    rgb_map = (0, 0, 0)
 
     def __init__(
         self,
@@ -58,19 +54,14 @@ class Fox(BaseObject):
         )
 
     def think(self):
-
-        return simple_chase(
-            self,
-            chase_after=[
-                "Chicken",
-                "Cow",
-                "Badger",
-                "ChickenEgg",
-                "CowEgg",
-                "BadgerEgg",
-            ],
-            chase_from=["CarnivorousFlower"],
-        )
+        if not self.code:
+            return simple_chase(
+                self,
+                chase_after=["Mushroom", "Spore"],
+                chase_from=["Fox", "CarnivorousFlower"],
+            )
+        else:
+            return super().think()
 
     def move_to_position(self, x_new: int, y_new: int):
         x_old = self.x
@@ -90,6 +81,6 @@ class Fox(BaseObject):
     def get_description_short(self) -> str:
 
         return (
-            "An animal representing a fox. A fox moves, eats chickens, cows and eggs."
-            " Foxes can also lay eggs."
+            "Animal representing a badger that moves, eats mushrooms and lays"
+            " eggs. A badger can also be eaten by a fox."
         )
