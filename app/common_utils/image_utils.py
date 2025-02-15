@@ -7,8 +7,8 @@ from singleton import realm
 def generate_map():
 
     # Create a new image with a white background
-    width = 200
-    height = 200
+    width = realm.MAP.size_x
+    height = realm.MAP.size_y
     image = Image.new("RGB", (width, height), "white")
 
     # Get the pixel access object
