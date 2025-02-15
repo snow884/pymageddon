@@ -1,7 +1,5 @@
 from io import BytesIO
 
-import matplotlib.pyplot as plt
-import numpy as np
 from PIL import Image
 from singleton import realm
 
@@ -49,6 +47,9 @@ def generate_map():
 
 
 def get_plot_by_spicies():
+
+    global HIST_COUNTS
+
     cnt_dict = {}
 
     for i, o in realm.OBJECT_LIST.items():
