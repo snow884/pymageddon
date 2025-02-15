@@ -16,7 +16,6 @@ from common_utils.grid_utils import (
 from common_utils.image_utils import generate_map
 from singleton import realm
 from type_defs.objects.angel import Angel
-from type_defs.objects.badger import Badger
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.chicken import Chicken
 from type_defs.objects.chicken_egg import ChickenEgg
@@ -25,11 +24,9 @@ from type_defs.objects.fox import Fox
 from type_defs.objects.grass import Grass
 from type_defs.objects.grass2 import Grass2
 from type_defs.objects.grass3 import Grass3
-from type_defs.objects.mushroom import Mushroom
 from type_defs.objects.seed import Seed
 from type_defs.objects.seed2 import Seed2
 from type_defs.objects.seed3 import Seed3
-from type_defs.objects.spore import Spore
 from type_defs.objects.stone import Stone
 from type_defs.objects.stone2 import Stone2
 from type_defs.particles.base_particle import BaseParticle
@@ -65,9 +62,9 @@ def populate_map_full(sz=200):
                         Chicken,
                         ChickenEgg,
                         Fox,
-                        Spore,
-                        Mushroom,
-                        Badger
+                        # Spore,
+                        # Mushroom,
+                        # Badger
                         # CarnivorousFlowerSeed,
                         # CarnivorousFlower,
                     ]
