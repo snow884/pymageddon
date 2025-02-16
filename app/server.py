@@ -399,6 +399,8 @@ def scores(current_user: Annotated[User, Depends(get_current_active_user)]):
 @app.get("/get_map")
 def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
 
+    # time.sleep(0.1)
+
     map_data_str = r.get(f"map_{current_user.username}")
 
     if not map_data_str:

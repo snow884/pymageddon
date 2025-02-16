@@ -994,7 +994,10 @@
                                     
                                     refresh_started = false;
                                     
-                                });
+                                }).catch(error => {
+                                    // Handle errors
+                                    console.error('Error:', error);
+                                });;
 
                             } else {
                                 
