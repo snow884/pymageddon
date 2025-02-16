@@ -7,6 +7,7 @@ class Realm:
     OBJ_COUNTER = 0
     MAP_VIEW_SIZE = 11
     TIME_INTERVAL = 0.66
+    LAST_REFRESH_TIME = 0.66
     EPOCH_COUNTER = 0
     MAP = None
     SCORE_LIST = None
