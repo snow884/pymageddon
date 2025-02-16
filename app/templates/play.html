@@ -963,7 +963,7 @@
                         case 'running':
                     
                             if (
-                                (map.elapsed>(map.time_left_until_refresh))
+                                (map.elapsed>(map.refresh_time-map.map_server_response_time))
                                 & (!(map.map_request_running))
                                 & (!(refresh_started))
                             ){
@@ -973,16 +973,16 @@
                             }
 
                             if (
-                                (map.elapsed>(map.time_left_until_refresh))
+                                (map.elapsed>(map.refresh_time))
                                 &(!(map.map_request_running))
                                 &(refresh_started)
                             ) { 
 
                                 map.refresh_data().then((refresh_success) => {
                                     
-                                    if (map.time_left_until_refresh>0.0) {
-                                        map.elapsed = map.refresh_time-map.time_left_until_refresh;
-                                    } 
+                                    //if (map.time_left_until_refresh>0.0) {
+                                    //    map.elapsed = map.refresh_time-map.time_left_until_refresh;
+                                    //} 
 
                                     if (refresh_success){
                                         
