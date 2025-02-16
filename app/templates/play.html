@@ -887,7 +887,7 @@
                 let refresh_started = false;
                 
                 document.addEventListener('keydown', logKey);
-                //document.addEventListener("keyup", clearKey);
+                document.addEventListener("keyup", clearKey);
 
                 let keys_pressed = {
                     "ArrowRight":false,
@@ -899,13 +899,6 @@
                 function logKey(e) {
 
                     if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(`${e.code}`)) {
-                        keys_pressed = {
-                            "ArrowRight":false,
-                            "ArrowLeft":false,
-                            "ArrowDown":false,
-                            "ArrowUp":false
-                        };
-
                         keys_pressed[`${e.code}`] = true;
                     }
                 }
@@ -970,7 +963,7 @@
                         case 'running':
                     
                             if (
-                                (map.elapsed>map.refresh_time)
+                                (map.elapsed>(map.time_left_until_refresh))
                                 & (!(map.map_request_running))
                                 & (!(refresh_started))
                             ){
@@ -980,21 +973,23 @@
                             }
 
                             if (
-                                (map.elapsed>map.refresh_time)
+                                (map.elapsed>(map.refresh_time))
                                 &(!(map.map_request_running))
                                 &(refresh_started)
                             ) { 
 
                                 map.refresh_data().then((refresh_success) => {
+                                    
+                                    if (map.time_left_until_refresh>0.0) {
+                                        map.elapsed = map.refresh_time-map.time_left_until_refresh;
+                                    } 
 
                                     if (refresh_success){
-                                        map.elapsed = map.refresh_time - (map.time_left_until_refresh) ;
+                                        
+                                        map.elapsed = 0.0;
                                         //update_control();
-                                        clear_keys();
-                                    } else {
-                                        if (map.time_left_until_refresh<map.refresh_time) {
-                                            map.elapsed = map.refresh_time;
-                                        } 
+                                        //clear_keys();
+                                        
                                     }
                                     
                                     refresh_started = false;
@@ -1015,7 +1010,7 @@
                             
                             }
                             
-                            if (control_refresh_elapsed<map.refresh_time/5){
+                            if (control_refresh_elapsed<0.2){
                                 control_refresh_elapsed += ticker.elapsedMS/1000;
                             } else {
                                 update_control();
@@ -1030,9 +1025,8 @@
                             }
 
                             if (map.dashboard_message){
-                                screen_title_dashboard.text = map.dashboard_message
+                                screen_title_dashboard.text = map.dashboard_message;
                                 screen_title_dashboard.visible = true;
-                                
                             } else {
                                 screen_title_dashboard.visible = false;
                             }
