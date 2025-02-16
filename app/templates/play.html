@@ -229,7 +229,11 @@
                     constructor(obj_data, map, z_index) {
 
                         this.index = obj_data["index"];
-                        
+
+                        if (!(obj_data["image"] in map.textures)){
+                            console.error("Unknown object texture " + obj_data["image"]);
+                        }
+
                         let texture = map.textures[obj_data["image"]];
 
                         this.sprite = PIXI.Sprite.from(texture);
