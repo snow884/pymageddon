@@ -970,8 +970,7 @@
                         case 'running':
                     
                             if (
-                                ((map.elapsed>(map.time_left_until_refresh-map.map_request_running))
-                                | (map.elapsed>map.refresh_time))
+                                (map.elapsed>map.refresh_time)
                                 & (!(map.map_request_running))
                                 & (!(refresh_started))
                             ){
@@ -981,24 +980,21 @@
                             }
 
                             if (
-                                ((map.elapsed>(map.time_left_until_refresh-map.map_request_running))
-                                | (map.elapsed>map.refresh_time))
+                                (map.elapsed>map.refresh_time)
                                 &(!(map.map_request_running))
                                 &(refresh_started)
                             ) { 
 
                                 map.refresh_data().then((refresh_success) => {
-                                    
-                                    if (map.time_left_until_refresh>0.0) {
-                                        map.elapsed = map.refresh_time;
-                                    } 
 
                                     if (refresh_success){
-                                        
-                                        map.elapsed = 0.0;
+                                        map.elapsed = map.refresh_time - (map.time_left_until_refresh-map.map_request_running) ;
                                         //update_control();
                                         clear_keys();
-                                        
+                                    } else {
+                                        if (map.time_left_until_refresh<map.refresh_time) {
+                                            map.elapsed = map.refresh_time - (map.time_left_until_refresh-map.map_request_running) ;
+                                        } 
                                     }
                                     
                                     refresh_started = false;
