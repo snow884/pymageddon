@@ -973,7 +973,7 @@
                             }
 
                             if (
-                                (map.elapsed>(map.refresh_time))
+                                (map.elapsed>(map.time_left_until_refresh))
                                 &(!(map.map_request_running))
                                 &(refresh_started)
                             ) { 
