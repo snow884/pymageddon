@@ -395,7 +395,7 @@ def evaluate_player_control():
         else:
             player_object.intent = None
 
-        # realm.REDIS_CONNECTION.delete(f"control_{player_name}")
+        realm.REDIS_CONNECTION.delete(f"control_{player_name}")
 
 
 def evaluate_effects():
@@ -530,13 +530,13 @@ def main_loop(steps=None):
         evaluate_effects()
         evaluate_moves()
 
-        if realm.MODE == "full":
-            send_map_data_all()
-
         if realm.EPOCH_COUNTER % 100 == 0:
             count_object()
             generate_map()
             generate_summary_yaml()
+
+        if realm.MODE == "full":
+            send_map_data_all()
 
         end_time = time.time()
         print(
