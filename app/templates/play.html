@@ -988,12 +988,12 @@
                                 map.refresh_data().then((refresh_success) => {
 
                                     if (refresh_success){
-                                        map.elapsed = map.refresh_time - (map.time_left_until_refresh-map.map_request_running) ;
+                                        map.elapsed = map.refresh_time - (map.time_left_until_refresh) ;
                                         //update_control();
                                         clear_keys();
                                     } else {
                                         if (map.time_left_until_refresh<map.refresh_time) {
-                                            map.elapsed = map.refresh_time - (map.time_left_until_refresh-map.map_request_running) ;
+                                            map.elapsed = map.refresh_time - (map.time_left_until_refresh) ;
                                         } 
                                     }
                                     
