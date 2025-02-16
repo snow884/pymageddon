@@ -970,7 +970,7 @@
                         case 'running':
                     
                             if (
-                                ((map.elapsed>map.time_left_until_refresh)
+                                ((map.elapsed>(map.time_left_until_refresh-map.map_request_running))
                                 | (map.elapsed>map.refresh_time))
                                 & (!(map.map_request_running))
                                 & (!(refresh_started))
@@ -981,7 +981,7 @@
                             }
 
                             if (
-                                ((map.elapsed>map.time_left_until_refresh)
+                                ((map.elapsed>(map.time_left_until_refresh-map.map_request_running))
                                 | (map.elapsed>map.refresh_time))
                                 &(!(map.map_request_running))
                                 &(refresh_started)
