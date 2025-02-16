@@ -279,6 +279,8 @@ def send_map_data(
         else:
             dashboard_message = ""
 
+        dashboard_message += "\n" + f"Iter. time: {int(realm.LAST_REFRESH_TIME)} ms"
+
         if player_object.code:
             vars_str = "\n".join(
                 [f"{k}={v}" for k, v in player_object.variables.items()][:10]
@@ -539,9 +541,10 @@ def main_loop(steps=None):
             send_map_data_all()
 
         end_time = time.time()
+        realm.LAST_REFRESH_TIME = (end_time - start_time) * 10**3
         print(
             "The time of execution of above program is :",
-            (end_time - start_time) * 10**3,
+            realm.LAST_REFRESH_TIME,
             "ms",
         )
 
