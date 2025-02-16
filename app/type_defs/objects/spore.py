@@ -8,7 +8,7 @@ from type_defs.objects.effects.turn_into_near_object import TurnIntoNearObject
 
 class Spore(BaseObject):
     type_name: str = "Spore"
-    image = "../../static/objects/Spore.png"
+    image = "../../static/objects/spore.png"
     hp = 20
 
     effects = [
