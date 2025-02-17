@@ -3,19 +3,21 @@ import random
 from common_utils.common_enums import Rotations
 from common_utils.think_utils import simple_chase
 from type_defs.objects.base_object import BaseObject
+from type_defs.objects.effects.hp_depletion import HpDepletion
 from type_defs.objects.effects.turn_into_near_object import TurnIntoNearObject
 
 
 class Spore(BaseObject):
     type_name: str = "Spore"
     image = "../../static/objects/spore.png"
-    hp = 20
+    hp = 10
 
     effects = [
+        HpDepletion(),
         TurnIntoNearObject(
             future_object_class="Mushroom",
             object_class_list_to_turn_when_earby=["Grass", "Grass2", "Grass3"],
-        )
+        ),
     ]
 
     rgb_map = (255, 204, 0)

@@ -48,6 +48,8 @@ class BaseObject:
     code: str = ""
     code_store: str = ""
 
+    died_flag: bool = False
+
     def __init__(
         self,
         x_new: int,
@@ -251,6 +253,11 @@ class BaseObject:
                 realm.SCORE_LIST["players"][key][score_type + "_rank"] = rank
 
     def die(self):
+
+        if self.died_flag:
+            return
+
+        self.died_flag = True
 
         self.update_score()
 

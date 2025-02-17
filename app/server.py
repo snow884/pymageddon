@@ -326,6 +326,32 @@ async def get_map_image(request: Request):
     return Response(content=map_image, media_type="image/png", headers=headers)
 
 
+@app.get("/hist_counts_image.png", response_class=Response)
+async def get_map_image(request: Request):
+
+    counts_historical_plot = r.get(f"counts_historical_plot")
+    headers = {
+        "Cache-Control": "no-cache",
+        "Content-Disposition": "inline; filename=my_image.jpg",
+    }
+    return Response(
+        content=counts_historical_plot, media_type="image/png", headers=headers
+    )
+
+
+@app.get("/refresh_time_plot.png", response_class=Response)
+async def refresh_time_plot(request: Request):
+
+    counts_historical_plot = r.get(f"refresh_time_plot")
+    headers = {
+        "Cache-Control": "no-cache",
+        "Content-Disposition": "inline; filename=my_image.jpg",
+    }
+    return Response(
+        content=counts_historical_plot, media_type="image/png", headers=headers
+    )
+
+
 @app.get("/start_game_page", response_class=HTMLResponse)
 def start_game_page(request: Request):
 

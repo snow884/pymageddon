@@ -13,7 +13,11 @@ from common_utils.grid_utils import (
     find_tiles_location,
     get_nearest_free_location,
 )
-from common_utils.image_utils import generate_map
+from common_utils.image_utils import (
+    generate_map,
+    get_plot_by_spicies,
+    get_refresh_time_plot,
+)
 from singleton import realm
 from type_defs.objects.angel import Angel
 from type_defs.objects.badger import Badger
@@ -535,6 +539,8 @@ def main_loop(steps=None):
         if realm.EPOCH_COUNTER % 100 == 0:
             count_object()
             generate_map()
+            get_plot_by_spicies(interval=100)
+            get_refresh_time_plot(interval=100)
             generate_summary_yaml()
 
         if realm.MODE == "full":

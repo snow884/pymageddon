@@ -42,17 +42,44 @@
                     </div>
                   </div>
             </div>  
+
+            <div class="col">
+              <div class="card">
+                <img id='hist_counts_image' src="/hist_counts_image.png" alt="count plot" width="100%" style="image-rendering: pixelated;">
+                <div class="card-body">
+                  <h5 class="card-title">Live plot of counts</h5>
+                  <p class="card-text">Live plot of counts of different animals/plants. See the legend for what the different colors mean</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="card">
+                <img id='hist_counts_image' src="/refresh_time_plot.png" alt="count plot" width="100%" style="image-rendering: pixelated;">
+                <div class="card-body">
+                  <h5 class="card-title">Live plot of world refresh time</h5>
+                  <p class="card-text">Live plot of how long it takes for a world to refresh in ms.</p>
+                </div>
+              </div>
+            </div>
+
         </div>
+
+
+
     </article>
 
 
     <script>
         var world_map_image = document.getElementById('world_map_image');
+        var hist_counts_image = document.getElementById('hist_counts_image');
         world_map_image.src = '/map_image.png?rand=' + Math.random();
+        hist_counts_image.src = '/hist_counts_image.png?rand=' + Math.random();
 
         setInterval(function() {
             var world_map_image = document.getElementById('world_map_image');
             world_map_image.src = '/map_image.png?rand=' + Math.random();
+            hist_counts_image.src = '/hist_counts_image.png?rand=' + Math.random();
         }, 1000);
     </script>
 
