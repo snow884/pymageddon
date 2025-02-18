@@ -78,6 +78,11 @@ class BotCreate(BaseModel):
     code: str
 
 
+class NewGame(BaseModel):
+    spectator_follow_index: Optional[int]
+    spectator_follow_type: Optional[str]
+
+
 class UserLogin(BaseModel):
     username: Optional[str] = ""
     password: Optional[str] = ""
@@ -227,11 +232,17 @@ def create_bot_page(request: Request):
 
 
 @app.post("/new_game")
-async def read_users_me(
+async def new_game(
     current_user: Annotated[User, Depends(get_current_active_user)],
-    spectator_follow_index: Optional[str] = None,
-    spectator_follow_type: Optional[str] = None,
+    new_game_data: Optional[NewGame] = None,
 ):
+    spectator_follow_index = None
+    spectator_follow_type = None
+
+    if new_game_data:
+        spectator_follow_index = new_game_data.spectator_follow_index
+        spectator_follow_type = new_game_data.spectator_follow_type
+
     if spectator_follow_index:
         r.set(
             f"game_{current_user.username}",
@@ -254,6 +265,17 @@ async def read_users_me(
                 }
             ),
         )
+
+    return {"status": "success"}
+
+
+@app.post("/end_game")
+async def end_game(current_user: Annotated[User, Depends(get_current_active_user)]):
+
+    r.set(
+        f"game_{current_user.username}",
+        json.dumps({"request_type": "end_game"}),
+    )
 
     return {"status": "success"}
 

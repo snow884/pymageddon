@@ -252,7 +252,7 @@ class BaseObject:
                 realm.SCORE_LIST["ranking"][rank] = key
                 realm.SCORE_LIST["players"][key][score_type + "_rank"] = rank
 
-    def die(self):
+    def die(self, player_afterlife=True):
 
         if self.died_flag:
             return
@@ -278,14 +278,14 @@ class BaseObject:
             del realm.SPECTATOR_LIST[self.index]
 
         if self.is_player:
-
-            Spectator(
-                obj=realm.TILES[(self.x, self.y)],
-                player_name=self.player_name,
-                object_type="tile",
-                lifetime=10,
-                large_message="You have been killed !",
-            )
+            if player_afterlife:
+                Spectator(
+                    obj=realm.TILES[(self.x, self.y)],
+                    player_name=self.player_name,
+                    object_type="tile",
+                    lifetime=10,
+                    large_message="You have been killed !",
+                )
 
             print(f"Player {self.player_name} died")
             del realm.PLAYER_LIST[self.player_name]

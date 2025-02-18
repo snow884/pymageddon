@@ -61,7 +61,7 @@
           <li class="list-group-item disabled" aria-disabled="true">List of animals of this type</li>
           {% for object_index, object in type_summary.objects.items() %}
           <li class="list-group-item">
-            <h6>{{type_summary.type_name}} bot {{object_index}}</h6>
+            <h6><a id="button_{{type_summary.type_name}}_{{object_index}}" href=""=>{{type_summary.type_name}} bot {{object_index}}</a></h6>
               HP: {{object.hp}} / 100 | SCORE: {{object.score}}  | FAMILY: {{object.family_name}} 
           </li>
           {% endfor %}
@@ -72,5 +72,103 @@
 </article>
 
 <hr class="featurette-divider">
+
+<script>
+  console.log("JS executing...")
+
+  // Add an event listener for the submit event
+  function start_new_game(spectator_follow_index, spectator_follow_type) {
+      console.log("new game pressed...")
+
+      const token = sessionStorage.getItem('token') ;
+
+      fetch('/new_game', {
+          method: 'POST', // or 'POST', 'PUT', 'DELETE', etc.
+          headers: {
+              'Authorization': 'Bearer ' + token, 
+              'Content-Type': 'application/json', // Another example header
+          },
+          body: JSON.stringify({
+            "spectator_follow_index":spectator_follow_index,
+            "spectator_follow_type":"object"
+          })
+        })
+        .then(response => {
+          if (response.ok) {
+              // Request successful, handle the response
+              return response.json(); 
+            } else if (response.status === 401) {
+              // Unauthorized, redirect to login page
+              window.location.replace("/login_page");
+              throw new Error('Redirect');
+              //return response.json(); 
+            } else {
+              // Other error, handle accordingly
+              throw new Error('Network response was not ok.');
+            }
+      })
+          .then(data => {
+
+              if (data["detail"]) {
+                  console.log(data["detail"]);
+              } 
+
+              if (data["status"]=="success") {
+                  console.log("success");
+                  
+                  poll_map_until_success();
+              }
+          })
+          .catch(error => {
+              // Handle errors
+              console.error('Error:', error);
+              console.log(error);
+          });
+      
+      event.preventDefault();
+
+  };
+
+
+  async function poll_map_until_success(interval = 100, timeout = 30000) {
+      let startTime = Date.now();
+    
+      while (Date.now() - startTime < timeout) {
+        try {
+          const token = sessionStorage.getItem('token') ;
+          
+          const response = await fetch('/get_map', {
+              method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
+              headers: {
+                  'Authorization': 'Bearer ' + token, 
+                  'Content-Type': 'application/json', // Another example header
+              }
+            })
+          const data = await response.json();
+    
+          if (data['global_params']['status'] === "running") {
+              window.location.replace("/play");
+          }
+        } catch (error) {
+          console.error("API request failed:", error);
+        }
+    
+        await new Promise(resolve => setTimeout(resolve, interval));
+      }
+    
+      throw new Error("Polling timeout exceeded");
+    }
+
+    {% for object_index, object in type_summary.objects.items() %}
+
+      const button_{{type_summary.type_name}}_{{object_index}} = document.getElementById('button_{{type_summary.type_name}}_{{object_index}}');
+
+      button_{{type_summary.type_name}}_{{object_index}}.addEventListener('click', function() {
+        start_new_game({{object_index}}, "{{type_summary.type_name}}");
+      });
+
+    {% endfor %}
+
+</script>
 
 {% endblock %}

@@ -86,10 +86,10 @@ class Cow(BaseObject):
 
         return res
 
-    def die(self):
+    def die(self, player_afterlife=True):
         DeathParticle(x_new=self.x, y_new=self.y)
         BlookMarkParticle(x_new=self.x, y_new=self.y)
-        super().die()
+        super().die(player_afterlife)
 
     def get_description_short(self) -> str:
 

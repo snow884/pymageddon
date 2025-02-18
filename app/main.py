@@ -22,8 +22,6 @@ from singleton import realm
 from type_defs.objects.angel import Angel
 from type_defs.objects.badger import Badger
 from type_defs.objects.base_object import BaseObject
-from type_defs.objects.carnivorous_flower import CarnivorousFlower
-from type_defs.objects.carnivorous_flower_seed import CarnivorousFlowerSeed
 from type_defs.objects.chicken import Chicken
 from type_defs.objects.chicken_egg import ChickenEgg
 from type_defs.objects.cow import Cow
@@ -74,8 +72,8 @@ def populate_map_full(sz=100):
                         Spore,
                         Mushroom,
                         Badger,
-                        CarnivorousFlowerSeed,
-                        CarnivorousFlower,
+                        # Seed,
+                        # CarnivorousFlower,
                     ]
                 )(x_new=i, y_new=j)
 
@@ -115,14 +113,29 @@ def handle_players():
                         player_name=player_name,
                     )
                     realm.REDIS_CONNECTION.delete(f"game_{player_name}")
+        else:
+            data_str = realm.REDIS_CONNECTION.get(f"game_{player_name}")
 
-        if player_name not in realm.SPECTATOR_LIST.keys():
+            if data_str:
+
+                data = json.loads(data_str)
+
+                if data["request_type"] == "end_game":
+
+                    player_object = realm.PLAYER_LIST[player_name]
+
+                    player_object.die(player_afterlife=False)
+
+                    realm.REDIS_CONNECTION.delete(f"game_{player_name}")
+
+        if player_name not in [s.player_name for i, s in realm.SPECTATOR_LIST.items()]:
 
             data_str = realm.REDIS_CONNECTION.get(f"game_{player_name}")
 
             if data_str:
 
                 data = json.loads(data_str)
+                print(data)
 
                 if data["request_type"] == "spectator":
                     spectator_follow_type = data["spectator_follow_type"]
@@ -135,21 +148,23 @@ def handle_players():
                         if spectator_follow_index in realm.OBJECT_LIST:
                             obj = realm.OBJECT_LIST[spectator_follow_index]
                         else:
-                            code = data["code"]
+                            if "code" in data:
 
-                            x_new, y_new = get_nearest_free_location(
-                                random.randint(0, realm.MAP.size_x - 1),
-                                random.randint(0, realm.MAP.size_y - 1),
-                            )
+                                code = data["code"]
 
-                            obj = Cow(
-                                x_new=x_new,
-                                y_new=y_new,
-                                is_player=False,
-                                player_name=player_name,
-                                family_name=player_name,
-                                code=code,
-                            )
+                                x_new, y_new = get_nearest_free_location(
+                                    random.randint(0, realm.MAP.size_x - 1),
+                                    random.randint(0, realm.MAP.size_y - 1),
+                                )
+
+                                obj = Cow(
+                                    x_new=x_new,
+                                    y_new=y_new,
+                                    is_player=False,
+                                    player_name=player_name,
+                                    family_name=player_name,
+                                    code=code,
+                                )
 
                     if spectator_follow_type == "tile":
                         if spectator_follow_index in realm.TILES:
@@ -168,8 +183,24 @@ def handle_players():
                             lifetime=1000,
                             title_indicative_message="Following bot",
                         )
+                        realm.REDIS_CONNECTION.delete(f"game_{player_name}")
+        else:
 
-                realm.REDIS_CONNECTION.delete(f"game_{player_name}")
+            data_str = realm.REDIS_CONNECTION.get(f"game_{player_name}")
+
+            if data_str:
+
+                data = json.loads(data_str)
+
+                if data["request_type"] == "end_game":
+
+                    spectator = {
+                        s.player_name: s for i, s in realm.SPECTATOR_LIST.items()
+                    }[player_name]
+
+                    spectator.die()
+
+                    realm.REDIS_CONNECTION.delete(f"game_{player_name}")
 
 
 def evaluate_thinking():
@@ -273,6 +304,7 @@ def send_map_data(
         "../../static/other/red_cross.png",
         "../../static/other/joystick_center.png",
         "../../static/other/joystick_outside.png",
+        "../../static/other/exit_button.png",
     ]
 
     unix_timestamp = time.time()

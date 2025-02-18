@@ -441,6 +441,7 @@
                     this.elapsed = 0.0;
                     this.nav_map_sprite = null;
                     this.nav_cross_sprite = null;
+                    this.exit_button_sprite = null;
                     this.map_server_response_time = 0.0;
                     }
 
@@ -769,7 +770,60 @@
                         this.nav_cross_sprite.width=2/20.0*Math.max(app.screen.width,app.screen.height);
                         this.nav_cross_sprite.anchor.set(0.5);
                         
-                                
+                        
+                        let exit_button_texture = map.textures['../../static/other/exit_button.png'];
+                        this.exit_button_sprite = PIXI.Sprite.from(exit_button_texture);
+                        app.stage.addChild(this.exit_button_sprite);
+                        this.exit_button_sprite.zIndex = 6;
+                        this.exit_button_sprite.x=0;
+                        this.exit_button_sprite.y=0;
+                        this.exit_button_sprite.height=1/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.exit_button_sprite.width=1/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.exit_button_sprite.buttonMode = true;
+                       
+                        this.exit_button_sprite.eventMode = 'static';
+
+                        // Shows hand cursor
+                        this.exit_button_sprite.cursor = 'pointer';
+                    
+                        // Pointers normalize touch and mouse (good for mobile and desktop)
+                        this.exit_button_sprite.on('pointerdown', onExitClick);
+                    
+                        async function onExitClick() {
+
+                            const token = sessionStorage.getItem('token') ;
+        
+                            await fetch('/end_game', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': 'Bearer ' + token, 
+                                    'Content-Type': 'application/json', // Another example header
+                                }
+                            })
+                                .then(response => {
+                                    if (response.ok) {
+                                        // Request successful, handle the response
+                                        return response.json(); 
+                                      } else if (response.status === 401) {
+                                        // Unauthorized, redirect to login page
+                                        window.location.replace("/login_page");
+                                        return response.json(); 
+                                      } else {
+                                        // Other error, handle accordingly
+                                        throw new Error('Network response was not ok.');
+                                      }
+                                })
+                                .then(data => {
+                                // Do something with the response data
+                                console.log(data);
+                                window.location.replace("/start_game_page");
+                                })
+                                .catch(error => {
+                                // Handle any errors
+                                console.error(error);
+                                });
+                        }
+
                     }
 
                     async update_positions(time_delta) {
@@ -796,7 +850,6 @@
                     }
 
                 }; 
-
             
                 // TEXT
                 let screen_title_big = new PIXI.Text(
