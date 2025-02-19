@@ -568,11 +568,11 @@ def main_loop(steps=None):
         evaluate_effects()
         evaluate_moves()
 
-        if realm.EPOCH_COUNTER % 100 == 0:
+        if realm.EPOCH_COUNTER % 30 == 0:
             count_object()
             generate_map()
-            get_plot_by_spicies(interval=100)
-            get_refresh_time_plot(interval=100)
+            get_plot_by_spicies(interval=30)
+            get_refresh_time_plot(interval=30)
             generate_summary_yaml()
 
         if realm.MODE == "full":
