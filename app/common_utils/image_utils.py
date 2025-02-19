@@ -51,7 +51,7 @@ def generate_map():
     realm.REDIS_CONNECTION.set(f"map_image", f.getvalue())
 
 
-def get_plot_by_spicies(interval=100, hist=1000):
+def get_plot_by_spicies(interval=100, hist=100):
 
     plt.clf()
 
