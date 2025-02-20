@@ -1,6 +1,7 @@
 redis
 passlib
 python-multipart
+cython
 uvicorn
 pyjwt
 jinja2

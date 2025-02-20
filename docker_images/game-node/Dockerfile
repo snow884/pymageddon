@@ -8,7 +8,7 @@ RUN pip3 install -r /app/requirements.txt
 
 ADD  ./app/ /app/
 
-RUN python setup.py build_ext --inplace
+RUN python /app/setup.py build_ext --inplace
 
 EXPOSE 5000
 
