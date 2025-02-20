@@ -4,6 +4,8 @@ RUN pip install --upgrade pip
 
 ADD ./app/requirements.txt /app/requirements.txt
 
+RUN pip install --upgrade setuptools
+
 RUN pip3 install -r /app/requirements.txt
 
 ADD  ./app/ /app/
