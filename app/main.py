@@ -583,9 +583,6 @@ def main_loop(steps=None):
         if realm.EPOCH_COUNTER % 31 == 0:
             generate_summary_yaml()
 
-        if realm.MODE == "full":
-            send_map_data_all()
-
         end_time = time.time()
         realm.LAST_REFRESH_TIME = (end_time - start_time) * 10**3
         print(
@@ -597,6 +594,9 @@ def main_loop(steps=None):
         while (end_time - start_time) < realm.TIME_INTERVAL:
             end_time = time.time()
             time.sleep(0.01)
+
+        if realm.MODE == "full":
+            send_map_data_all()
 
         end_time = time.time()
         print("Total epoch time :", (end_time - start_time) * 10**3, "ms")
