@@ -8,11 +8,13 @@ RUN pip3 install -r /app/requirements.txt
 
 ADD  ./app/ /app/
 
+RUN python setup.py build_ext --inplace
+
 EXPOSE 5000
 
 ENV PYTHONPATH=/app/    
 
 WORKDIR "/app"
 
-ENTRYPOINT [ "python","main.py"]
+ENTRYPOINT [ "python","run.py"]
 

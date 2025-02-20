@@ -314,19 +314,19 @@ async def explorer_type(request: Request, type_name: str):
     )
 
 
-@app.get("/explorer/family/{family}", response_class=HTMLResponse)
-async def explorer_family(request: Request):
+# @app.get("/explorer/family/{family}", response_class=HTMLResponse)
+# async def explorer_family(request: Request):
 
-    with open("objects_summary.json") as f:
-        objects_summary = json.load(f)
+#     with open("objects_summary.json") as f:
+#         objects_summary = json.load(f)
 
-    map_image = r.get(f"objects_summary")
+#     map_image = r.get(f"objects_summary")
 
-    return templates.TemplateResponse(
-        request=request,
-        name="explorer.html",
-        context={"all_objects_summary": all_objects_summary},
-    )
+#     return templates.TemplateResponse(
+#         request=request,
+#         name="explorer.html",
+#         context={"all_objects_summary": all_objects_summary},
+#     )
 
 
 @app.get("/world_map", response_class=HTMLResponse)

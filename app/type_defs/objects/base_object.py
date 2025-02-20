@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from common_utils.common_enums import Actions, Rotations
 from dataclasses_json import dataclass_json
-from sandboxed_language.sandboxed_language import evaluate_code
+from sandboxed_language.evaluator import evaluate_code
 from singleton import realm
 from type_defs.particles.score20_effect import Score20Particle
 from type_defs.particles.score100_effect import Score100Particle

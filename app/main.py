@@ -2,6 +2,7 @@ import json
 import random
 import time
 
+import cython
 import redis
 from common_utils.common_enums import Actions, EnumEncoder, Rotations
 from common_utils.grid_utils import (
@@ -551,6 +552,11 @@ def generate_summary_yaml():
 
 def main_loop(steps=None):
 
+    if cython.compiled:
+        print("Compiled with cython")
+    else:
+        print("NOT Compiled with cython")
+
     if realm.MODE == "full":
         populate_map_full()
     else:
@@ -573,6 +579,7 @@ def main_loop(steps=None):
         if realm.EPOCH_COUNTER % 30 == 0:
             get_plot_by_spicies(interval=30)
             get_refresh_time_plot(interval=30)
+
         if realm.EPOCH_COUNTER % 31 == 0:
             generate_summary_yaml()
 
