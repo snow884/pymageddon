@@ -557,7 +557,7 @@ def worker_send_map_data_all(q, thread_id):
     while True:
         try:
             item = q.get(
-                timeout=realm.TIME_INTERVAL
+                timeout=realm.TIME_INTERVAL * 2
             )  # Block until an item is available or timeout
             print(f"Thread {thread_id}: Processing {item}")
             send_map_data_all()
@@ -570,20 +570,18 @@ def worker_generate_plots(q, thread_id):
     while True:
         try:
             item = q.get(
-                timeout=realm.TIME_INTERVAL
+                timeout=realm.TIME_INTERVAL * 30 * 2
             )  # Block until an item is available or timeout
             print(f"Thread {thread_id}: Processing {item}")
-            if realm.EPOCH_COUNTER % 30 == 0:
-                generate_map()
-            if realm.EPOCH_COUNTER % 30 == 0:
-                get_plot_by_spicies(interval=30)
-                get_refresh_time_plot(interval=30)
 
-            if realm.EPOCH_COUNTER % 30 == 0:
-                generate_summary_yaml()
+            generate_map()
 
-            if realm.MODE == "full":
-                send_map_data_all()
+            get_plot_by_spicies(interval=30)
+            get_refresh_time_plot(interval=30)
+
+            generate_summary_yaml()
+
+            send_map_data_all()
 
             q.task_done()  # Indicate that a formerly enqueued task is complete
         except queue.Empty:
@@ -631,8 +629,11 @@ def main_loop(steps=None):
         evaluate_effects()
         evaluate_moves()
 
-        q_send_map_data_all.put(realm.EPOCH_COUNTER)
-        q_generate_plots.put(realm.EPOCH_COUNTER)
+        if realm.MODE == "full":
+            q_send_map_data_all.put(realm.EPOCH_COUNTER)
+
+            if realm.EPOCH_COUNTER % 30:
+                q_generate_plots.put(realm.EPOCH_COUNTER)
 
         end_time = time.time()
         realm.LAST_REFRESH_TIME = (end_time - start_time) * 10**3
