@@ -1,5 +1,7 @@
 import json
+import queue
 import random
+import threading
 import time
 
 import cython
@@ -551,6 +553,43 @@ def generate_summary_yaml():
     )
 
 
+def worker_send_map_data_all(q, thread_id):
+    while True:
+        try:
+            item = q.get(
+                timeout=realm.TIME_INTERVAL
+            )  # Block until an item is available or timeout
+            print(f"Thread {thread_id}: Processing {item}")
+            send_map_data_all()
+            q.task_done()  # Indicate that a formerly enqueued task is complete
+        except queue.Empty:
+            print(f"Thread {thread_id}: queue is empty")
+
+
+def worker_generate_plots(q, thread_id):
+    while True:
+        try:
+            item = q.get(
+                timeout=realm.TIME_INTERVAL
+            )  # Block until an item is available or timeout
+            print(f"Thread {thread_id}: Processing {item}")
+            if realm.EPOCH_COUNTER % 30 == 0:
+                generate_map()
+            if realm.EPOCH_COUNTER % 30 == 0:
+                get_plot_by_spicies(interval=30)
+                get_refresh_time_plot(interval=30)
+
+            if realm.EPOCH_COUNTER % 30 == 0:
+                generate_summary_yaml()
+
+            if realm.MODE == "full":
+                send_map_data_all()
+
+            q.task_done()  # Indicate that a formerly enqueued task is complete
+        except queue.Empty:
+            print(f"Thread {thread_id}: queue is empty")
+
+
 def main_loop(steps=None):
 
     if cython.compiled:
@@ -562,6 +601,23 @@ def main_loop(steps=None):
         populate_map_full()
     else:
         populate_map_full(15)
+
+    threads = []
+
+    q_send_map_data_all = queue.Queue()
+    thread_send_map_data_all = threading.Thread(
+        target=worker_send_map_data_all,
+        args=(q_send_map_data_all, "thread_send_map_data_all"),
+    )
+    thread_send_map_data_all.start()
+    threads.append(thread_send_map_data_all)
+
+    q_generate_plots = queue.Queue()
+    thread_generate_plots = threading.Thread(
+        target=worker_generate_plots, args=(q_generate_plots, "thread_generate_plots")
+    )
+    thread_generate_plots.start()
+    threads.append(thread_generate_plots)
 
     while True:
 
@@ -575,17 +631,8 @@ def main_loop(steps=None):
         evaluate_effects()
         evaluate_moves()
 
-        if realm.EPOCH_COUNTER % 29 == 0:
-            generate_map()
-        if realm.EPOCH_COUNTER % 30 == 0:
-            get_plot_by_spicies(interval=30)
-            get_refresh_time_plot(interval=30)
-
-        if realm.EPOCH_COUNTER % 31 == 0:
-            generate_summary_yaml()
-
-        if realm.MODE == "full":
-            send_map_data_all()
+        q_send_map_data_all.put(realm.EPOCH_COUNTER)
+        q_generate_plots.put(realm.EPOCH_COUNTER)
 
         end_time = time.time()
         realm.LAST_REFRESH_TIME = (end_time - start_time) * 10**3

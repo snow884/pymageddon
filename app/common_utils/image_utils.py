@@ -1,5 +1,8 @@
 from io import BytesIO
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from common_utils.utils import get_types_dict
 from PIL import Image
