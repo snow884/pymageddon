@@ -332,6 +332,7 @@ def send_map_data(
             "status": "running",
             "time_interval": realm.TIME_INTERVAL,
             "map_view_size": realm.MAP_VIEW_SIZE,
+            "map_size_x": realm.MAP.size_x,
             "epoch": realm.EPOCH_COUNTER,
             "textures": all_images + other_images,
             "timestamp": unix_timestamp,

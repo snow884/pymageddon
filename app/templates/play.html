@@ -428,21 +428,22 @@
 
                 class MyMap {
                     constructor() {
-                    this.objects = {};
-                    this.tiles = {};
-                    this.particles = {};
-                    this.player_id = "0";
-                    this.player_obj = null;
-                    this.textures = {};
-                    this.refresh_time =0.0;
-                    this.time_left_until_refresh =1.0;
-                    this.map_request_running = false;
-                    this.epoch = 0;
-                    this.elapsed = 0.0;
-                    this.nav_map_sprite = null;
-                    this.nav_cross_sprite = null;
-                    this.exit_button_sprite = null;
-                    this.map_server_response_time = 0.0;
+                        this.objects = {};
+                        this.tiles = {};
+                        this.particles = {};
+                        this.player_id = "0";
+                        this.player_obj = null;
+                        this.textures = {};
+                        this.refresh_time =0.0;
+                        this.time_left_until_refresh =1.0;
+                        this.map_request_running = false;
+                        this.epoch = 0;
+                        this.elapsed = 0.0;
+                        this.nav_map_sprite = null;
+                        this.nav_cross_sprite = null;
+                        this.exit_button_sprite = null;
+                        this.map_server_response_time = 0.0;
+                        this.map_size_x = null;
                     }
 
                     get_player_obj(){
@@ -481,6 +482,8 @@
                         }
 
                         this.epoch = this.map_data['global_params']['epoch'];
+
+                        this.map_size_x = this.map_data['global_params']['map_size_x'];
 
                         Object.entries(this.map_data['objects']).forEach(([i,my_obj_data]) => {
                             
@@ -558,8 +561,8 @@
                         this.nav_map_sprite.width=3/20.0*Math.max(app.screen.width,app.screen.height);
                         this.nav_map_sprite.anchor.set(0.5);
 
-                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (this.player_obj.x/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_cross_sprite.y= (this.player_obj.y/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (this.player_obj.x/this.map_size_x)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.y= (this.player_obj.y/this.map_size_x)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
                         
                         //map.elapsed = 0.0;
                         return true;
@@ -711,6 +714,10 @@
                         this.epoch = this.map_data['global_params']['epoch'];
 
                         this.status = this.map_data['global_params']['status'];
+
+                        this.map_size_x = this.map_data['global_params']['map_size_x'];
+
+                        console.log(this.map_data);
                         
                         
                         Object.entries(this.map_data['objects']).forEach(([i,my_obj_data]) => {
@@ -764,8 +771,8 @@
                         this.nav_cross_sprite = PIXI.Sprite.from(nav_cross_texture);
                         app.stage.addChild(this.nav_cross_sprite);
                         this.nav_cross_sprite.zIndex = 6;
-                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (0/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_cross_sprite.y= (0/200.0)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (0/this.map_size_x)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.y= (0/this.map_size_x)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
                         this.nav_cross_sprite.height=2/20.0*Math.max(app.screen.width,app.screen.height);
                         this.nav_cross_sprite.width=2/20.0*Math.max(app.screen.width,app.screen.height);
                         this.nav_cross_sprite.anchor.set(0.5);
