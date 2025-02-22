@@ -33,6 +33,7 @@ from type_defs.objects.grass import Grass
 from type_defs.objects.grass2 import Grass2
 from type_defs.objects.grass3 import Grass3
 from type_defs.objects.mushroom import Mushroom
+from type_defs.objects.mushroom2 import Mushroom2
 from type_defs.objects.seed import Seed
 from type_defs.objects.seed2 import Seed2
 from type_defs.objects.seed3 import Seed3
@@ -74,6 +75,7 @@ def populate_map_full(sz=100):
                         Fox,
                         Spore,
                         Mushroom,
+                        Mushroom2,
                         Badger,
                         # Seed,
                         # CarnivorousFlower,
@@ -562,8 +564,10 @@ def worker_send_map_data_all(q, thread_id):
             print(f"Thread {thread_id}: Processing {item}")
             send_map_data_all()
             q.task_done()  # Indicate that a formerly enqueued task is complete
-        except queue.Empty:
+        except queue.Empty as e:
             print(f"Thread {thread_id}: queue is empty")
+        except Exception as e:
+            print(f"Thread {thread_id}: got exception: {e}")
 
 
 def worker_generate_plots(q, thread_id):
@@ -584,8 +588,10 @@ def worker_generate_plots(q, thread_id):
             send_map_data_all()
 
             q.task_done()  # Indicate that a formerly enqueued task is complete
-        except queue.Empty:
+        except queue.Empty as e:
             print(f"Thread {thread_id}: queue is empty")
+        except Exception as e:
+            print(f"Thread {thread_id}: got exception: {e}")
 
 
 def main_loop(steps=None):
