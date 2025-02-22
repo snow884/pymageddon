@@ -28,7 +28,9 @@ OBJ_TYPE_LIST = [
     "CarnivorousFlowerSeed",
     "CarnivorousFlower",
     "Mushroom",
+    "Mushroom2",
     "Spore",
+    "Spore2",
     "Badger",
     "BadgerEgg",
 ]
@@ -128,10 +130,20 @@ def obj_fut(str_in):
             from type_defs.objects.spore import Spore
         return Spore
 
+    elif str_in == "Spore2":
+        if "Spore2" not in sys.modules:
+            from type_defs.objects.spore2 import Spore2
+        return Spore2
+
     elif str_in == "Mushroom":
         if "Mushroom" not in sys.modules:
             from type_defs.objects.mushroom import Mushroom
         return Mushroom
+
+    elif str_in == "Mushroom2":
+        if "Mushroom2" not in sys.modules:
+            from type_defs.objects.mushroom2 import Mushroom2
+        return Mushroom2
 
     elif str_in == "Badger":
         if "Badger" not in sys.modules:

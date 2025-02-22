@@ -57,7 +57,7 @@ class Badger(BaseObject):
         if not self.code:
             return simple_chase(
                 self,
-                chase_after=["Mushroom", "Spore"],
+                chase_after=["Mushroom", "Mushroom2", "Spore", "Spore2"],
                 chase_from=["Fox", "CarnivorousFlower"],
             )
         else:
