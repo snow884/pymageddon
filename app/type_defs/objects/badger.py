@@ -21,7 +21,9 @@ class Badger(BaseObject):
         EatObjectInFront(
             types_eaten_to_hp_conv={
                 "Mushroom": 50,
+                "Mushroom2": 50,
                 "Spore": 5,
+                "Spore2": 5,
             }
         ),
         HpDepletion(hp_loss_per_cycle=1, skip_cycles=1),
