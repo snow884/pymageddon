@@ -638,7 +638,7 @@ def main_loop(steps=None):
         if realm.MODE == "full":
             q_send_map_data_all.put(realm.EPOCH_COUNTER)
 
-            if realm.EPOCH_COUNTER % 30:
+            if realm.EPOCH_COUNTER % 30 == 0:
                 q_generate_plots.put(realm.EPOCH_COUNTER)
 
         end_time = time.time()
