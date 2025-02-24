@@ -362,9 +362,8 @@ async def players(request: Request):
         if score_str:
 
             all_players[player_name] = json.loads(score_str)
-        else:
-            all_players[player_name] = {}
 
+    for player_name, _ in all_players.items():
         all_players[player_name]["player_scores"][
             "last_game_ago"
         ] = curr_timestamp - all_players[player_name]["player_scores"].get(
