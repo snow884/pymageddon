@@ -365,11 +365,14 @@ async def players(request: Request):
         else:
             all_players[player_name] = {}
 
-        all_players[player_name]["player_scores"]["last_game_ago"] = (
-            curr_timestamp - all_players[player_name]["player_scores"]["last_game"]
+        all_players[player_name]["player_scores"][
+            "last_game_ago"
+        ] = curr_timestamp - all_players[player_name]["player_scores"].get(
+            "last_game", curr_timestamp
         )
         all_players[player_name]["player_scores"]["last_game_ago_str"] = time_ago(
-            curr_timestamp - all_players[player_name]["player_scores"]["last_game"]
+            curr_timestamp
+            - all_players[player_name]["player_scores"].get("last_game", curr_timestamp)
         )
 
     return templates.TemplateResponse(
