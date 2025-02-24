@@ -314,6 +314,71 @@ async def explorer_type(request: Request, type_name: str):
     )
 
 
+@app.get("/explorer", response_class=HTMLResponse)
+async def explorer(request: Request):
+
+    all_objects_summary = json.loads(r.get(f"all_objects_summary"))
+
+    return templates.TemplateResponse(
+        request=request,
+        name="explorer.html",
+        context={"objects_summary": all_objects_summary},
+    )
+
+
+@app.get("/players", response_class=HTMLResponse)
+async def players(request: Request):
+
+    all_players = {}
+
+    def time_ago(seconds):
+        if seconds < 60:
+            return f"{int(seconds)} seconds ago"
+        minutes = seconds // 60
+        if minutes < 60:
+            return f"{int(minutes)} minutes ago"
+        hours = minutes // 60
+        if hours < 24:
+            return f"{int(hours)} hours ago"
+        days = hours // 24
+        if days < 30:
+            return f"{int(days)} days ago"
+        months = days // 30
+        if months < 12:
+            return f"{int(months)} months ago"
+
+        years = months // 12
+        return f"{int(years)} years ago"
+
+    curr_timestamp = time.time()
+
+    for key in r.keys(pattern="player_*"):
+        key_str = key.decode()
+
+        player_name = key_str.replace("player_", "")
+
+        score_str = r.get(f"score_{player_name}")
+
+        if score_str:
+
+            all_players[player_name] = json.loads(score_str)
+        else:
+            all_players[player_name] = {}
+
+        all_players[player_name]["player_scores"]["last_game_ago"] = (
+            curr_timestamp - all_players[player_name]["player_scores"]["last_game"]
+        )
+        all_players[player_name]["player_scores"]["last_game_ago_str"] = time_ago(
+            curr_timestamp - all_players[player_name]["player_scores"]["last_game"]
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="players.html",
+        context={"all_players": all_players},
+    )
+
+
 # @app.get("/explorer/family/{family}", response_class=HTMLResponse)
 # async def explorer_family(request: Request):
 

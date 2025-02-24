@@ -639,13 +639,17 @@
 
                         spinner_ticker.start();
 
+                        let loading_await_list = [];
+
                         for (const [i,my_texture_url] of Object.entries(this.map_data['global_params']['textures'])) {
 
                             console.log("Loading " + my_texture_url + "...");
 
-                            await PIXI.Assets.load(my_texture_url).then(texture => {this.textures[my_texture_url] = texture}).catch(err => console.error(err));
+                            loading_await_list.push(PIXI.Assets.load(my_texture_url).then(texture => {this.textures[my_texture_url] = texture}).catch(err => console.error(err)));
 
                         }
+
+                        await Promise.all(loading_await_list)
 
                         spinner_ticker.destroy();
 

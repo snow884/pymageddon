@@ -207,6 +207,12 @@ def handle_players():
 
                     realm.REDIS_CONNECTION.delete(f"game_{player_name}")
 
+        data_str = realm.REDIS_CONNECTION.get(f"game_{player_name}")
+        if data_str:
+            data = json.loads(data_str)
+            print(f"Cant process data {data}, deleting...")
+            realm.REDIS_CONNECTION.delete(f"game_{player_name}")
+
 
 def evaluate_thinking():
 
@@ -397,9 +403,10 @@ def send_map_data_all():
             particles,
         )
 
-    for player_name in list(
-        set(realm.PLAYER_LIST.keys()).union(set(realm.SPECTATOR_LIST.keys()))
-    ):
+    for key in realm.REDIS_CONNECTION.keys(pattern="player_*"):
+        key_str = key.decode()
+
+        player_name = key_str.replace("player_", "")
 
         send_score_data(player_name)
 

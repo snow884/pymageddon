@@ -1,3 +1,4 @@
+import time
 from dataclasses import dataclass
 
 from common_utils.common_enums import Actions, Rotations
@@ -195,9 +196,11 @@ class BaseObject:
     def update_score(self):
 
         if self.is_player:
+
             score_dict = realm.SCORE_LIST["players"].get(
                 self.player_name,
                 {
+                    "last_game": time.time(),
                     "player_score": 0,
                     "player_score_rank": 0,
                     "family_score": 0,
@@ -214,6 +217,7 @@ class BaseObject:
                 score_dict["player_score"] = self.score
 
             score_dict["player_games"] += 1
+            score_dict["last_game"] = time.time()
 
             realm.SCORE_LIST["players"][self.player_name] = score_dict
 

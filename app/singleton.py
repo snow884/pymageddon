@@ -27,7 +27,7 @@ class Realm:
         self.PLAYER_LIST = {}
         self.PARTICLE_LIST = {}
         self.OBJ_COUNTER = 0
-        self.MAP_VIEW_SIZE = 11
+        self.MAP_VIEW_SIZE = 12
         self.TIME_INTERVAL = 0.50
         self.EPOCH_COUNTER = 0
         self.MAP = None

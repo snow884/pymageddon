@@ -1,0 +1,51 @@
+{% extends "_menu_bar.html" %}
+
+{% block content %}
+
+<article>
+    <br>
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Player list</li>
+        </ol>
+    </nav>
+    <p>List of all players in Pymageddon.</p>
+    <div class="row  row-cols-1 row-cols-md-2 g-4">
+        {% for player_name, scores in all_players.items() %}
+        <div class="col">
+            
+            <div class="card">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img id='{{player_name}}_image' src="../../static/other/profie_avatar.png" alt="{{player_name}} avatar" width="100%" style="image-rendering: pixelated;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                        <h5 class="card-title">{{ player_name }}</h5>
+                        <p class="card-text">
+                            {% if scores['player_scores']['last_game_ago'] < 60 %}
+                                🟢 Playing now 
+                            {% else %}
+                                ⚫️ Offline
+                            {% endif %}<br>
+                            Max score: {{ scores['player_scores']['player_score'] }}<br>
+                            Games played: {{ scores['player_scores']['player_games'] }}
+                        </p>
+                        <p class="card-text"><small class="text-body-secondary">Last played {{ scores['player_scores']['last_game_ago_str'] }}</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        {% endfor %}
+
+    </div>
+
+</article>
+
+<hr class="featurette-divider">
+
+{% endblock %}
