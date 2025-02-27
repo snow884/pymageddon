@@ -1,10 +1,13 @@
 import json
+import random
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
+from io import BytesIO
 from typing import Annotated, Optional
 
 import jwt
+import python_avatars as pa
 import redis
 from common_utils.utils import get_types_dict
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
@@ -16,6 +19,9 @@ from fastapi.templating import Jinja2Templates
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from pydantic import BaseModel
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import PythonLexer
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
@@ -41,6 +47,26 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
+
+
+def time_ago(seconds):
+    if seconds < 60:
+        return f"{int(seconds)} seconds ago"
+    minutes = seconds // 60
+    if minutes < 60:
+        return f"{int(minutes)} minutes ago"
+    hours = minutes // 60
+    if hours < 24:
+        return f"{int(hours)} hours ago"
+    days = hours // 24
+    if days < 30:
+        return f"{int(days)} days ago"
+    months = days // 30
+    if months < 12:
+        return f"{int(months)} months ago"
+
+    years = months // 12
+    return f"{int(years)} years ago"
 
 
 class KeysPressed(BaseModel):
@@ -331,25 +357,6 @@ async def players(request: Request):
 
     all_players = {}
 
-    def time_ago(seconds):
-        if seconds < 60:
-            return f"{int(seconds)} seconds ago"
-        minutes = seconds // 60
-        if minutes < 60:
-            return f"{int(minutes)} minutes ago"
-        hours = minutes // 60
-        if hours < 24:
-            return f"{int(hours)} hours ago"
-        days = hours // 24
-        if days < 30:
-            return f"{int(days)} days ago"
-        months = days // 30
-        if months < 12:
-            return f"{int(months)} months ago"
-
-        years = months // 12
-        return f"{int(years)} years ago"
-
     curr_timestamp = time.time()
 
     for key in r.keys(pattern="player_*"):
@@ -381,19 +388,60 @@ async def players(request: Request):
     )
 
 
-# @app.get("/explorer/family/{family}", response_class=HTMLResponse)
-# async def explorer_family(request: Request):
+@app.get("/players/{player_name}", response_class=HTMLResponse)
+async def player(request: Request, player_name: str):
 
-#     with open("objects_summary.json") as f:
-#         objects_summary = json.load(f)
+    curr_timestamp = time.time()
 
-#     map_image = r.get(f"objects_summary")
+    score_str = r.get(f"score_{player_name}")
 
-#     return templates.TemplateResponse(
-#         request=request,
-#         name="explorer.html",
-#         context={"all_objects_summary": all_objects_summary},
-#     )
+    score_summary = {}
+
+    if score_str:
+
+        score_summary = json.loads(score_str)
+
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Player not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    score_summary["player_name"] = player_name
+
+    print(score_summary["player_scores"])
+
+    score_summary["player_scores"]["last_game_ago_str"] = time_ago(
+        curr_timestamp - score_summary["player_scores"].get("last_game", curr_timestamp)
+    )
+    score_summary["player_scores"]["last_game_ago"] = curr_timestamp - score_summary[
+        "player_scores"
+    ].get("last_game", curr_timestamp)
+
+    all_objects_summary = json.loads(r.get(f"all_objects_summary"))
+
+    score_summary["families"] = {}
+
+    for type_name, type_obj in all_objects_summary.items():
+        print(type_obj["families"])
+        if type_obj["families"].get(player_name):
+            score_summary["families"][type_name] = type_obj["families"].get(
+                player_name, []
+            )
+
+            for code_sha1, family_obj in score_summary["families"][type_name].items():
+                print(family_obj["code"])
+                family_obj["code"] = highlight(
+                    family_obj["code"],
+                    PythonLexer(),
+                    HtmlFormatter(noclasses=True, linenos="inline", nobackground=True),
+                )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="player.html",
+        context={"player_summary": score_summary},
+    )
 
 
 @app.get("/world_map", response_class=HTMLResponse)
@@ -573,4 +621,44 @@ def robots(request: Request):
         request=request,
         name="robots.txt",
         context={},
+    )
+
+
+@app.get("/player_image/{player_name}")
+def player_image(request: Request, player_name: str):
+
+    random.seed(player_name)
+
+    print(pa.ClothingType)
+
+    svg_data = pa.Avatar(
+        style=pa.AvatarStyle.CIRCLE,
+        background_color=pa.BackgroundColor.pick_random(),
+        top=pa.HairType.pick_random(),
+        eyebrows=pa.EyebrowType.pick_random(),
+        eyes=pa.EyeType.pick_random(),
+        nose=pa.NoseType.pick_random(),
+        # mouth=pa.MouthType.pick_random(),
+        # facial_hair=pa.FacialHairType.pick_random(),
+        # Or you can use the colors provided by the library
+        hair_color=pa.HairColor.pick_random(),
+        accessory=pa.AccessoryType.pick_random(),
+        clothing=pa.ClothingType.GRAPHIC_SHIRT,
+        clothing_color=pa.ClothingColor.pick_random(),
+        shirt_graphic=pa.ClothingGraphic.CUSTOM_TEXT,
+        shirt_text=player_name,
+    ).render()
+
+    file_bytes = svg_data.encode()
+
+    # Create a BytesIO object from the byte data
+    file_like = BytesIO(file_bytes)
+
+    # Set appropriate headers (optional)
+    headers = {
+        "Cache-Control": "no-cache",
+        "Content-Disposition": "inline; filename=my_image.svg",
+    }
+    return Response(
+        content=file_like.getvalue(), media_type="image/svg+xml", headers=headers
     )

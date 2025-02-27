@@ -19,19 +19,47 @@
             <div class="card">
                 <div class="row g-0">
                     <div class="col-md-4">
-                        <img id='{{player_name}}_image' src="../../static/other/profie_avatar.png" alt="{{player_name}} avatar" width="100%" style="image-rendering: pixelated;">
+                        <img id='{{player_name}}_image' src="{{ url_for('player_image', player_name=player_name) }}" alt="{{player_name}} avatar" width="100%" style="image-rendering: pixelated;">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
-                        <h5 class="card-title">{{ player_name }}</h5>
+                        <h5 class="card-title"><a href="{{ url_for('player', player_name=player_name) }}">{{ player_name }}</a></h5>
                         <p class="card-text">
-                            {% if scores['player_scores']['last_game_ago'] < 60 %}
-                                🟢 Playing now 
-                            {% else %}
-                                ⚫️ Offline
-                            {% endif %}<br>
-                            Max score: {{ scores['player_scores']['player_score'] }}<br>
-                            Games played: {{ scores['player_scores']['player_games'] }}
+
+                            <div class="bd-example m-0 border-0">
+    
+                                <table class="table table-sm table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">Status:</th>
+                                            <td>
+                                                {% if scores['player_scores']['last_game_ago'] < 60 %}
+                                                    🟢 Playing now 
+                                                {% else %}
+                                                    ⚫️ Offline
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Max score:</th>
+                                            <td>{{ scores['player_scores']['player_score'] }} ( Ranked {{ scores['player_scores']['player_score_rank'] }})</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Games played:</th>
+                                            <td>{{ scores['player_scores']['player_games'] }} ( Ranked {{ scores['player_scores']['player_games_rank'] }})</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Max bot score:</th>
+                                            <td>{{ scores['player_scores']['family_score'] }} ( Ranked {{ scores['player_scores']['family_score_rank'] }})</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Bots created total:</th>
+                                            <td>{{ scores['player_scores']['family_games'] }} ( Ranked {{ scores['player_scores']['family_games_rank'] }})</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                          </div>
                         </p>
                         <p class="card-text"><small class="text-body-secondary">Last played {{ scores['player_scores']['last_game_ago_str'] }}</small></p>
                         </div>

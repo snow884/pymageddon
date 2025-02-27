@@ -513,7 +513,6 @@ def generate_summary_yaml():
         )
         summary_json[o.type_name]["description_long"] = o.get_description_long()
         summary_json[o.type_name]["description_short"] = o.get_description_short()
-        summary_json[o.type_name]["families"] = {}
 
         if not summary_json[o.type_name].get("objects"):
             summary_json[o.type_name]["objects"] = {}
@@ -523,20 +522,32 @@ def generate_summary_yaml():
             "score": o.score,
             "player_name": o.player_name,
             "family_name": o.family_name,
+            "code_sha1": o.code_sha1,
             "code": o.code,
         }
+
         if not summary_json[o.type_name].get("families"):
             summary_json[o.type_name]["families"] = {}
 
-        if o.family_name:
+        if o.code:
 
-            summary_json[o.type_name]["families"][o.family_name] = {
-                "hp": o.hp,
-                "score": o.score,
-                "player_name": o.player_name,
-                "family_name": o.family_name,
-                "code": o.code,
-            }
+            if not summary_json[o.type_name]["families"].get(o.family_name):
+                summary_json[o.type_name]["families"][o.family_name] = {}
+
+            if not summary_json[o.type_name]["families"][o.family_name].get(
+                o.code_sha1
+            ):
+                summary_json[o.type_name]["families"][o.family_name][o.code_sha1] = {
+                    "code_sha1": o.code_sha1,
+                    "code": o.code,
+                    "object_index_list": [],
+                }
+
+            summary_json[o.type_name]["families"][o.family_name][o.code_sha1][
+                "object_index_list"
+            ].append(o.index)
+
+            print(summary_json[o.type_name]["families"])
 
         # if o.family_index not in summary_json[o.type_name]["families"].keys():
         #     summary_json[o.type_name]["families"][o.family_index] = {}

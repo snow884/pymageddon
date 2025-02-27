@@ -1,3 +1,4 @@
+import hashlib
 import time
 from dataclasses import dataclass
 
@@ -86,6 +87,11 @@ class BaseObject:
         self.y = y_new
         self.is_player = is_player
         self.code = code
+        if code:
+            self.code_sha1 = hashlib.sha1(code.encode("utf-8")).hexdigest()
+        else:
+            self.code_sha1 = None
+
         self.code_store = code_store
         self.family_name = family_name
 
@@ -203,12 +209,12 @@ class BaseObject:
                     "last_game": time.time(),
                     "player_score": 0,
                     "player_score_rank": 0,
-                    "family_score": 0,
-                    "family_score_rank": 0,
                     "player_games": 0,
                     "player_games_rank": 0,
+                    "family_scores": {},
+                    "bots_created": 0,
+                    "family_score": 0,
                     "family_games": 0,
-                    "family_games_rank": 0,
                 },
             )
 
@@ -223,21 +229,48 @@ class BaseObject:
 
         else:
             if self.family_name:
-                score_dict = realm.SCORE_LIST["players"].get(
-                    self.family_name,
-                    {
+                if not realm.SCORE_LIST["players"].get(self.family_name):
+
+                    realm.SCORE_LIST["players"][self.family_name] = {
+                        "last_game": time.time(),
                         "player_score": 0,
-                        "family_score": 0,
+                        "player_score_rank": 0,
                         "player_games": 0,
+                        "player_games_rank": 0,
+                        "family_scores": {},
+                        "family_score": 0,
                         "family_games": 0,
-                    },
+                    }
+
+                if not realm.SCORE_LIST["players"][self.family_name][
+                    "family_scores"
+                ].get(self.code_sha1):
+
+                    realm.SCORE_LIST["players"][self.family_name]["family_scores"] = {
+                        self.code_sha1: {
+                            "last_game": time.time(),
+                            "family_score": 0,
+                            "family_games": 0,
+                        }
+                    }
+
+                realm.SCORE_LIST["players"][self.family_name]["family_scores"][
+                    self.code_sha1
+                ]["family_score"] += self.score
+
+                realm.SCORE_LIST["players"][self.family_name]["family_scores"][
+                    self.code_sha1
+                ]["family_games"] += 1
+
+                realm.SCORE_LIST["players"][self.family_name]["family_scores"][
+                    self.code_sha1
+                ]["last_game"] = time.time()
+
+                realm.SCORE_LIST["players"][self.family_name]["family_games"] += 1
+                realm.SCORE_LIST["players"][self.family_name]["family_score"] = max(
+                    realm.SCORE_LIST["players"][self.family_name]["family_score"],
+                    self.score,
                 )
-
-                score_dict["family_score"] += self.score
-
-                score_dict["family_games"] += 1
-
-                realm.SCORE_LIST["players"][self.family_name] = score_dict
 
         for score_type in [
             "player_score",

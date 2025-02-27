@@ -16,6 +16,8 @@ binary_operators = {
     ast.Pow: op.pow,
     ast.BitXor: op.xor,
     ast.USub: op.neg,
+    ast.Mod: op.mod,
+    ast.FloorDiv: op.floordiv,
 }
 
 unary_operators = {
@@ -288,7 +290,15 @@ def eval_math(expr):
 
 def evaluate_code(code_in, user_variables={}, parent_object=None):
 
-    tree = ast.parse(code_in)
+    error = ""
+
+    try:
+        tree = ast.parse(code_in)
+    except Exception as e:
+        error = "Error: " + str(e)
+        intent = None
+        user_variables_out = {}
+        return intent, user_variables_out, error
 
     if parent_object:
 
@@ -317,7 +327,7 @@ def evaluate_code(code_in, user_variables={}, parent_object=None):
         user_variables=user_variables_in,
         code_in=code_in,
     )
-    error = ""
+
     try:
         visitor.visit(tree)
     except Exception as e:
