@@ -38,7 +38,9 @@ class Angel(BaseObject):
                 "FoxEgg": 0,
                 "BadgerEgg": 0,
                 "Spore": 0,
+                "Spore2": 0,
                 "Mushroom": 0,
+                "Mushroom2": 0,
                 "CarnivorousFlowerSeed": 0,
                 "CarnivorousFlower": 0,
             }

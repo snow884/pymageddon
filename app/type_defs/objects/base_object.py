@@ -202,10 +202,8 @@ class BaseObject:
     def update_score(self):
 
         if self.is_player:
-
-            score_dict = realm.SCORE_LIST["players"].get(
-                self.player_name,
-                {
+            if not realm.SCORE_LIST["players"].get(self.player_name):
+                realm.SCORE_LIST["players"][self.player_name] = {
                     "last_game": time.time(),
                     "player_score": 0,
                     "player_score_rank": 0,
@@ -215,22 +213,22 @@ class BaseObject:
                     "bots_created": 0,
                     "family_score": 0,
                     "family_games": 0,
-                },
-            )
+                }
 
-            if score_dict["player_score"] < self.score or (not self.score):
+            if realm.SCORE_LIST["players"][self.player_name][
+                "player_score"
+            ] < self.score or (not self.score):
 
-                score_dict["player_score"] = self.score
+                realm.SCORE_LIST["players"][self.player_name][
+                    "player_score"
+                ] = self.score
 
-            score_dict["player_games"] += 1
-            score_dict["last_game"] = time.time()
-
-            realm.SCORE_LIST["players"][self.player_name] = score_dict
+            realm.SCORE_LIST["players"][self.player_name]["player_games"] += 1
+            realm.SCORE_LIST["players"][self.player_name]["last_game"] = time.time()
 
         else:
             if self.family_name:
                 if not realm.SCORE_LIST["players"].get(self.family_name):
-
                     realm.SCORE_LIST["players"][self.family_name] = {
                         "last_game": time.time(),
                         "player_score": 0,
@@ -238,6 +236,7 @@ class BaseObject:
                         "player_games": 0,
                         "player_games_rank": 0,
                         "family_scores": {},
+                        "bots_created": 0,
                         "family_score": 0,
                         "family_games": 0,
                     }
@@ -246,12 +245,12 @@ class BaseObject:
                     "family_scores"
                 ].get(self.code_sha1):
 
-                    realm.SCORE_LIST["players"][self.family_name]["family_scores"] = {
-                        self.code_sha1: {
-                            "last_game": time.time(),
-                            "family_score": 0,
-                            "family_games": 0,
-                        }
+                    realm.SCORE_LIST["players"][self.family_name]["family_scores"][
+                        self.code_sha1
+                    ] = {
+                        "last_game": time.time(),
+                        "family_score": 0,
+                        "family_games": 0,
                     }
 
                 realm.SCORE_LIST["players"][self.family_name]["family_scores"][
@@ -265,6 +264,10 @@ class BaseObject:
                 realm.SCORE_LIST["players"][self.family_name]["family_scores"][
                     self.code_sha1
                 ]["last_game"] = time.time()
+
+                realm.SCORE_LIST["players"][self.family_name]["family_scores"][
+                    self.code_sha1
+                ]["code"] = self.code
 
                 realm.SCORE_LIST["players"][self.family_name]["family_games"] += 1
                 realm.SCORE_LIST["players"][self.family_name]["family_score"] = max(

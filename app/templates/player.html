@@ -1,0 +1,250 @@
+{% extends "_menu_bar.html" %}
+
+{% block content %}
+<article>
+    <br>
+    
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('players') }}">Player list</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{player_summary.player_name}}</li>
+      </ol>
+    </nav>
+    <p>Description of the player {{player_summary.player_name}}</p>
+    <div class="row  row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+          <div class="card">
+            <img id='{{player_summary.player_name}}}_image' src="{{ url_for('player_image', player_name=player_summary.player_name) }}" alt="{{player_summary.player_name}}" width="100%" style="image-rendering: pixelated;">
+            <div class="card-body">
+              <h5 class="card-title">{{player_summary.player_name}}</h5>
+              <p class="card-text">This page lists the scores achieved by player {{player_summary.player_name}} and also lists the bots created by this player as well as the code that the bots use.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            
+            <div class="card-body">
+
+                <table class="table table-sm table-borderless">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Status:</th>
+                            <td>
+                                {% if player_summary['player_scores']['last_game_ago'] and player_summary['player_scores']['last_game_ago'] < 60 %}
+                                    🟢 Playing now 
+                                {% elif player_summary['player_scores']['last_game_ago'] and player_summary['player_scores']['last_game_ago'] < 3600 %}
+                                    🟡 Played recently
+                                {% else %}
+                                    ⚫️ Offline
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Max score:</th>
+                            <td>
+                                {% if player_summary['player_scores']['player_score'] %}
+                                    {{ player_summary['player_scores']['player_score'] }} ( Ranked {{ player_summary['player_scores']['player_score_rank'] }})
+                                    {% if player_summary['player_scores']['player_score'] == 1%} 🥇 {% endif %}
+                                    {% if player_summary['player_scores']['player_score'] == 2%} 🥈 {% endif %}
+                                    {% if player_summary['player_scores']['player_score'] == 3%} 🥉 {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                                </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Games played:</th>
+                            <td>
+                                {% if player_summary['player_scores']['player_games'] %}
+                                    {{ player_summary['player_scores']['player_games'] }} ( Ranked {{ player_summary['player_scores']['player_games_rank'] }})
+                                    {% if player_summary['player_scores']['player_games'] == 1%} 🥇 {% endif %}
+                                    {% if player_summary['player_scores']['player_games'] == 2%} 🥈 {% endif %}
+                                    {% if player_summary['player_scores']['player_games'] == 3%} 🥉 {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Max bot score:</th>
+                            <td>
+                                {% if player_summary['player_scores']['family_score'] %}
+                                    {{ player_summary['player_scores']['family_score'] }} ( Ranked {{ player_summary['player_scores']['family_score_rank'] }})
+                                    {% if player_summary['player_scores']['family_score'] == 1%} 🥇 {% endif %}
+                                    {% if player_summary['player_scores']['family_score'] == 2%} 🥈 {% endif %}
+                                    {% if player_summary['player_scores']['family_score'] == 3%} 🥉 {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Bots created total:</th>
+                            <td>
+                                {% if player_summary['player_scores']['family_games'] %}
+                                    {{ player_summary['player_scores']['family_games'] }} ( Ranked {{ player_summary['player_scores']['family_games_rank'] }}) 
+                                    {% if player_summary['player_scores']['family_games_rank'] == 1%} 🥇 {% endif %}
+                                    {% if player_summary['player_scores']['family_games_rank'] == 2%} 🥈 {% endif %}
+                                    {% if player_summary['player_scores']['family_games_rank'] == 3%} 🥉 {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      
+      <hr class="featurette-divider">
+
+      <div class="bd-example m-0 border-0">
+    
+        <ul class="list-group">
+          
+          <li class="list-group-item disabled" aria-disabled="true">List of bots created by the player</li>
+          {% for obj_type,families_object in player_summary['families'].items() %}
+
+            {% for family_sha1,family_object in families_object.items() %}
+            <li class="list-group-item">
+  
+            {{ obj_type }} ( {{ family_sha1 }} ) <a href="#{{ family_sha1 }}" name="{{ family_sha1 }}">#</a>
+
+              <br>
+              <br>
+              {{family_object.code | safe}}
+              <br>
+              
+              {% for object_index in family_object.object_index_list %}
+
+              <a id="button_{{obj_type}}_{{object_index}}" href=""=>{{obj_type}} bot {{object_index}}</a> 
+
+              {% endfor %}
+
+            </li>
+            {% endfor %}
+          
+          {% endfor %}
+        </ul>
+        
+      </div>
+
+</article>
+
+<hr class="featurette-divider">
+
+
+<script>
+    console.log("JS executing...")
+  
+    // Add an event listener for the submit event
+    function start_new_game(spectator_follow_index, spectator_follow_type) {
+        console.log("new game pressed...")
+  
+        const token = sessionStorage.getItem('token') ;
+  
+        fetch('/new_game', {
+            method: 'POST', // or 'POST', 'PUT', 'DELETE', etc.
+            headers: {
+                'Authorization': 'Bearer ' + token, 
+                'Content-Type': 'application/json', // Another example header
+            },
+            body: JSON.stringify({
+              "spectator_follow_index":spectator_follow_index,
+              "spectator_follow_type":"object"
+            })
+          })
+          .then(response => {
+            if (response.ok) {
+                // Request successful, handle the response
+                return response.json(); 
+              } else if (response.status === 401) {
+                // Unauthorized, redirect to login page
+                window.location.replace("/login_page");
+                throw new Error('Redirect');
+                //return response.json(); 
+              } else {
+                // Other error, handle accordingly
+                throw new Error('Network response was not ok.');
+              }
+        })
+            .then(data => {
+  
+                if (data["detail"]) {
+                    console.log(data["detail"]);
+                } 
+  
+                if (data["status"]=="success") {
+                    console.log("success");
+                    
+                    poll_map_until_success();
+                }
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('Error:', error);
+                console.log(error);
+            });
+        
+        event.preventDefault();
+  
+    };
+  
+  
+    async function poll_map_until_success(interval = 100, timeout = 30000) {
+        let startTime = Date.now();
+      
+        while (Date.now() - startTime < timeout) {
+          try {
+            const token = sessionStorage.getItem('token') ;
+            
+            const response = await fetch('/get_map', {
+                method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
+                headers: {
+                    'Authorization': 'Bearer ' + token, 
+                    'Content-Type': 'application/json', // Another example header
+                }
+              })
+            const data = await response.json();
+      
+            if (data['global_params']['status'] === "running") {
+                window.location.replace("/play");
+            }
+          } catch (error) {
+            console.error("API request failed:", error);
+          }
+      
+          await new Promise(resolve => setTimeout(resolve, interval));
+        }
+      
+        throw new Error("Polling timeout exceeded");
+      }
+  
+      {% for obj_type,families_object in player_summary['families'].items() %}
+
+      {% for family_sha1,family_object in families_object.items() %}
+        
+        {% for object_index in family_object.object_index_list %}
+
+            const button_{{obj_type}}_{{object_index}} = document.getElementById('button_{{obj_type}}_{{object_index}}');
+    
+            button_{{obj_type}}_{{object_index}}.addEventListener('click', function() {
+            start_new_game({{object_index}}, "{{obj_type}}");
+            });
+
+        {% endfor %}
+
+      {% endfor %}
+    
+    {% endfor %}
+
+  </script>
+
+{% endblock %}

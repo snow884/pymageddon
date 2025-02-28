@@ -430,7 +430,7 @@ async def player(request: Request, player_name: str):
             )
 
             for code_sha1, family_obj in score_summary["families"][type_name].items():
-                print(family_obj["code"])
+
                 family_obj["code"] = highlight(
                     family_obj["code"],
                     PythonLexer(),
