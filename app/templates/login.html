@@ -78,7 +78,15 @@
                         console.log(data)
                         waring_message.innerText = "success";
                         sessionStorage.setItem('token', data["access_token"]);
-                        window.location.replace("/play");
+                        
+                        const url_params = new URLSearchParams(window.location.search);
+                        const next_page = url_params.get('next');
+                        console.log('redirecting to '+ next_page);
+                        if (next_page){
+                            window.location.replace(next_page);
+                        } else {
+                            window.location.replace("/play");
+                        }
                     } 
                 })
                 .catch(error => {
@@ -116,7 +124,17 @@
                         console.log(data)
                         waring_message.innerText = "success";
                         sessionStorage.setItem('token', data["access_token"]);
-                        window.location.replace("/play");
+                        
+                        const url_params = new URLSearchParams(window.location.search);
+                        const next_page = url_params.get('next');
+                        console.log('redirecting to '+ next_page);
+                        if (next_page){
+                            window.location.replace(next_page);
+                        } else {
+                            window.location.replace("/play");
+                        }
+
+                        
                     } 
                 })
                 .catch(error => {

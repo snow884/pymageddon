@@ -25,6 +25,57 @@
 <br>
 
 <script>
+
+      function check_token() {
+        console.log("Checking token...")
+
+        let token = sessionStorage.getItem('token') ;
+
+        if (token) {
+            console.log("Token found: " + token)
+            const status_success =  fetch('/ping', {
+                method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
+                headers: {
+                  'Authorization': 'Bearer ' + token, // Example header
+                  'Content-Type': 'application/json', // Another example header
+                },
+              })
+                .then(response => {
+                  // Handle the response
+                  if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                  }
+                  return response.json(); // Assuming JSON response
+                })
+                .then(data => {
+                  // Process the data
+                  console.log(data);
+                  if (data['status'] == 'success'){
+                    return true;
+                  } else {
+                    return false;
+                  }
+                })
+                .catch(error => {
+                  // Handle errors
+                  console.error('Error:', error);
+                });
+            return status_success;
+        } else {
+            console.log("Token not found")
+            return false;
+        }
+    }
+
+    if (check_token()) {
+        console.log("Token found and verified");
+    } else {
+        console.log("Token not found, redirecing...");
+        window.location.replace("/login_page");
+    }
+
+
+
     console.log("JS executing...")
     // Get a reference to the form element
     const create_bot_button = document.getElementById('create_bot_button');
@@ -58,7 +109,7 @@
                 return response.json(); 
               } else if (response.status === 401) {
                 // Unauthorized, redirect to login page
-                window.location.replace("/login_page");
+                window.location.replace("/login_page?next=%2F{{ url_for('create_bot_page') }}");
                 throw new Error('Redirect');
                 //return response.json(); 
               } else {
