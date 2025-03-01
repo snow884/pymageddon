@@ -62,7 +62,7 @@
           {% for object_index, object in type_summary.objects.items() %}
           <li class="list-group-item">
             <h6><a id="button_{{type_summary.type_name}}_{{object_index}}" href=""=>{{type_summary.type_name}} bot {{object_index}}</a></h6>
-              HP: {{object.hp}} / 100 | SCORE: {{object.score}}  | FAMILY: {{object.family_name}} 
+              HP: {{object.hp}} / 100 | SCORE: {{object.score}} | FAMILY: {{object.family_name}} <span class="glyphicon glyphicon-search" aria-hidden="true"></span> | CODE: {{object.code_sha1}} 
           </li>
           {% endfor %}
         </ul>

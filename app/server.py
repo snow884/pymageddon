@@ -1,5 +1,4 @@
 import json
-import random
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -304,6 +303,12 @@ async def end_game(current_user: Annotated[User, Depends(get_current_active_user
     )
 
     return {"status": "success"}
+
+
+@app.get("/me")
+async def end_game(current_user: Annotated[User, Depends(get_current_active_user)]):
+
+    return {"user_name": current_user.username}
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -626,25 +631,32 @@ def robots(request: Request):
 
 @app.get("/player_image/{player_name}")
 def player_image(request: Request, player_name: str):
+    def pick_random_member(class_in, player_name):
+        ascii_values_comprehension = [ord(char) for char in player_name]
+        rand_seed = sum(ascii_values_comprehension)
 
-    random.seed(player_name)
+        list_len = len(class_in.__dict__["_member_names_"])
 
-    print(pa.ClothingType)
+        reminder = rand_seed % list_len
+
+        return class_in[class_in.__dict__["_member_names_"][reminder]]
+
+    print(pa.ClothingType.__dict__["_member_names_"])
 
     svg_data = pa.Avatar(
-        style=pa.AvatarStyle.CIRCLE,
-        background_color=pa.BackgroundColor.pick_random(),
-        top=pa.HairType.pick_random(),
-        eyebrows=pa.EyebrowType.pick_random(),
-        eyes=pa.EyeType.pick_random(),
-        nose=pa.NoseType.pick_random(),
+        style=pick_random_member(pa.AvatarStyle, player_name),
+        background_color=pick_random_member(pa.BackgroundColor, player_name),
+        top=pick_random_member(pa.HairType, player_name),
+        eyebrows=pick_random_member(pa.EyebrowType, player_name),
+        eyes=pick_random_member(pa.EyeType, player_name),
+        nose=pick_random_member(pa.NoseType, player_name),
         # mouth=pa.MouthType.pick_random(),
         # facial_hair=pa.FacialHairType.pick_random(),
         # Or you can use the colors provided by the library
-        hair_color=pa.HairColor.pick_random(),
-        accessory=pa.AccessoryType.pick_random(),
+        hair_color=pick_random_member(pa.HairColor, player_name),
+        accessory=pick_random_member(pa.AccessoryType, player_name),
         clothing=pa.ClothingType.GRAPHIC_SHIRT,
-        clothing_color=pa.ClothingColor.pick_random(),
+        clothing_color=pick_random_member(pa.ClothingColor, player_name),
         shirt_graphic=pa.ClothingGraphic.CUSTOM_TEXT,
         shirt_text=player_name,
     ).render()
