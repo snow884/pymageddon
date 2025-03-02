@@ -35,7 +35,7 @@ class Bee(BaseObject):
             }
         ),
         HpDepletion(),
-        LayObject(object_to_lay="BeeEgg", time_to_lay=152),
+        LayObject(object_to_lay="BeeEgg", time_to_lay=302),
     ]
 
     rgb_map = (186, 142, 3)
