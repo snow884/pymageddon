@@ -197,12 +197,15 @@ def simple_defend(parent_object):
     chasing_dir = parent_object.variables.get("chasing_dir", False)
     run_away_dir = parent_object.variables.get("run_away_dir", 0)
 
-    mode = parent_object.variables.get("mode", "chase")
+    mode = parent_object.variables.get("mode", "follow")
 
     last_x = parent_object.variables.get("last_x", 0)
     last_y = parent_object.variables.get("last_y", 0)
 
     stuck_num = parent_object.variables.get("stuck_num", 0)
+
+    turned_by_object_last_x = parent_object.variables.get("turned_by_object_last_x", -1)
+    turned_by_object_last_y = parent_object.variables.get("turned_by_object_last_y", -1)
 
     intent = None
 
@@ -218,31 +221,37 @@ def simple_defend(parent_object):
     if not turned_by_object:
         mode = "random"
 
-    leading_dist = 2
+    max_dist = 3
+
+    if mode == "follow":
+
+        if (
+            abs(turned_by_object.x - parent_object.x)
+            + abs(turned_by_object.y - parent_object.y)
+            > max_dist
+        ):
+            mode = "chase"
+        else:
+            if turned_by_object.rotation != parent_object.rotation:
+
+                if turned_by_object.rotation == Rotations.DOWN:
+                    intent = Actions.ROTATE_DOWN
+
+                elif turned_by_object.rotation == Rotations.UP:
+                    intent = Actions.ROTATE_UP
+
+                elif turned_by_object.rotation == Rotations.LEFT:
+                    intent = Actions.ROTATE_LEFT
+
+                elif turned_by_object.rotation == Rotations.RIGHT:
+                    intent = Actions.ROTATE_RIGHT
+            else:
+                if (turned_by_object_last_x != turned_by_object.x) or (
+                    turned_by_object_last_y != turned_by_object.y
+                ):
+                    intent = Actions.MOVE_FORWARD
 
     if mode == "chase":
-        target_x = turned_by_object.x
-        target_y = turned_by_object.y
-
-        if turned_by_object.rotation == Rotations.UP:
-
-            target_x = turned_by_object.x
-            target_y = turned_by_object.y - leading_dist
-
-        if turned_by_object.rotation == Rotations.DOWN:
-
-            target_x = turned_by_object.x
-            target_y = turned_by_object.y + leading_dist
-
-        if turned_by_object.rotation == Rotations.LEFT:
-
-            target_x = turned_by_object.x - leading_dist
-            target_y = turned_by_object.y
-
-        if turned_by_object.rotation == Rotations.RIGHT:
-
-            target_x = turned_by_object.x + leading_dist
-            target_y = turned_by_object.y
 
         if chasing_num == 0:
 
@@ -253,53 +262,50 @@ def simple_defend(parent_object):
         if (last_x == parent_object.x) and (last_y == parent_object.y):
             stuck_num = stuck_num + 1
 
-        if stuck_num > 5:
+        if (chasing_num > 50) or (stuck_num > 5):
             stuck_num = 0
+            chasing_num = 0
+            run_away_num = 0
             mode = "random"
 
         if chasing_dir:
 
-            if target_x > parent_object.x:
+            if turned_by_object.x > parent_object.x:
                 if parent_object.rotation == Rotations.RIGHT:
                     intent = Actions.MOVE_FORWARD
                 else:
                     intent = Actions.ROTATE_RIGHT
 
-            elif target_x < parent_object.x:
+            elif turned_by_object.x < parent_object.x:
                 if parent_object.rotation == Rotations.LEFT:
                     intent = Actions.MOVE_FORWARD
                 else:
                     intent = Actions.ROTATE_LEFT
 
-            elif target_x == parent_object.x:
+            elif turned_by_object.x == parent_object.x:
                 chasing_dir = not (chasing_dir)
 
-        if not chasing_dir:
+            if not chasing_dir:
 
-            if target_y > parent_object.y:
-                if parent_object.rotation == Rotations.DOWN:
-                    intent = Actions.MOVE_FORWARD
-                else:
-                    intent = Actions.ROTATE_DOWN
+                if turned_by_object.y > parent_object.y:
+                    if parent_object.rotation == Rotations.DOWN:
+                        intent = Actions.MOVE_FORWARD
+                    else:
+                        intent = Actions.ROTATE_DOWN
 
-            elif target_y < parent_object.y:
-                if parent_object.rotation == Rotations.UP:
-                    intent = Actions.MOVE_FORWARD
-                else:
-                    intent = Actions.ROTATE_UP
+                elif turned_by_object.y < parent_object.y:
+                    if parent_object.rotation == Rotations.UP:
+                        intent = Actions.MOVE_FORWARD
+                    else:
+                        intent = Actions.ROTATE_UP
 
-            elif target_y == parent_object.y:
-                chasing_dir = not (chasing_dir)
+                elif turned_by_object.y == parent_object.y:
+                    chasing_dir = not (chasing_dir)
 
     if mode == "random":
 
         if (last_x == parent_object.x) and (last_y == parent_object.y):
             stuck_num = stuck_num + 1
-
-        if random_num > 5:
-            random_num = 0
-            stuck_num = 0
-            mode = "chase"
 
         random_num = random_num + 1
 
@@ -312,6 +318,11 @@ def simple_defend(parent_object):
             ][(stuck_num // 2) % 4]
         else:
             intent = Actions.MOVE_FORWARD
+
+        if random_num > 5:
+            random_num = 0
+            stuck_num = 0
+            mode = "follow"
 
     if turned_by_object:
         next_x = parent_object.x
@@ -343,6 +354,14 @@ def simple_defend(parent_object):
 
     last_x = parent_object.x
     last_y = parent_object.y
+
+    if turned_by_object:
+
+        turned_by_object_last_x = turned_by_object.x
+        turned_by_object_last_y = turned_by_object.y
+
+        parent_object.variables["turned_by_object_last_x"] = turned_by_object_last_x
+        parent_object.variables["turned_by_object_last_y"] = turned_by_object_last_y
 
     parent_object.variables["last_x"] = last_x
     parent_object.variables["last_y"] = last_y
