@@ -1,7 +1,7 @@
 import random
 
 from common_utils.common_enums import Rotations
-from common_utils.think_utils import simple_chase
+from common_utils.think_utils import simple_defend
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
 from type_defs.objects.effects.hp_depletion import HpDepletion
@@ -11,17 +11,23 @@ from type_defs.particles.death_particle import DeathParticle
 from type_defs.particles.track_particle import TrackParticle
 
 
-class Fox(BaseObject):
+class Bee(BaseObject):
 
-    type_name: str = "Fox"
+    type_name: str = "Bee"
 
-    image = "../../static/objects/fox.png"
+    image = "../../static/objects/bee.png"
     is_alive = True
 
     effects = [
         EatObjectInFront(
             types_eaten_to_hp_conv={
+                "Fox": 50,
                 "Cow": 50,
+                "Seed": 1,
+                "Seed2": 1,
+                "Seed3": 1,
+                "Spore": 1,
+                "Spore2": 1,
                 "Chicken": 50,
                 "Badger": 50,
                 "CowEgg": 25,
@@ -29,10 +35,10 @@ class Fox(BaseObject):
             }
         ),
         HpDepletion(),
-        LayObject(object_to_lay="FoxEgg", time_to_lay=202),
+        LayObject(object_to_lay="BeeEgg", time_to_lay=152),
     ]
 
-    rgb_map = (255, 153, 000)
+    rgb_map = (186, 142, 3)
 
     def __init__(
         self,
@@ -43,6 +49,7 @@ class Fox(BaseObject):
         code: str = None,
         code_store: str = None,
         family_name: str = None,
+        variables={},
     ):
         super().__init__(
             x_new=x_new,
@@ -52,25 +59,14 @@ class Fox(BaseObject):
             code=code,
             code_store=code_store,
             family_name=family_name,
+            variables=variables,
         )
         self.rotation = random.choice(
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
         )
 
     def think(self):
-
-        return simple_chase(
-            self,
-            chase_after=[
-                "Chicken",
-                "Cow",
-                "Badger",
-                "ChickenEgg",
-                "CowEgg",
-                "BadgerEgg",
-            ],
-            chase_from=["CarnivorousFlower"],
-        )
+        return simple_defend(self)
 
     def move_to_position(self, x_new: int, y_new: int):
         x_old = self.x
@@ -90,6 +86,7 @@ class Fox(BaseObject):
     def get_description_short(self) -> str:
 
         return (
-            "An animal representing a fox. A fox moves, eats chickens, cows and eggs."
-            " Foxes can also lay eggs."
+            "An animal representing a bee. A bee hatches from a honeycomb when other"
+            " animal touches the honeycomb after that it follows the animal that caused"
+            " it to hatch."
         )

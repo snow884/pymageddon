@@ -61,11 +61,12 @@ class BaseObject:
         code=None,
         code_store=None,
         family_name=None,
+        variables={},
     ):
 
         super().__init__()
 
-        self.variables = {}
+        self.variables = variables
 
         self.index = realm.OBJ_COUNTER
         realm.OBJ_COUNTER = realm.OBJ_COUNTER + 1

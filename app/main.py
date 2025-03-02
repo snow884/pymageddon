@@ -24,7 +24,10 @@ from common_utils.image_utils import (
 from singleton import realm
 from type_defs.objects.angel import Angel
 from type_defs.objects.badger import Badger
+from type_defs.objects.badger_egg import BadgerEgg
 from type_defs.objects.base_object import BaseObject
+from type_defs.objects.bee import Bee
+from type_defs.objects.bee_egg import BeeEgg
 from type_defs.objects.chicken import Chicken
 from type_defs.objects.chicken_egg import ChickenEgg
 from type_defs.objects.cow import Cow
@@ -77,6 +80,9 @@ def populate_map_full(sz=100):
                         Mushroom,
                         Mushroom2,
                         Badger,
+                        BadgerEgg,
+                        Bee,
+                        BeeEgg,
                         # Seed,
                         # CarnivorousFlower,
                     ]

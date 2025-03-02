@@ -2,6 +2,7 @@ import random
 
 from common_utils.common_enums import Actions, Rotations
 from common_utils.grid_utils import find_nearest
+from singleton import realm
 
 
 def simple_chase(parent_object, chase_after=[], chase_from=[]):
@@ -166,6 +167,179 @@ def simple_chase(parent_object, chase_after=[], chase_from=[]):
             intent = random.choice(list(Actions))
         else:
             intent = Actions.MOVE_FORWARD
+
+    last_x = parent_object.x
+    last_y = parent_object.y
+
+    parent_object.variables["last_x"] = last_x
+    parent_object.variables["last_y"] = last_y
+
+    parent_object.variables["stuck_num"] = stuck_num
+
+    parent_object.variables["chasing_num"] = chasing_num
+    parent_object.variables["random_num"] = random_num
+    parent_object.variables["run_away_num"] = run_away_num
+
+    parent_object.variables["chasing_dir"] = chasing_dir
+    parent_object.variables["run_away_dir"] = run_away_dir
+
+    parent_object.variables["mode"] = mode
+
+    return intent
+
+
+def simple_defend(parent_object):
+
+    chasing_num = parent_object.variables.get("chasing_num", 0)
+    random_num = parent_object.variables.get("random_num", 0)
+    run_away_num = parent_object.variables.get("run_away_num", 0)
+
+    chasing_dir = parent_object.variables.get("chasing_dir", False)
+    run_away_dir = parent_object.variables.get("run_away_dir", 0)
+
+    mode = parent_object.variables.get("mode", "chase")
+
+    last_x = parent_object.variables.get("last_x", 0)
+    last_y = parent_object.variables.get("last_y", 0)
+
+    stuck_num = parent_object.variables.get("stuck_num", 0)
+
+    intent = None
+
+    turned_by_object_index = parent_object.variables.get("turned_by_object_index")
+
+    turned_by_object = None
+
+    if not turned_by_object_index:
+        mode = "random"
+    else:
+        turned_by_object = realm.OBJECT_LIST.get(turned_by_object_index)
+
+    if not turned_by_object:
+        mode = "random"
+
+    leading_dist = 2
+
+    if mode == "chase":
+        target_x = turned_by_object.x
+        target_y = turned_by_object.y
+
+        if turned_by_object.rotation == Rotations.UP:
+
+            target_x = turned_by_object.x
+            target_y = turned_by_object.y - leading_dist
+
+        if turned_by_object.rotation == Rotations.DOWN:
+
+            target_x = turned_by_object.x
+            target_y = turned_by_object.y + leading_dist
+
+        if turned_by_object.rotation == Rotations.LEFT:
+
+            target_x = turned_by_object.x - leading_dist
+            target_y = turned_by_object.y
+
+        if turned_by_object.rotation == Rotations.RIGHT:
+
+            target_x = turned_by_object.x + leading_dist
+            target_y = turned_by_object.y
+
+        if chasing_num == 0:
+
+            chasing_dir = random.randint(0, 1) > 0
+
+        chasing_num = chasing_num + 1
+
+        if (last_x == parent_object.x) and (last_y == parent_object.y):
+            stuck_num = stuck_num + 1
+
+        if stuck_num > 5:
+            stuck_num = 0
+            mode = "random"
+
+        if chasing_dir:
+
+            if target_x > parent_object.x:
+                if parent_object.rotation == Rotations.RIGHT:
+                    intent = Actions.MOVE_FORWARD
+                else:
+                    intent = Actions.ROTATE_RIGHT
+
+            elif target_x < parent_object.x:
+                if parent_object.rotation == Rotations.LEFT:
+                    intent = Actions.MOVE_FORWARD
+                else:
+                    intent = Actions.ROTATE_LEFT
+
+            elif target_x == parent_object.x:
+                chasing_dir = not (chasing_dir)
+
+        if not chasing_dir:
+
+            if target_y > parent_object.y:
+                if parent_object.rotation == Rotations.DOWN:
+                    intent = Actions.MOVE_FORWARD
+                else:
+                    intent = Actions.ROTATE_DOWN
+
+            elif target_y < parent_object.y:
+                if parent_object.rotation == Rotations.UP:
+                    intent = Actions.MOVE_FORWARD
+                else:
+                    intent = Actions.ROTATE_UP
+
+            elif target_y == parent_object.y:
+                chasing_dir = not (chasing_dir)
+
+    if mode == "random":
+
+        if (last_x == parent_object.x) and (last_y == parent_object.y):
+            stuck_num = stuck_num + 1
+
+        if random_num > 5:
+            random_num = 0
+            stuck_num = 0
+            mode = "chase"
+
+        random_num = random_num + 1
+
+        if (stuck_num % 2) == 0:
+            intent = [
+                Actions.ROTATE_UP,
+                Actions.ROTATE_RIGHT,
+                Actions.ROTATE_DOWN,
+                Actions.ROTATE_LEFT,
+            ][(stuck_num // 2) % 4]
+        else:
+            intent = Actions.MOVE_FORWARD
+
+    if turned_by_object:
+        next_x = parent_object.x
+        next_y = parent_object.y
+
+        if parent_object.rotation == Rotations.UP:
+
+            next_x = parent_object.x
+            next_y = parent_object.y - 1
+
+        if parent_object.rotation == Rotations.DOWN:
+
+            next_x = parent_object.x
+            next_y = parent_object.y + 1
+
+        if parent_object.rotation == Rotations.LEFT:
+
+            next_x = parent_object.x - 1
+            next_y = parent_object.y
+
+        if parent_object.rotation == Rotations.RIGHT:
+
+            next_x = parent_object.x + 1
+            next_y = parent_object.y
+
+        if next_x == turned_by_object.x and next_y == turned_by_object.y:
+            intent = None
+            mode = "random"
 
     last_x = parent_object.x
     last_y = parent_object.y

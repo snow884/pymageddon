@@ -17,13 +17,14 @@ class Angel(BaseObject):
     effects = [
         LayObject(object_to_lay="CowEgg", time_to_lay=51),
         LayObject(object_to_lay="ChickenEgg", time_to_lay=52),
-        LayObject(object_to_lay="FoxEgg", time_to_lay=53),
+        LayObject(object_to_lay="FoxEgg", time_to_lay=253),
         LayObject(object_to_lay="Seed", time_to_lay=54),
         LayObject(object_to_lay="Seed2", time_to_lay=55),
         LayObject(object_to_lay="Seed3", time_to_lay=56),
         LayObject(object_to_lay="Spore", time_to_lay=57),
         LayObject(object_to_lay="Spore2", time_to_lay=58),
         LayObject(object_to_lay="BadgerEgg", time_to_lay=59),
+        LayObject(object_to_lay="BeeEgg", time_to_lay=60),
         # LayObject(object_to_lay="CarnivorousFlowerSeed", time_to_lay=59),
         EatObjectInFront(
             types_eaten_to_hp_conv={
@@ -43,6 +44,7 @@ class Angel(BaseObject):
                 "Mushroom2": 0,
                 "CarnivorousFlowerSeed": 0,
                 "CarnivorousFlower": 0,
+                "BeeEgg": 0,
             }
         ),
     ]

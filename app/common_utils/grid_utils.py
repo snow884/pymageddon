@@ -138,14 +138,14 @@ def get_nearest_free_location(x, y):
 
     while rad < realm.MAP.size_x:
 
-        for i in [max(0, x - rad), min(x + rad, realm.MAP.size_x)]:
+        for i in [max(0, x - rad), min(x + rad, realm.MAP.size_x - 1)]:
             for j in range(max(0, y - rad), min(y + rad, realm.MAP.size_y)):
                 tile = realm.TILES[(i, j)]
                 if not tile.occupied_by:
                     return i, j
 
         for i in range(max(0, x - rad), min(x + rad, realm.MAP.size_x)):
-            for j in [max(0, y - rad), min(y + rad, realm.MAP.size_y)]:
+            for j in [max(0, y - rad), min(y + rad, realm.MAP.size_y - 1)]:
                 tile = realm.TILES[(i, j)]
                 if not tile.occupied_by:
                     return i, j

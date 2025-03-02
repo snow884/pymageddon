@@ -5,7 +5,7 @@ from type_defs.particles.hatching_particle import HetchingParticle
 
 
 class TurnIntoNearObject(BaseEffect):
-    effect_name = "Will turn into a different object when nearby other objects"
+    effect_name = "Will turn into a different object when nearby other objects/animals"
 
     def __init__(
         self,
@@ -48,4 +48,5 @@ class TurnIntoNearObject(BaseEffect):
                 y_new=y_new,
                 code=parent_object.code_store,
                 family_name=parent_object.family_name,
+                variables={"turned_by_object_index": obj_near_found.index},
             )

@@ -18,9 +18,15 @@ class Mushroom2(BaseObject):
         code: str = None,
         code_store: str = None,
         family_name: str = None,
+        variables={},
     ):
         super().__init__(
-            x_new, y_new, code=code, code_store=code_store, family_name=family_name
+            x_new,
+            y_new,
+            code=code,
+            code_store=code_store,
+            family_name=family_name,
+            variables=variables,
         )
         self.rotation = random.choice(
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]

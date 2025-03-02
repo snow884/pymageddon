@@ -33,6 +33,8 @@ OBJ_TYPE_LIST = [
     "Spore2",
     "Badger",
     "BadgerEgg",
+    "Bee",
+    "BeeEgg",
 ]
 
 
@@ -153,6 +155,15 @@ def obj_fut(str_in):
         if "BadgerEgg" not in sys.modules:
             from type_defs.objects.badger_egg import BadgerEgg
         return BadgerEgg
+
+    elif str_in == "Bee":
+        if "Bee" not in sys.modules:
+            from type_defs.objects.bee import Bee
+        return Bee
+    elif str_in == "BeeEgg":
+        if "BeeEgg" not in sys.modules:
+            from type_defs.objects.bee_egg import BeeEgg
+        return BeeEgg
 
     else:
         raise Exception(f"class name {str_in} not found")
