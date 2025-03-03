@@ -32,7 +32,7 @@ class Mushroom2(BaseObject):
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
         )
 
-    effects = [EmitObject(object_to_emit="Spore2", time_to_emit=80 * 3)]
+    effects = [EmitObject(object_to_emit="Spore2", time_to_emit=80)]
 
     rgb_map = (255, 153, 255)
 
