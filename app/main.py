@@ -6,7 +6,7 @@ import time
 
 import cython
 import redis
-from common_utils.backup_utils import backup_to_s3, restore_from_s3
+from common_utils.backup_utils import backup_to_s3
 from common_utils.common_enums import Actions, EnumEncoder, Rotations
 from common_utils.grid_utils import (
     find_objects,
@@ -716,6 +716,6 @@ def main_loop(steps=None):
 
 
 if __name__ == "__main__":
-    restore_from_s3()
+    # restore_from_s3()
     main_loop()
 # dummy change
