@@ -623,7 +623,7 @@ def worker_backup_redis(q, thread_id):
     while True:
         try:
             item = q.get(
-                timeout=realm.TIME_INTERVAL * 5000 * 2
+                timeout=realm.TIME_INTERVAL * int(360 / realm.TIME_INTERVAL) * 2
             )  # Block until an item is available or timeout
             print(f"Thread {thread_id}: Processing {item}")
 
@@ -690,7 +690,7 @@ def main_loop(steps=None):
             if realm.EPOCH_COUNTER % 30 == 0:
                 q_generate_plots.put(realm.EPOCH_COUNTER)
 
-            if realm.EPOCH_COUNTER % 50 == 0:
+            if realm.EPOCH_COUNTER % int(360 / realm.TIME_INTERVAL) == 0:
                 q_backup_redis.put(realm.EPOCH_COUNTER)
 
         end_time = time.time()
