@@ -26,7 +26,7 @@ class Grass(BaseObject):
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
         )
 
-    effects = [EmitObject(object_to_emit="Seed", time_to_emit=80)]
+    effects = [EmitObject(object_to_emit="Seed", time_to_emit=40)]
 
     rgb_map = (0, 204, 0)
 

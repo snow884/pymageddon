@@ -18,7 +18,6 @@ def backup_to_s3():
 
     # Print the keys
     for key in all_keys:
-        print(key)
         dict_to_dump[key.decode()] = (realm.REDIS_CONNECTION.get(key)).hex()
 
     dict_to_dump_str = json.dumps(dict_to_dump)
@@ -67,4 +66,4 @@ def restore_from_s3():
     dict_from_dump = json.loads(file_content)
 
     for key, val in dict_from_dump.items():
-        realm.REDIS_CONNECTION.set(key, val)
+        realm.REDIS_CONNECTION.set(key, bytes.fromhex(val))

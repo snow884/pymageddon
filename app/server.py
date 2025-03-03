@@ -145,6 +145,8 @@ def get_user(username: str):
 
     user_dict = json.loads(user_dict_str)
 
+    print(user_dict)
+
     return User(**user_dict)
 
 
