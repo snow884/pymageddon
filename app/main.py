@@ -6,6 +6,7 @@ import time
 
 import cython
 import redis
+from common_utils.backup_utils import backup_to_s3, restore_from_s3
 from common_utils.common_enums import Actions, EnumEncoder, Rotations
 from common_utils.grid_utils import (
     find_objects,
@@ -618,6 +619,23 @@ def worker_generate_plots(q, thread_id):
             print(f"Thread {thread_id}: got exception: {e}")
 
 
+def worker_backup_redis(q, thread_id):
+    while True:
+        try:
+            item = q.get(
+                timeout=realm.TIME_INTERVAL * 5000 * 2
+            )  # Block until an item is available or timeout
+            print(f"Thread {thread_id}: Processing {item}")
+
+            backup_to_s3()
+
+            q.task_done()  # Indicate that a formerly enqueued task is complete
+        except queue.Empty as e:
+            print(f"Thread {thread_id}: queue is empty")
+        except Exception as e:
+            print(f"Thread {thread_id}: got exception: {e}")
+
+
 def main_loop(steps=None):
 
     if cython.compiled:
@@ -647,6 +665,13 @@ def main_loop(steps=None):
     thread_generate_plots.start()
     threads.append(thread_generate_plots)
 
+    q_backup_redis = queue.Queue()
+    thread_backup_redis = threading.Thread(
+        target=worker_backup_redis, args=(q_backup_redis, "thread_backup_redis")
+    )
+    thread_backup_redis.start()
+    threads.append(thread_backup_redis)
+
     while True:
 
         start_time = time.time()
@@ -664,6 +689,9 @@ def main_loop(steps=None):
 
             if realm.EPOCH_COUNTER % 30 == 0:
                 q_generate_plots.put(realm.EPOCH_COUNTER)
+
+            if realm.EPOCH_COUNTER % 50 == 0:
+                q_backup_redis.put(realm.EPOCH_COUNTER)
 
         end_time = time.time()
         realm.LAST_REFRESH_TIME = (end_time - start_time) * 10**3
@@ -688,4 +716,5 @@ def main_loop(steps=None):
 
 
 if __name__ == "__main__":
+    restore_from_s3()
     main_loop()
