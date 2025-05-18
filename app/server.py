@@ -34,11 +34,12 @@ origins = [
     "http://localhost:80",  # Replace with your frontend's port if different
     "http://127.0.0.1:80",
     "http://0.0.0.0:80",
+    "http://0.0.0.0:80",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, PUT, etc.)
     allow_headers=["*"],  # Allow all headers
