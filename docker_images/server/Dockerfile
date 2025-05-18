@@ -14,5 +14,5 @@ ENV PYTHONPATH=/app/
 
 WORKDIR "/app"
 
-#ENTRYPOINT [ "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "80"]
-ENTRYPOINT [ "gunicorn", "server:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80"]
+ENTRYPOINT [ "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "80"]
+#ENTRYPOINT [ "gunicorn", "server:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80"]
