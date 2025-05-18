@@ -30,9 +30,9 @@ app = FastAPI()
 r = redis.Redis(host="pymageddon-redis-server", port=6379, db=0)
 
 origins = [
-    "http://localhost:8000",  # Your frontend's origin
-    "http://localhost:8000",  # Replace with your frontend's port if different
-    "http://127.0.0.1:8000",
+    "http://localhost:80",  # Your frontend's origin
+    "http://localhost:80",  # Replace with your frontend's port if different
+    "http://127.0.0.1:80",
 ]
 
 app.add_middleware(
