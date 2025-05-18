@@ -8,11 +8,11 @@ RUN pip3 install -r /app/requirements.txt
 
 ADD  ../../app/ /app/
 
-EXPOSE 5000
+EXPOSE 80
 
 ENV PYTHONPATH=/app/
 
 WORKDIR "/app"
 
-ENTRYPOINT [ "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "80"]
+ENTRYPOINT [ "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
 
