@@ -607,13 +607,13 @@ def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
 
 
 @app.get("/ping")
-def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
+def ping(current_user: Annotated[User, Depends(get_current_active_user)]):
 
     return {"status": "success"}
 
 
 @app.get("/ping2")
-def read_item():
+def ping2():
 
     return {"status": "success"}
 
