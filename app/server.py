@@ -612,6 +612,12 @@ def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
     return {"status": "success"}
 
 
+@app.get("/ping2")
+def read_item():
+
+    return {"status": "success"}
+
+
 @app.get("/sitemap.xml")
 def sitemap(request: Request):
     objects_summary = json.loads(r.get(f"all_objects_summary"))
