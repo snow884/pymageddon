@@ -6,7 +6,7 @@ import time
 
 import cython
 import redis
-from common_utils.backup_utils import backup_to_s3
+from common_utils.backup_utils import backup_to_s3, restore_from_s3
 from common_utils.common_enums import Actions, EnumEncoder, Rotations
 from common_utils.grid_utils import (
     find_objects,
@@ -50,7 +50,9 @@ from type_defs.tiles.tile1 import Tile1
 from type_defs.utils.utils import Map, Spectator
 
 if realm.MODE == "full":
-    realm.REDIS_CONNECTION = redis.Redis(host="localhost", port=6379, db=0)
+    realm.REDIS_CONNECTION = redis.Redis(
+        host="pymageddon-redis-server", port=6379, db=0
+    )
 
 
 def populate_map_full(sz=100):
@@ -716,6 +718,6 @@ def main_loop(steps=None):
 
 
 if __name__ == "__main__":
-    # restore_from_s3()
+    restore_from_s3()
     main_loop()
 # dummy change

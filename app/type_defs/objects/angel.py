@@ -17,7 +17,7 @@ class Angel(BaseObject):
     effects = [
         LayObject(object_to_lay="CowEgg", time_to_lay=51),
         LayObject(object_to_lay="ChickenEgg", time_to_lay=52),
-        LayObject(object_to_lay="FoxEgg", time_to_lay=253),
+        LayObject(object_to_lay="FoxEgg", time_to_lay=53),
         LayObject(object_to_lay="Seed", time_to_lay=54),
         LayObject(object_to_lay="Seed2", time_to_lay=55),
         LayObject(object_to_lay="Seed3", time_to_lay=56),

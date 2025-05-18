@@ -27,7 +27,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 31
 
 app = FastAPI()
-r = redis.Redis(host="localhost", port=6379, db=0)
+r = redis.Redis(host="pymageddon-redis-server", port=6379, db=0)
 
 origins = [
     "http://localhost:8000",  # Your frontend's origin
