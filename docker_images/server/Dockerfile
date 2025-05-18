@@ -8,7 +8,7 @@ RUN pip3 install -r /app/requirements.txt
 
 ADD  ../../app/ /app/
 
-EXPOSE 5000
+EXPOSE 80
 
 ENV PYTHONPATH=/app/
 
