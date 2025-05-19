@@ -453,7 +453,7 @@ async def player(request: Request, player_name: str):
     )
 
 
-@app.get("/world_map", response_class=HTMLResponse)
+@app.get("/ ", response_class=HTMLResponse)
 async def world_map(request: Request):
 
     return templates.TemplateResponse(
@@ -612,10 +612,10 @@ def ping(current_user: Annotated[User, Depends(get_current_active_user)]):
     return {"status": "success"}
 
 
-@app.get("/ping2")
-def ping2():
+@app.get("/ping2/{size}")
+def ping2(size: int):
 
-    return {"status": "success"}
+    return "a" * size
 
 
 @app.get("/sitemap.xml")
