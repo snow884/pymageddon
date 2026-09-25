@@ -1,184 +1,198 @@
 <!doctype html>
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- Search console -->
         <meta name="google-site-verification" content="evmqjYRoTrRgw6tZvMG4eEVPDgUvSTFBpCkXOeOMdqA" />
 
-        <!-- Clarity tracking 
-        <script type="text/javascript">
-            (function(c,l,a,r,i,t,y){
-                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "ptabw2rs3n");
-        </script>
-        -->
-
         <script src="../../static/website/pixi/pixi.js"></script>
         
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background-color: #000;
+            }
+            canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
     </head>
     <body scroll="no" style="overflow: hidden">
         
         <script>
-            theCanvas.onkeydown = function (e) {
-                if (["ArrowRight","ArrowLeft","ArrowDown", "ArrowUp"].includes(`${e.code}`)) {
-                    e.view.event.preventDefault();
+            window.addEventListener('keydown', function (e) {
+                if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.code)) {
+                    e.preventDefault();
                 }
-            }
+            });
         </script>
         <script type="module">
             
-            (async () =>
-        {
+        (async () => {
 
-            const app = new PIXI.Application(
-                {
-                    antialias: true,
-                    autoDensity: true, // !!!
-                    resolution: 2,
-                }
-            );
-            await app.init({ resizeTo: window });
+            const app = new PIXI.Application();
+            await app.init({
+                antialias: true,
+                autoDensity: true,
+                resolution: Math.min(window.devicePixelRatio || 1, 2),
+                resizeTo: window,
+                backgroundColor: 0x111111,
+            });
             document.body.appendChild(app.canvas);
 
-            function check_token() {
-                console.log("Checking token...")
+            async function check_token() {
+                const token = sessionStorage.getItem('token');
+                if (!token) {
+                    return false;
+                }
 
-                let token = sessionStorage.getItem('token') ;
-
-                if (token) {
-                    console.log("Token found: " + token)
-                    const status_success =  fetch('/ping', {
-                        method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
+                try {
+                    const response = await fetch('/ping', {
+                        method: 'GET',
                         headers: {
-                          'Authorization': 'Bearer ' + token, // Example header
-                          'Content-Type': 'application/json', // Another example header
+                            'Authorization': 'Bearer ' + token,
+                            'Content-Type': 'application/json',
                         },
-                      })
-                        .then(response => {
-                          // Handle the response
-                          if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                          }
-                          return response.json(); // Assuming JSON response
-                        })
-                        .then(data => {
-                          // Process the data
-                          console.log(data);
-                          if (data['status'] == 'success'){
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })
-                        .catch(error => {
-                          // Handle errors
-                          console.error('Error:', error);
-                        });
-                    return status_success;
-                } else {
-                    console.log("Token not found")
+                    });
+
+                    if (!response.ok) {
+                        return false;
+                    }
+                    const data = await response.json();
+                    return data['status'] === 'success';
+                } catch (error) {
+                    console.error('Auth verification error:', error);
                     return false;
                 }
             }
 
-            if (check_token()) {
-                console.log("Token found and verified");
+            const isAuth = await check_token();
+            if (isAuth) {
                 await run_game().catch(error => {
-                    // Handle errors
-                    console.error('Error:', error);
-                  });
+                    console.error('Runtime error:', error);
+                });
             } else {
-                console.log("Token not found, redirecing...");
                 window.location.replace("/login_page");
             }
 
             async function run_game() {
 
+                let keys_pressed = {
+                    "ArrowRight": false,
+                    "ArrowLeft": false,
+                    "ArrowDown": false,
+                    "ArrowUp": false
+                };
+
+                let control_in_flight = false;
+                let pending_control_keys = null;
+
+                async function send_control() {
+                    if (control_in_flight) {
+                        pending_control_keys = Object.assign({}, keys_pressed);
+                        return;
+                    }
+                    control_in_flight = true;
+                    pending_control_keys = null;
+
+                    const payload = Object.assign({}, keys_pressed);
+                    const token = sessionStorage.getItem('token');
+
+                    try {
+                        const response = await fetch('/control', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + token,
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(payload),
+                        });
+                        if (response.status === 401) {
+                            window.location.replace("/login_page");
+                        }
+                    } catch (error) {
+                        console.error('Control dispatch error:', error);
+                    } finally {
+                        control_in_flight = false;
+                        if (pending_control_keys) {
+                            send_control();
+                        }
+                    }
+                }
+
                 class JoyStick {
-                    constructor(){
+                    constructor() {
+                        const self = this;
 
-                        function joystick_to_keys(dragtarget){
+                        function joystick_to_keys(dragtarget) {
+                            const x_diff = dragtarget.x - app.screen.width / 2;
+                            const y_diff = dragtarget.y - app.screen.height * 0.8;
+                            const angle = (Math.atan2(x_diff, y_diff) / 3.14) * 180;
+                            const dist = Math.sqrt(x_diff * x_diff + y_diff * y_diff);
 
-                            const x_diff = dragtarget.x-app.screen.width/2;
-                            const y_diff = dragtarget.y-app.screen.height*0.8;
+                            let changed = false;
+                            const next_keys = {
+                                "ArrowUp": false,
+                                "ArrowLeft": false,
+                                "ArrowDown": false,
+                                "ArrowRight": false
+                            };
 
-                            const angle = Math.atan2(x_diff, y_diff)/3.14*180;
-
-                            const dist = Math.sqrt(x_diff * x_diff + y_diff * y_diff)
-                            
-
-                            if (dist>5){
-
-                                if ((angle > (90-45))&(angle <= (90+45))){
-                                    keys_pressed["ArrowUp"] = false;
-                                    keys_pressed["ArrowLeft"] = false;
-                                    keys_pressed["ArrowDown"] = false;
-                                    keys_pressed["ArrowRight"] = true;
+                            if (dist > 5) {
+                                if ((angle > (90 - 45)) && (angle <= (90 + 45))) {
+                                    next_keys["ArrowRight"] = true;
                                 }
-                                if ((angle > (180-45))&(angle <= (180+45))){
-                                    keys_pressed["ArrowUp"] = true;
-                                    keys_pressed["ArrowLeft"] = false;
-                                    keys_pressed["ArrowDown"] = false;
-                                    keys_pressed["ArrowRight"] = false;
-
+                                if ((angle > (180 - 45)) && (angle <= (180 + 45))) {
+                                    next_keys["ArrowUp"] = true;
                                 }
-                                if ((angle > (-90-45))&(angle <= (-90+45))){
-                                    keys_pressed["ArrowUp"] = false;
-                                    keys_pressed["ArrowLeft"] = true;
-                                    keys_pressed["ArrowDown"] = false;
-                                    keys_pressed["ArrowRight"] = false;
-
+                                if ((angle > (-90 - 45)) && (angle <= (-90 + 45))) {
+                                    next_keys["ArrowLeft"] = true;
                                 }
-                                if ((angle > (0-45)) & (angle <= (0+45))){
-                                    keys_pressed["ArrowUp"] = false;
-                                    keys_pressed["ArrowLeft"] = false;
-                                    keys_pressed["ArrowDown"] = true;
-                                    keys_pressed["ArrowRight"] = false;
+                                if ((angle > (0 - 45)) && (angle <= (0 + 45))) {
+                                    next_keys["ArrowDown"] = true;
                                 }
+                            }
 
-                            } else {
-                                keys_pressed["ArrowUp"] = false;
-                                keys_pressed["ArrowLeft"] = false;
-                                keys_pressed["ArrowDown"] = false;
-                                keys_pressed["ArrowRight"] = false;
+                            for (const k of ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]) {
+                                if (keys_pressed[k] !== next_keys[k]) {
+                                    keys_pressed[k] = next_keys[k];
+                                    changed = true;
+                                }
+                            }
+
+                            if (changed) {
+                                send_control();
                             }
                         }
 
-                        function onDragMove(event)
-                        {
-                            console.log("onDragMove");
-
-                            console.log(dragtarget);
-                            if (dragtarget)
-                            {
+                        function onDragMove(event) {
+                            if (dragtarget) {
                                 dragtarget.parent.toLocal(event.global, null, dragtarget.position);
                                 joystick_to_keys(dragtarget);
                             }
                         }
-    
-                        function onDragStart()
-                        {
-                            console.log("onDragStart");
-                            // Store a reference to the data
-                            // * The reason for this is because of multitouch *
-                            // * We want to track the movement of this particular touch *
+
+                        function onDragStart() {
                             dragtarget.alpha = 0.5;
                             app.stage.on('pointermove', onDragMove);
-                            joystick_to_keys(dragtarget)
+                            joystick_to_keys(dragtarget);
                         }
-                    
-                        function onDragEnd()
-                        {
-                            console.log("onDragEnd");
-                            if (dragtarget)
-                            {
+
+                        function onDragEnd() {
+                            if (dragtarget) {
                                 app.stage.off('pointermove', onDragMove);
                                 dragtarget.alpha = 1;
-                                dragtarget.x = app.screen.width/2;
-                                dragtarget.y = app.screen.height*0.8;
-                                joystick_to_keys(dragtarget)
+                                dragtarget.x = app.screen.width / 2;
+                                dragtarget.y = app.screen.height * 0.8;
+                                joystick_to_keys(dragtarget);
                             }
                         }
 
@@ -187,7 +201,7 @@
 
                         this.sprite = PIXI.Sprite.from(texture);
                         this.sprite_outside = PIXI.Sprite.from(texture_outside);
-                        
+
                         this.sprite.anchor.set(0.5);
                         this.sprite_outside.anchor.set(0.5);
 
@@ -203,213 +217,196 @@
                         app.stage.on('pointerup', onDragEnd);
                         app.stage.on('pointerupoutside', onDragEnd);
 
-                        this.sprite.x = app.screen.width/2;
-                        this.sprite.y = app.screen.height*0.8;
+                        this.sprite.x = app.screen.width / 2;
+                        this.sprite.y = app.screen.height * 0.8;
                         this.sprite.zIndex = 6;
-                        this.sprite.height=app.screen.width*0.4;
-                        this.sprite.width=app.screen.width*0.4;
+                        this.sprite.height = app.screen.width * 0.4;
+                        this.sprite.width = app.screen.width * 0.4;
 
-                        this.sprite_outside.x = app.screen.width/2;
-                        this.sprite_outside.y = app.screen.height*0.8;
+                        this.sprite_outside.x = app.screen.width / 2;
+                        this.sprite_outside.y = app.screen.height * 0.8;
                         this.sprite_outside.zIndex = 5;
-                        this.sprite_outside.height=app.screen.width*0.4;
-                        this.sprite_outside.width=app.screen.width*0.4;
+                        this.sprite_outside.height = app.screen.width * 0.4;
+                        this.sprite_outside.width = app.screen.width * 0.4;
                         this.sprite_outside.alpha = 0.5;
 
-                        // This button mode will mean the hand cursor appears when you roll over the bunny with your mouse
                         this.sprite.cursor = 'pointer';
-
-
                     }
-
-
                 }
 
                 class MyObject {
                     constructor(obj_data, map, z_index) {
-
                         this.index = obj_data["index"];
 
-                        if (!(obj_data["image"] in map.textures)){
-                            console.error("Unknown object texture " + obj_data["image"]);
-                        }
-
                         let texture = map.textures[obj_data["image"]];
+                        if (!texture) {
+                            console.warn("Unknown object texture:", obj_data["image"]);
+                        }
 
                         this.sprite = PIXI.Sprite.from(texture);
                         app.stage.addChild(this.sprite);
                         this.sprite.anchor.set(0.5);
 
-                        this.height=1/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.width=1/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.sprite.height=1/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.sprite.width=1/20.0*Math.max(app.screen.width,app.screen.height);
+                        const maxDim = Math.max(app.screen.width, app.screen.height);
+                        this.height = (1 / 20.0) * maxDim;
+                        this.width = (1 / 20.0) * maxDim;
+                        this.sprite.height = this.height;
+                        this.sprite.width = this.width;
 
                         this.sprite.zIndex = z_index;
 
                         this.x = obj_data["x"];
                         this.y = obj_data["y"];
-                        this.rotation = obj_data["rotation"];
-                        this.is_particle = obj_data["is_particle"];
+                        this.x_new = obj_data["x"];
+                        this.y_new = obj_data["y"];
+                        this.rotation = obj_data["rotation"] || 1;
+                        this.rotation_new = obj_data["rotation"] || 1;
+                        this.is_particle = !!obj_data["is_particle"];
                         this.motion = obj_data["motion"];
 
                         if (this.is_particle) {
-                            this.x_new = obj_data["x"];
-                            this.y_new = obj_data["y"];
-                            this.alpha = 1-(obj_data["life"]/obj_data["lifetime"]);
-                            this.alpha_new = 1-(obj_data["life"]/obj_data["lifetime"]);
+                            const lifeRatio = obj_data["lifetime"] > 0 ? (obj_data["life"] / obj_data["lifetime"]) : 0;
+                            this.alpha = 1 - lifeRatio;
+                            this.alpha_new = 1 - lifeRatio;
                             this.sprite.alpha = this.alpha;
 
-                            if (this.motion == 'up') {
-                                this.y_new = obj_data["y"]-(obj_data["life"]/obj_data["lifetime"]);
-                            }
-                            
-                            if (this.motion == 'scale') {
-                                this.height_new = ((obj_data["life"]/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.width_new = ((obj_data["life"]/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.height = (((obj_data["life"]-1)/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.width = (((obj_data["life"]-1)/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
+                            if (this.motion === 'up') {
+                                this.y_new = obj_data["y"] - lifeRatio;
                             }
 
-                            if (this.motion == 'ground_stuck') {
+                            if (this.motion === 'scale') {
+                                this.height_new = lifeRatio * 15 * (1 / 20.0) * maxDim;
+                                this.width_new = lifeRatio * 15 * (1 / 20.0) * maxDim;
+                                this.height = Math.max(0, (obj_data["life"] - 1) / obj_data["lifetime"]) * 15 * (1 / 20.0) * maxDim;
+                                this.width = Math.max(0, (obj_data["life"] - 1) / obj_data["lifetime"]) * 15 * (1 / 20.0) * maxDim;
+                            }
+
+                            if (this.motion === 'ground_stuck') {
                                 this.sprite.zIndex = 1;
-                                this.alpha =0.0;
-                            } 
-
-                        } else {
-                            this.x_new = obj_data["x"];
-                            this.y_new = obj_data["y"];
+                                this.alpha = 0.0;
+                            }
                         }
 
-                        this.rotation_new = obj_data["rotation"];
-                        
                         this.move_progress = 0.0;
-
-                        this.hp = obj_data["hp"] ;
-                        this.hp_new = obj_data["hp"] ;
+                        this.hp = obj_data["hp"] || 0;
+                        this.hp_new = obj_data["hp"] || 0;
 
                         if (obj_data["is_alive"]) {
-                            
                             let hp_texture = map.textures["../../static/other/health_bar_green.png"];
-                            
                             this.health_bar = PIXI.Sprite.from(hp_texture);
                             app.stage.addChild(this.health_bar);
-                            
+
                             this.health_bar.anchor.set(0.5);
-                            this.health_bar.height=this.sprite.height*0.05;
-                            this.health_bar.width=this.sprite.width;
+                            this.health_bar.height = this.sprite.height * 0.05;
+                            this.health_bar.width = this.sprite.width;
                             this.health_bar.zIndex = z_index;
                             this.health_bar.pivot.set(0, 90);
-                            
                         } else {
                             this.health_bar = null;
                         }
-                        
-                        let name_to_display = "";
 
+                        let name_to_display = "";
                         if (obj_data['is_alive']) {
                             if (obj_data['player_name']) {
                                 name_to_display = "🙋‍♂️" + obj_data['player_name'];
-                            } else {
-                                if (obj_data['family_name']) {
-                                    name_to_display = "🧠" + obj_data['family_name'] + " " + obj_data['index'];
-                                } else {
-                                    //name_to_display = obj_data['type_name'] + " " + obj_data['index'];
-                                }
+                            } else if (obj_data['family_name']) {
+                                name_to_display = "🧠" + obj_data['family_name'] + " " + obj_data['index'];
                             }
                         }
-                        
 
-                        this.name_text = new PIXI.Text(
-                            {
-                                "text":name_to_display,
-                                "anchor":0.5,
-                                "zIndex":4,
-                                "style": new PIXI.TextStyle({
-                                    "fontFamily": "Roboto",
-                                    "fontSize": 16,
-                                    "fill": "white",
+                        this.name_text = new PIXI.Text({
+                            "text": name_to_display,
+                            "anchor": 0.5,
+                            "zIndex": 4,
+                            "style": new PIXI.TextStyle({
+                                "fontFamily": "Roboto",
+                                "fontSize": 16,
+                                "fill": "white",
                             })
                         });
                         this.name_text.pivot.set(0, -50);
                         app.stage.addChild(this.name_text);
-
                     }
 
                     update_data(obj_data) {
-
                         this.x = this.x_new;
                         this.y = this.y_new;
-                        
+
                         if (this.is_particle) {
                             this.x_new = obj_data["x"];
                             this.y_new = obj_data["y"];
+                            const lifeRatio = obj_data["lifetime"] > 0 ? (obj_data["life"] / obj_data["lifetime"]) : 0;
 
-                            if (this.motion == 'up') {
-                                this.y_new = obj_data["y"]-(obj_data["life"]/obj_data["lifetime"]);
-                            } 
+                            if (this.motion === 'up') {
+                                this.y_new = obj_data["y"] - lifeRatio;
+                            }
 
-                            if (this.motion == 'scale') {
+                            if (this.motion === 'scale') {
+                                const maxDim = Math.max(app.screen.width, app.screen.height);
                                 this.height = this.height_new;
                                 this.width = this.width_new;
-                                this.height_new = ((obj_data["life"]/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
-                                this.width_new = ((obj_data["life"]/obj_data["lifetime"]))*15*1/20.0*Math.max(app.screen.width,app.screen.height);
+                                this.height_new = lifeRatio * 15 * (1 / 20.0) * maxDim;
+                                this.width_new = lifeRatio * 15 * (1 / 20.0) * maxDim;
                             }
 
                             this.alpha = this.alpha_new;
-                            this.alpha_new = 1-(obj_data["life"]/obj_data["lifetime"]);
+                            this.alpha_new = 1 - lifeRatio;
                         } else {
                             this.x_new = obj_data["x"];
                             this.y_new = obj_data["y"];
                         }
 
                         this.rotation = this.rotation_new;
-                        this.rotation_new = obj_data["rotation"] ;
+                        this.rotation_new = obj_data["rotation"] || 1;
 
-                        this.hp = this.hp_new ;
-                        this.hp_new = obj_data["hp"] ;
-
+                        this.hp = this.hp_new;
+                        this.hp_new = obj_data["hp"] || 0;
                     }
 
-
                     update_position(time_delta, player_obj) {
+                        const t = Math.min(Math.max(time_delta, 0.0), 1.0);
+                        const maxDim = Math.max(app.screen.width, app.screen.height);
 
-                        let player_obj_x = (((player_obj.x_new - player_obj.x)*time_delta)+player_obj.x)/20*Math.max(app.screen.width,app.screen.height) ;
-                        let player_obj_y = (((player_obj.y_new - player_obj.y)*time_delta)+player_obj.y)/20*Math.max(app.screen.width,app.screen.height) ;
+                        const player_x = player_obj ? (((player_obj.x_new - player_obj.x) * t) + player_obj.x) : 0;
+                        const player_y = player_obj ? (((player_obj.y_new - player_obj.y) * t) + player_obj.y) : 0;
 
-                        this.sprite.x = (((this.x_new - this.x)*time_delta)+this.x)/20*Math.max(app.screen.width,app.screen.height) - player_obj_x + app.screen.width/2;
-                        //console.log((((this.x_new - this.x)*time_delta/500)+this.x)/100*app.screen.width)
-                        this.sprite.y = (((this.y_new - this.y)*time_delta)+this.y)/20*Math.max(app.screen.width,app.screen.height) - player_obj_y + app.screen.height/2;
-                        this.sprite.angle = ((((this.rotation_new - this.rotation)*time_delta) + this.rotation)-1)*90.0;
-                        
-                        if (this.is_particle){
-                            this.sprite.alpha = (((this.alpha_new - this.alpha)*time_delta)+this.alpha);
+                        const player_obj_x = (player_x / 20.0) * maxDim;
+                        const player_obj_y = (player_y / 20.0) * maxDim;
 
-                            if (this.motion == 'scale') {
-                                this.sprite.height = (((this.height_new - this.height)*time_delta)+this.height);
-                                this.sprite.width = (((this.width_new - this.width)*time_delta)+this.width);
+                        this.sprite.x = (((this.x_new - this.x) * t) + this.x) / 20.0 * maxDim - player_obj_x + app.screen.width / 2;
+                        this.sprite.y = (((this.y_new - this.y) * t) + this.y) / 20.0 * maxDim - player_obj_y + app.screen.height / 2;
+
+                        if (this.rotation_new === this.rotation) {
+                            this.sprite.angle = (this.rotation - 1) * 90.0;
+                        } else {
+                            const startAngle = (this.rotation - 1) * 90.0;
+                            const targetAngle = (this.rotation_new - 1) * 90.0;
+                            let diff = ((targetAngle - startAngle + 180) % 360) - 180;
+                            if (diff < -180) diff += 360;
+                            this.sprite.angle = startAngle + diff * t;
+                        }
+
+                        if (this.is_particle) {
+                            this.sprite.alpha = Math.max(0, (((this.alpha_new - this.alpha) * t) + this.alpha));
+
+                            if (this.motion === 'scale') {
+                                this.sprite.height = (((this.height_new - this.height) * t) + this.height);
+                                this.sprite.width = (((this.width_new - this.width) * t) + this.width);
                             }
                         }
 
                         if (this.health_bar) {
-
-                            if (this.hp_new<=20){
+                            if (this.hp_new <= 20) {
                                 this.health_bar.texture = map.textures["../../static/other/health_bar_red.png"];
-                            }
-                            if ((this.hp_new>20) & (this.hp_new<=50)) {
+                            } else if (this.hp_new <= 50) {
                                 this.health_bar.texture = map.textures["../../static/other/health_bar_yellow.png"];
-                            
-                            }  
-
-                            if (this.hp_new>50){
+                            } else {
                                 this.health_bar.texture = map.textures["../../static/other/health_bar_green.png"];
-                            
-                            }  
-                        
+                            }
+
                             this.health_bar.x = this.sprite.x;
                             this.health_bar.y = this.sprite.y;
-
-                            this.health_bar.width = (((this.hp_new - this.hp)*time_delta) + this.hp)/100 * this.sprite.width;
+                            this.health_bar.width = ((((this.hp_new - this.hp) * t) + this.hp) / 100.0) * this.sprite.width;
 
                             this.name_text.x = this.sprite.x;
                             this.name_text.y = this.sprite.y;
@@ -418,9 +415,10 @@
 
                     delete() {
                         app.stage.removeChild(this.sprite);
-                        app.stage.removeChild(this.health_bar);
-                        
-                        if (this.name_text){
+                        if (this.health_bar) {
+                            app.stage.removeChild(this.health_bar);
+                        }
+                        if (this.name_text) {
                             app.stage.removeChild(this.name_text);
                         }
                     }
@@ -434,699 +432,409 @@
                         this.player_id = "0";
                         this.player_obj = null;
                         this.textures = {};
-                        this.refresh_time =0.0;
-                        this.time_left_until_refresh =1.0;
-                        this.map_request_running = false;
+                        this.refresh_time = 0.33;
                         this.epoch = 0;
-                        this.elapsed = 0.0;
+                        this.epoch_start_time = performance.now();
+                        this.status = "running";
+                        this.map_data = null;
+                        this.map_size_x = 100;
                         this.nav_map_sprite = null;
                         this.nav_cross_sprite = null;
                         this.exit_button_sprite = null;
-                        this.map_server_response_time = 0.0;
-                        this.map_size_x = null;
+                        this.large_message = null;
+                        this.dashboard_message = null;
+                        this.title_indicative_message = null;
                     }
 
-                    get_player_obj(){
+                    get_player_obj() {
+                        if (!this.map_data || !this.map_data['player']) return;
+
                         this.player_id = this.map_data['player']['object_id'];
 
-                        if (this.map_data['player']['object_type']=='object'){
+                        if (this.map_data['player']['object_type'] === 'object') {
                             this.player_obj = this.objects[this.player_id];
-                        }
-                        if (this.map_data['player']['object_type']=='tile'){
+                        } else if (this.map_data['player']['object_type'] === 'tile') {
                             this.player_obj = this.tiles[this.player_id];
                         }
-                        if (this.map_data['global_params']['large_message']){
-                            this.large_message = this.map_data['global_params']['large_message'];
-                        }
-                        if (this.map_data['global_params']['dashboard_message']){
-                            this.dashboard_message = this.map_data['global_params']['dashboard_message'];
-                        }
 
-                        if (this.map_data['global_params']['title_indicative_message']){
-                            this.title_indicative_message = this.map_data['global_params']['title_indicative_message'];
-                        }
+                        this.large_message = this.map_data['global_params']['large_message'] || null;
+                        this.dashboard_message = this.map_data['global_params']['dashboard_message'] || null;
+                        this.title_indicative_message = this.map_data['global_params']['title_indicative_message'] || null;
                     }
 
-                    async refresh_data() {
-
-                        
-                        if (this.map_data['global_params']['status'] != 'running') {
-                            window.location.replace("/start_game_page");
-                        }
-
-                        this.time_left_until_refresh = this.map_data['global_params']['time_left'];
-                        
-                        if (this.epoch == this.map_data['global_params']['epoch']){
-                            console.log("Not doing anything, epoch did not refresh")
+                    refresh_data() {
+                        if (!this.map_data || !this.map_data['global_params']) {
                             return false;
                         }
 
-                        this.epoch = this.map_data['global_params']['epoch'];
+                        this.status = this.map_data['global_params']['status'];
+                        if (this.status !== 'running') {
+                            return false;
+                        }
 
-                        this.map_size_x = this.map_data['global_params']['map_size_x'];
+                        const incoming_epoch = this.map_data['global_params']['epoch'];
+                        if (this.epoch === incoming_epoch) {
+                            return false;
+                        }
 
-                        Object.entries(this.map_data['objects']).forEach(([i,my_obj_data]) => {
-                            
-                            if (!(this.objects.hasOwnProperty(i))) {
-                                let my_obj = new MyObject(my_obj_data, this, 2);
-                                this.objects[i] = my_obj;
+                        this.epoch = incoming_epoch;
+                        this.epoch_start_time = performance.now();
+                        this.refresh_time = this.map_data['global_params']['time_interval'] || 0.33;
+                        this.map_size_x = this.map_data['global_params']['map_size_x'] || 100;
+
+                        // Sync objects
+                        Object.entries(this.map_data['objects'] || {}).forEach(([i, objData]) => {
+                            if (!this.objects.hasOwnProperty(i)) {
+                                this.objects[i] = new MyObject(objData, this, 2);
                             } else {
-                                this.objects[i].update_data(my_obj_data);
+                                this.objects[i].update_data(objData);
                             }
                         });
 
-                        Object.entries(this.objects).forEach(([i,my_obj_data]) => {
-                            
-                            if (!(this.map_data['objects'].hasOwnProperty(i))) {
-                                this.objects[i].delete();
+                        Object.entries(this.objects).forEach(([i, obj]) => {
+                            if (!this.map_data['objects'] || !this.map_data['objects'].hasOwnProperty(i)) {
+                                obj.delete();
                                 delete this.objects[i];
-                            }  
-                        });
-
-                        Object.entries(this.map_data['tiles']).forEach(([i,my_obj_data]) => {
-                            
-                            if (!(this.tiles.hasOwnProperty(i))) {
-                                let my_obj = new MyObject(my_obj_data, this, 0);
-                                this.tiles[i] = my_obj;
-                            } else {
-                                this.tiles[i].update_data(my_obj_data);
                             }
                         });
 
-                        Object.entries(this.tiles).forEach(([i,my_obj_data]) => {
-                            
-                            if (!(this.map_data['tiles'].hasOwnProperty(i))) {
-                                this.tiles[i].delete();
+                        // Sync tiles
+                        Object.entries(this.map_data['tiles'] || {}).forEach(([i, tileData]) => {
+                            if (!this.tiles.hasOwnProperty(i)) {
+                                this.tiles[i] = new MyObject(tileData, this, 0);
+                            } else {
+                                this.tiles[i].update_data(tileData);
+                            }
+                        });
+
+                        Object.entries(this.tiles).forEach(([i, tile]) => {
+                            if (!this.map_data['tiles'] || !this.map_data['tiles'].hasOwnProperty(i)) {
+                                tile.delete();
                                 delete this.tiles[i];
-                            }  
-                        });
-
-
-                        Object.entries(this.map_data['particles']).forEach(([i,my_obj_data]) => {
-                            
-                            if (!(this.particles.hasOwnProperty(i))) {
-                                let my_obj = new MyObject(my_obj_data, this, 3);
-                                this.particles[i] = my_obj;
-                            } else {
-                                this.particles[i].update_data(my_obj_data);
                             }
                         });
 
-                        Object.entries(this.particles).forEach(([i,my_obj_data]) => {
-                            
-                            if (!(this.map_data['particles'].hasOwnProperty(i))) {
-                                this.particles[i].delete();
-                                delete this.particles[i];
-                            }  
+                        // Sync particles
+                        Object.entries(this.map_data['particles'] || {}).forEach(([i, particleData]) => {
+                            if (!this.particles.hasOwnProperty(i)) {
+                                this.particles[i] = new MyObject(particleData, this, 3);
+                            } else {
+                                this.particles[i].update_data(particleData);
+                            }
                         });
-                        
+
+                        Object.entries(this.particles).forEach(([i, particle]) => {
+                            if (!this.map_data['particles'] || !this.map_data['particles'].hasOwnProperty(i)) {
+                                particle.delete();
+                                delete this.particles[i];
+                            }
+                        });
+
                         this.get_player_obj();
-
-                        let nav_map_texture_url = '../../map_image.png';
-                        
-                        this.textures[nav_map_texture_url].destroy();
-
-                        PIXI.Assets.load(nav_map_texture_url).then(texture => {this.textures[nav_map_texture_url] = texture}).catch(err => console.error(err));
-                        
-                        this.nav_map_sprite.destroy();
-
-                        this.nav_map_sprite = PIXI.Sprite.from(nav_map_texture_url);
-                        
-                        app.stage.addChild(this.nav_map_sprite);
-                        
-                        this.nav_map_sprite.zIndex = 5;
-                        this.nav_map_sprite.x=app.screen.width - 1.5/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_map_sprite.y=1.5/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_map_sprite.height=3/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_map_sprite.width=3/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_map_sprite.anchor.set(0.5);
-
-                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (this.player_obj.x/this.map_size_x)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_cross_sprite.y= (this.player_obj.y/this.map_size_x)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
-                        
-                        //map.elapsed = 0.0;
                         return true;
-
                     }
 
                     async load_textures() {
-                        
-                        console.log("Run load textures...");
-                        
-                        // Load the textures
-                        await PIXI.Assets.load([
-                            '../../static/other/circle.png',
-                        ]);
+                        const loading_await_list = [];
+                        const textures_list = this.map_data['global_params']['textures'] || [];
 
-                        const balls = [];
-                        const container = new PIXI.Container();
-
-                        const generateSpinner2 = (position) =>
-                        {
-                            
-                            container.position = position;
-                            app.stage.addChild(container);
-
-                            const size = 300;
-                            const ballAmount = 7;
-                            
-                            for (let i = 0; i < ballAmount; i++)
-                            {
-                                const ball = PIXI.Sprite.from('../../static/other/circle.png');
-                                ball.anchor.set(0.5);
-                                container.addChild(ball);
-                                ball.position.set(
-                                    size / 2 + (Math.cos((i / ballAmount) * Math.PI * 2) * size) / 3,
-                                    size / 2 + (Math.sin((i / ballAmount) * Math.PI * 2) * size) / 3,
+                        for (const my_texture_url of textures_list) {
+                            if (!this.textures[my_texture_url]) {
+                                loading_await_list.push(
+                                    PIXI.Assets.load(my_texture_url)
+                                        .then(texture => {
+                                            this.textures[my_texture_url] = texture;
+                                        })
+                                        .catch(err => console.error("Asset load err:", my_texture_url, err))
                                 );
-                                
-                                ball.width = 1/20.0*Math.max(app.screen.width,app.screen.height);
-                                ball.height = 1/20.0*Math.max(app.screen.width,app.screen.height);
-
-                                balls.push(ball);
                             }
-
-                            let phase = 0;
-
-                            return (delta) =>
-                            {
-                                // Update phase
-                                phase += delta / 60;
-                                phase %= Math.PI * 2;
-
-                                // Update ball scales
-                                balls.forEach((b, i) =>
-                                {
-                                    const sin = Math.sin((i / ballAmount) * Math.PI - phase);
-                                    // Multiply sin with itself to get more steeper edge.
-
-                                    b.scale.set(Math.abs(sin * sin * sin * 0.05) + 0.05);
-                                });
-                            };
-                        };
-                        
-                        console.log("scheduling spinner...");
-
-                        let spinner = generateSpinner2(new PIXI.Point(app.screen.width/2-150,app.screen.height/2-150));
-                        
-                        const spinner_ticker = new PIXI.Ticker();
-
-                        spinner_ticker.add((time) =>
-                        {
-                            console.log("spinner tick");
-                            spinner(time.deltaTime);
-                        });
-
-                        spinner_ticker.start();
-
-                        let loading_await_list = [];
-
-                        for (const [i,my_texture_url] of Object.entries(this.map_data['global_params']['textures'])) {
-
-                            console.log("Loading " + my_texture_url + "...");
-
-                            loading_await_list.push(PIXI.Assets.load(my_texture_url).then(texture => {this.textures[my_texture_url] = texture}).catch(err => console.error(err)));
-
                         }
 
-                        await Promise.all(loading_await_list)
-
-                        spinner_ticker.destroy();
-
-                        balls.forEach((b, i) =>
-                        {
-                            b.destroy();
-                        });
-
-                        container.destroy();
-
+                        await Promise.all(loading_await_list);
                     }
 
                     async fetch_data_objects() {
-                        console.log("Fetching data objects...");
+                        const token = sessionStorage.getItem('token');
+                        const response = await fetch("/get_map", {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + token,
+                                'Content-Type': 'application/json',
+                            }
+                        });
 
-                        const token = sessionStorage.getItem('token') ;
-                        
-                        const startTime = performance.now();
+                        if (response.status === 401) {
+                            window.location.replace("/login_page");
+                            return null;
+                        }
 
-                        this.map_request_running = true;
+                        if (!response.ok) {
+                            throw new Error('Network response not ok: ' + response.status);
+                        }
 
-                        await fetch(
-                            "/get_map",
-                            {
-                                method: 'GET',
-                                headers: {
-                                    'Authorization': 'Bearer ' + token, 
-                                    'Content-Type': 'application/json', // Another example header
-                                }
-                            })
-                            .then(response => {
-
-                                if (response.ok) {
-                                    // Request successful, handle the response
-                                    return response.json(); 
-                                  } else if (response.status === 401) {
-                                    // Unauthorized, redirect to login page
-                                    window.location.replace("/login_page");
-                                    //return response.json(); 
-
-                                  } else {
-                                    // Other error, handle accordingly
-                                    throw new Error('Network response was not ok.');
-                                  }
-                            })
-
-                            .then((map_data) => {
-                                
-                                if (map_data['global_params']['status'] != 'running') {
-                                    window.location.replace("/start_game_page");
-                                }
-
-                                this.map_data = map_data;
-
-                                const endTime = performance.now();
-                                this.map_server_response_time = endTime - startTime;
-                                this.map_request_running = false;
-
-                            });
+                        const data = await response.json();
+                        this.map_data = data;
+                        return data;
                     }
 
                     async init_objects() {
-
-                        this.refresh_time = this.map_data['global_params']['time_interval'];
-
-                        this.epoch = this.map_data['global_params']['epoch'];
-
+                        this.refresh_time = this.map_data['global_params']['time_interval'] || 0.33;
+                        this.epoch = this.map_data['global_params']['epoch'] || 0;
+                        this.epoch_start_time = performance.now();
                         this.status = this.map_data['global_params']['status'];
+                        this.map_size_x = this.map_data['global_params']['map_size_x'] || 100;
 
-                        this.map_size_x = this.map_data['global_params']['map_size_x'];
-
-                        console.log(this.map_data);
-                        
-                        
-                        Object.entries(this.map_data['objects']).forEach(([i,my_obj_data]) => {
-                            try {
-                                let my_obj = new MyObject(my_obj_data, this, 2);
-
-                                this.objects[i] = my_obj;
-                            } catch (error) {
-                                console.error('Error:', error.message);
-                            }
+                        Object.entries(this.map_data['objects'] || {}).forEach(([i, objData]) => {
+                            this.objects[i] = new MyObject(objData, this, 2);
                         });
 
-                        Object.entries(this.map_data['tiles']).forEach(([i,my_obj_data]) => {
-                            try {
-                                let my_obj = new MyObject(my_obj_data, this, 0);
-
-                                this.tiles[i] = my_obj;
-                            } catch (error) {
-                                console.error('Error:', error.message);
-                            }
+                        Object.entries(this.map_data['tiles'] || {}).forEach(([i, tileData]) => {
+                            this.tiles[i] = new MyObject(tileData, this, 0);
                         });
 
-                        Object.entries(this.map_data['particles']).forEach(([i,my_obj_data]) => {
-                            try {
-                                let my_obj = new MyObject(my_obj_data, this, 3);
-
-                                this.particles[i] = my_obj;
-                            } catch (error) {
-                                console.error('Error:', error.message);
-                            }
+                        Object.entries(this.map_data['particles'] || {}).forEach(([i, particleData]) => {
+                            this.particles[i] = new MyObject(particleData, this, 3);
                         });
-
-                        console.log("Creating nav map...");
 
                         this.get_player_obj();
 
-                        let nav_map_texture = this.textures['../../map_image.png'];
+                        const maxDim = Math.max(app.screen.width, app.screen.height);
 
+                        let nav_map_texture = this.textures['../../map_image.png'];
                         this.nav_map_sprite = PIXI.Sprite.from(nav_map_texture);
-                        console.log(this.nav_map_sprite.x);
                         app.stage.addChild(this.nav_map_sprite);
                         this.nav_map_sprite.zIndex = 5;
-                        this.nav_map_sprite.x=app.screen.width - 1.5/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_map_sprite.y=1.5/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_map_sprite.height=3/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_map_sprite.width=3/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_map_sprite.x = app.screen.width - (1.5 / 20.0) * maxDim;
+                        this.nav_map_sprite.y = (1.5 / 20.0) * maxDim;
+                        this.nav_map_sprite.height = (3.0 / 20.0) * maxDim;
+                        this.nav_map_sprite.width = (3.0 / 20.0) * maxDim;
                         this.nav_map_sprite.anchor.set(0.5);
-                        
-                        let nav_cross_texture = this.textures['../../static/other/red_cross.png'];
 
+                        let nav_cross_texture = this.textures['../../static/other/red_cross.png'];
                         this.nav_cross_sprite = PIXI.Sprite.from(nav_cross_texture);
                         app.stage.addChild(this.nav_cross_sprite);
                         this.nav_cross_sprite.zIndex = 6;
-                        this.nav_cross_sprite.x=app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height) + (0/this.map_size_x)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_cross_sprite.y= (0/this.map_size_x)*3.0/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_cross_sprite.height=2/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.nav_cross_sprite.width=2/20.0*Math.max(app.screen.width,app.screen.height);
+                        this.nav_cross_sprite.height = (2.0 / 20.0) * maxDim;
+                        this.nav_cross_sprite.width = (2.0 / 20.0) * maxDim;
                         this.nav_cross_sprite.anchor.set(0.5);
-                        
-                        
-                        let exit_button_texture = map.textures['../../static/other/exit_button.png'];
+
+                        let exit_button_texture = this.textures['../../static/other/exit_button.png'];
                         this.exit_button_sprite = PIXI.Sprite.from(exit_button_texture);
                         app.stage.addChild(this.exit_button_sprite);
                         this.exit_button_sprite.zIndex = 6;
-                        this.exit_button_sprite.x=0;
-                        this.exit_button_sprite.y=0;
-                        this.exit_button_sprite.height=1/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.exit_button_sprite.width=1/20.0*Math.max(app.screen.width,app.screen.height);
-                        this.exit_button_sprite.buttonMode = true;
-                       
+                        this.exit_button_sprite.x = 0;
+                        this.exit_button_sprite.y = 0;
+                        this.exit_button_sprite.height = (1.0 / 20.0) * maxDim;
+                        this.exit_button_sprite.width = (1.0 / 20.0) * maxDim;
                         this.exit_button_sprite.eventMode = 'static';
-
-                        // Shows hand cursor
                         this.exit_button_sprite.cursor = 'pointer';
-                    
-                        // Pointers normalize touch and mouse (good for mobile and desktop)
+
                         this.exit_button_sprite.on('pointerdown', onExitClick);
-                    
+
                         async function onExitClick() {
-
-                            const token = sessionStorage.getItem('token') ;
-        
-                            await fetch('/end_game', {
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': 'Bearer ' + token, 
-                                    'Content-Type': 'application/json', // Another example header
-                                }
-                            })
-                                .then(response => {
-                                    if (response.ok) {
-                                        // Request successful, handle the response
-                                        return response.json(); 
-                                      } else if (response.status === 401) {
-                                        // Unauthorized, redirect to login page
-                                        window.location.replace("/login_page");
-                                        return response.json(); 
-                                      } else {
-                                        // Other error, handle accordingly
-                                        throw new Error('Network response was not ok.');
-                                      }
-                                })
-                                .then(data => {
-                                // Do something with the response data
-                                console.log(data);
-                                window.location.replace("/start_game_page");
-                                })
-                                .catch(error => {
-                                // Handle any errors
-                                console.error(error);
+                            const token = sessionStorage.getItem('token');
+                            try {
+                                await fetch('/end_game', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Authorization': 'Bearer ' + token,
+                                        'Content-Type': 'application/json',
+                                    }
                                 });
+                            } catch (e) {
+                                console.error(e);
+                            }
+                            window.location.replace("/start_game_page");
                         }
-
                     }
 
-                    async update_positions(time_delta) {
-                        
-                        //console.log("Updating " + (Object.keys(this.objects).length) + " objects, "  + ( Object.keys(this.tiles).length) + " tiles")
-
-                        Object.entries(this.objects).forEach(([i,my_obj_data]) => {
-
-                            my_obj_data.update_position(time_delta,this.player_obj);
-
-                        });
-
-                        Object.entries(this.tiles).forEach(([i,my_obj_data]) => {
-
-                            my_obj_data.update_position(time_delta,this.player_obj);
-
-                        });
-
-                        Object.entries(this.particles).forEach(([i,my_obj_data]) => {
-
-                            my_obj_data.update_position(time_delta,this.player_obj);
-
-                        });
+                    update_positions(progress) {
+                        for (const key in this.objects) {
+                            this.objects[key].update_position(progress, this.player_obj);
+                        }
+                        for (const key in this.tiles) {
+                            this.tiles[key].update_position(progress, this.player_obj);
+                        }
+                        for (const key in this.particles) {
+                            this.particles[key].update_position(progress, this.player_obj);
+                        }
                     }
+                }
 
-                }; 
-            
-                // TEXT
-                let screen_title_big = new PIXI.Text(
-                    {
-                        "text":"",
-                        "x":app.screen.width/2,
-                        "y":app.screen.height/2,
-                        "anchor":0.5,
-                        "zIndex":5,
-                        "style": new PIXI.TextStyle({
-                            "fontFamily": "Roboto",
-                            "fontSize": 60,
-                            "fill": "white",
+                // UI Overlay Text
+                const screen_title_big = new PIXI.Text({
+                    "text": "",
+                    "x": app.screen.width / 2,
+                    "y": app.screen.height / 2,
+                    "anchor": 0.5,
+                    "zIndex": 7,
+                    "style": new PIXI.TextStyle({
+                        "fontFamily": "Roboto",
+                        "fontSize": 60,
+                        "fill": "white",
                     })
                 });
                 app.stage.addChild(screen_title_big);
                 screen_title_big.visible = false;
 
-                let screen_title_indicative = new PIXI.Text(
-                    {
-                        "text":"",
-                        "x":app.screen.width/2,
-                        "y":app.screen.height/4,
-                        "anchor":0.5,
-                        "zIndex":5,
-                        "style": new PIXI.TextStyle({
-                            "fontFamily": "Roboto",
-                            "fontSize": 60,
-                            "fill": "white",
+                const screen_title_indicative = new PIXI.Text({
+                    "text": "",
+                    "x": app.screen.width / 2,
+                    "y": app.screen.height / 4,
+                    "anchor": 0.5,
+                    "zIndex": 7,
+                    "style": new PIXI.TextStyle({
+                        "fontFamily": "Roboto",
+                        "fontSize": 60,
+                        "fill": "white",
                     })
                 });
                 app.stage.addChild(screen_title_indicative);
                 screen_title_indicative.visible = false;
 
-                let screen_title_dashboard = new PIXI.Text(
-                    {
-                        "text":"",
-                        "x":app.screen.width - 3.0/20.0*Math.max(app.screen.width,app.screen.height),
-                        "y":3/20.0*Math.max(app.screen.width,app.screen.height),//+3/20.0*Math.max(app.screen.width,app.screen.height),
-                        "anchor":0.0,
-                        "zIndex":5,
-                        "style": new PIXI.TextStyle({
-                            "fontFamily": "Roboto",
-                            "fontSize": 20,
-                            "fill": "white",
+                const maxDim = Math.max(app.screen.width, app.screen.height);
+                const screen_title_dashboard = new PIXI.Text({
+                    "text": "",
+                    "x": app.screen.width - (3.0 / 20.0) * maxDim,
+                    "y": (3.0 / 20.0) * maxDim,
+                    "anchor": 0.0,
+                    "zIndex": 7,
+                    "style": new PIXI.TextStyle({
+                        "fontFamily": "Roboto",
+                        "fontSize": 20,
+                        "fill": "white",
                     })
                 });
                 app.stage.addChild(screen_title_dashboard);
                 screen_title_dashboard.visible = false;
 
-                // TEXT
-                let screen_title_small = new PIXI.Text(
-                    {
-                        "text":"Press any key to play again...",
-                        "x":512,
-                        "y":512+100,
-                        "anchor":0.5,
-                        "zIndex":5,
-                        "style": new PIXI.TextStyle({
-                            "fontFamily": "Roboto",
-                            "fontSize": 60,
-                            "fill": "white",
+                const screen_title_small = new PIXI.Text({
+                    "text": "Press any key to play again...",
+                    "x": app.screen.width / 2,
+                    "y": app.screen.height / 2 + 100,
+                    "anchor": 0.5,
+                    "zIndex": 7,
+                    "style": new PIXI.TextStyle({
+                        "fontFamily": "Roboto",
+                        "fontSize": 28,
+                        "fill": "white",
                     })
                 });
                 app.stage.addChild(screen_title_small);
                 screen_title_small.visible = false;
 
-                console.log("Loading map...");
-
                 const map = new MyMap();
-
-                
-
-                console.log("Init objects");
-
                 await map.fetch_data_objects();
+
+                if (map.map_data['global_params']['status'] !== 'running') {
+                    window.location.replace("/start_game_page");
+                    return;
+                }
+
                 await map.load_textures();
                 await map.init_objects();
 
-                if (  (typeof window.orientation !== "undefined") || ( navigator.userAgent.indexOf('IEMobile') !== -1 )  ){
-
-                    const joystick = new JoyStick();
-
+                if ((typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1)) {
+                    new JoyStick();
                 }
-
-                console.log("Start ticker");
-
-                let refresh_time = 0.33;
-                let control_refresh_elapsed = 0.0;
-                let elapsed = 0.0;
-                let cnt = 0.0;
-                let refresh_started = false;
-                
-                document.addEventListener('keydown', logKey);
-                document.addEventListener("keyup", clearKey);
-
-                let keys_pressed = {
-                    "ArrowRight":false,
-                    "ArrowLeft":false,
-                    "ArrowDown":false,
-                    "ArrowUp":false
-                };
 
                 function logKey(e) {
-
-                    if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(`${e.code}`)) {
-                        keys_pressed[`${e.code}`] = true;
+                    if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.code)) {
+                        if (!keys_pressed[e.code]) {
+                            keys_pressed[e.code] = true;
+                            send_control();
+                        }
                     }
                 }
-                
+
                 function clearKey(e) {
-
-                    if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(`${e.code}`)) {
-                        keys_pressed[`${e.code}`] = false;
+                    if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.code)) {
+                        if (keys_pressed[e.code]) {
+                            keys_pressed[e.code] = false;
+                            send_control();
+                        }
                     }
                 }
 
-                function clear_keys() {
-                    keys_pressed = {
-                        "ArrowRight":false,
-                        "ArrowLeft":false,
-                        "ArrowDown":false,
-                        "ArrowUp":false
-                    };
+                document.addEventListener('keydown', logKey);
+                document.addEventListener('keyup', clearKey);
 
+                // Periodic input heartbeat when any movement key is pressed
+                setInterval(() => {
+                    if (keys_pressed["ArrowRight"] || keys_pressed["ArrowLeft"] || keys_pressed["ArrowDown"] || keys_pressed["ArrowUp"]) {
+                        send_control();
+                    }
+                }, 200);
+
+                // High-efficiency background polling loop decoupled from render ticker
+                let isPolling = false;
+                async function pollServer() {
+                    if (isPolling) return;
+                    isPolling = true;
+                    try {
+                        await map.fetch_data_objects();
+                        if (map.map_data && map.map_data.global_params) {
+                            if (map.map_data.global_params.status !== 'running') {
+                                map.status = 'stopped';
+                            } else {
+                                map.refresh_data();
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Map sync error:", err);
+                    } finally {
+                        isPolling = false;
+                    }
                 }
 
-                async function update_control(){
+                // Poll immediately and continuously with adaptive interval
+                setInterval(pollServer, 40);
 
-                    const token = sessionStorage.getItem('token') ;
-
-                    await fetch('/control', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'Bearer ' + token, 
-                            'Content-Type': 'application/json', // Another example header
-                        },
-                        body: JSON.stringify(keys_pressed),
-                    })
-                        .then(response => {
-                            if (response.ok) {
-                                // Request successful, handle the response
-                                return response.json(); 
-                              } else if (response.status === 401) {
-                                // Unauthorized, redirect to login page
-                                window.location.replace("/login_page");
-                                return response.json(); 
-                              } else {
-                                // Other error, handle accordingly
-                                throw new Error('Network response was not ok.');
-                              }
-                        })
-                        .then(data => {
-                        // Do something with the response data
-                        //console.log(data);
-                        })
-                        .catch(error => {
-                        // Handle any errors
-                        console.error(error);
-                        });
-                }
-
+                // 60fps/120fps Smooth Render Loop
                 app.ticker.add((ticker) => {
-                    //console.log("time elapsed");
-                    //console.log("Map status is " + map.status);
+                    if (map.status === 'running') {
+                        if (map.player_obj) {
+                            const now = performance.now();
+                            const elapsed = (now - (map.epoch_start_time || now)) / 1000.0;
+                            const progress = Math.min(Math.max(elapsed / (map.refresh_time || 0.33), 0.0), 1.0);
 
-                    switch (map.status) {
-                        case 'running':
-                    
-                            if (
-                                (map.elapsed>(map.refresh_time-map.map_server_response_time))
-                                & (!(map.map_request_running))
-                                & (!(refresh_started))
-                            ){
-                                
-                                map.fetch_data_objects();
-                                refresh_started = true;
+                            map.update_positions(progress);
+
+                            if (map.nav_cross_sprite && map.map_size_x) {
+                                const screenDim = Math.max(app.screen.width, app.screen.height);
+                                const curX = (((map.player_obj.x_new - map.player_obj.x) * progress) + map.player_obj.x);
+                                const curY = (((map.player_obj.y_new - map.player_obj.y) * progress) + map.player_obj.y);
+                                map.nav_cross_sprite.x = app.screen.width - (3.0 / 20.0) * screenDim + (curX / map.map_size_x) * (3.0 / 20.0) * screenDim;
+                                map.nav_cross_sprite.y = (curY / map.map_size_x) * (3.0 / 20.0) * screenDim;
                             }
+                        }
 
-                            if (
-                                (map.elapsed>(map.refresh_time))
-                                &(!(map.map_request_running))
-                                &(refresh_started)
-                            ) { 
-
-                                map.refresh_data().then((refresh_success) => {
-                                    
-                                    if (map.time_left_until_refresh>0.0) {
-                                        map.elapsed = map.refresh_time-map.time_left_until_refresh;
-                                    } 
-
-                                    if (refresh_success){
-                                        
-                                        map.elapsed = 0.0;
-                                        //update_control();
-                                        //clear_keys();
-                                        
-                                    }
-                                    
-                                    refresh_started = false;
-                                    
-                                }).catch(error => {
-                                    // Handle errors
-                                    console.error('Error:', error);
-                                });;
-
-                            } else {
-                                
-                                //console.log("update positions");
-                                
-                                
-
-                                map.update_positions(map.elapsed/map.refresh_time);
-                                
-
-                                map.elapsed += ticker.elapsedMS/1000;
-                                
-                            
-                            }
-                            
-                            if (control_refresh_elapsed<0.2){
-                                control_refresh_elapsed += ticker.elapsedMS/1000;
-                            } else {
-                                update_control();
-                                control_refresh_elapsed = 0.0;
-                            }
-                            
-                            if (map.large_message){
-                                screen_title_big.text = map.large_message;
-                                screen_title_big.visible = true;
-                            } else {
-                                screen_title_big.visible = false;
-                            }
-
-                            if (map.dashboard_message){
-                                screen_title_dashboard.text = map.dashboard_message;
-                                screen_title_dashboard.visible = true;
-                            } else {
-                                screen_title_dashboard.visible = false;
-                            }
-                            
-                            if (map.title_indicative_message){
-                                screen_title_indicative.text = map.title_indicative_message;
-                                screen_title_indicative.visible = true;
-                            } else {
-                                screen_title_indicative.visible = false;
-                            }
-                            break;
-                        default:
-
-                            screen_title_big.text = "Game over !";
+                        if (map.large_message) {
+                            screen_title_big.text = map.large_message;
                             screen_title_big.visible = true;
+                        } else {
+                            screen_title_big.visible = false;
+                        }
 
-                            screen_title_small.text = "Press any key to play again...";
-                            screen_title_small.visible = true;
+                        if (map.dashboard_message) {
+                            screen_title_dashboard.text = map.dashboard_message;
+                            screen_title_dashboard.visible = true;
+                        } else {
+                            screen_title_dashboard.visible = false;
+                        }
 
-                            //screen_title_big.visible = false;
-                            //screen_title_small.visible = false;
-                            update_control();
-                            break;
-
+                        if (map.title_indicative_message) {
+                            screen_title_indicative.text = map.title_indicative_message;
+                            screen_title_indicative.visible = true;
+                        } else {
+                            screen_title_indicative.visible = false;
+                        }
+                    } else {
+                        screen_title_big.text = "Game over !";
+                        screen_title_big.visible = true;
+                        screen_title_small.visible = true;
                     }
-                    
-                }).catch(err => console.error(err));
-
-                
+                });
 
             }
 

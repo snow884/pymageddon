@@ -1,4 +1,5 @@
 import json
+import os
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -45,9 +46,13 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
 def time_ago(seconds):
@@ -527,7 +532,10 @@ def create_player(new_user: UserCreate):
 
     user = User(username=new_user.username, hashed_password=hashed_password)
 
-    r.set(f"player_{user.username}", user.json())
+    user_data = (
+        user.model_dump_json() if hasattr(user, "model_dump_json") else user.json()
+    )
+    r.set(f"player_{user.username}", user_data)
 
     return {"status": "success"}
 
@@ -537,8 +545,12 @@ def control(
     current_user: Annotated[User, Depends(get_current_active_user)],
     my_keys: KeysPressed,
 ):
-
-    r.set(f"control_{current_user.username}", my_keys.json())
+    keys_data = (
+        my_keys.model_dump_json()
+        if hasattr(my_keys, "model_dump_json")
+        else my_keys.json()
+    )
+    r.set(f"control_{current_user.username}", keys_data)
 
     return {"status": "success"}
 
@@ -548,12 +560,15 @@ def create_bot(
     current_user: Annotated[User, Depends(get_current_active_user)],
     code: BotCode,
 ):
-    print(code.code_str)
     new_bot_data = BotCreate(
         request_type="spectator", spectator_follow_type="object", code=code.code_str
     )
-    print(new_bot_data.json())
-    r.set(f"game_{current_user.username}", new_bot_data.json())
+    bot_json = (
+        new_bot_data.model_dump_json()
+        if hasattr(new_bot_data, "model_dump_json")
+        else new_bot_data.json()
+    )
+    r.set(f"game_{current_user.username}", bot_json)
 
     return {"status": "success"}
 
@@ -571,15 +586,13 @@ def scores(current_user: Annotated[User, Depends(get_current_active_user)]):
 @app.get("/get_map")
 def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
 
-    # time.sleep(0.1)
-
     map_data_str = r.get(f"map_{current_user.username}")
 
     if not map_data_str:
         map_data = {
             "global_params": {
                 "status": "stopped",
-                "time_interval": 1,
+                "time_interval": 0.33,
                 "map_view_size": 11,
                 "epoch": 0,
             },
@@ -595,13 +608,11 @@ def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
     status = map_data["global_params"]["status"]
 
     if status == "running":
-
         unix_timestamp = time.time()
         new_map_timestamp = map_data["global_params"]["new_map_timestamp"]
-
-        timestamp = map_data["global_params"]["timestamp"]
-        print(new_map_timestamp - unix_timestamp)
-        map_data["global_params"]["time_left"] = new_map_timestamp - unix_timestamp
+        map_data["global_params"]["time_left"] = max(
+            0.0, new_map_timestamp - unix_timestamp
+        )
 
     return map_data
 

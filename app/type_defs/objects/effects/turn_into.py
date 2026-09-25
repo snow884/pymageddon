@@ -15,8 +15,11 @@ class TurnInto(BaseEffect):
 
     def description(self):
 
+        future_name = getattr(
+            self.future_object_class, "type_name", str(self.future_object_class)
+        )
         return f"""
-        After {self.time_to_turn} cycles turns into {self.future_object_class}.
+        After {self.time_to_turn} cycles turns into {future_name}.
         """
 
     def run_effect(self, parent_object):

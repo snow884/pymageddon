@@ -98,10 +98,41 @@ def populate_map_full(sz=100):
                     Angel(x_new=i, y_new=j)
 
 
-def handle_players():
+_CACHED_TEXTURES = None
 
-    for key in realm.REDIS_CONNECTION.keys(pattern="player_*"):
-        key_str = key.decode()
+
+def get_all_textures():
+    global _CACHED_TEXTURES
+    if _CACHED_TEXTURES is None:
+        all_images = (
+            [inheritor.image for inheritor in BaseObject.__subclasses__()]
+            + [inheritor.image for inheritor in BaseTile.__subclasses__()]
+            + [inheritor.image for inheritor in BaseParticle.__subclasses__()]
+        )
+        other_images = [
+            "../../static/other/health_bar_green.png",
+            "../../static/other/health_bar_red.png",
+            "../../static/other/health_bar_yellow.png",
+            "../../static/other/circle.png",
+            "../../map_image.png",
+            "../../static/other/red_cross.png",
+            "../../static/other/joystick_center.png",
+            "../../static/other/joystick_outside.png",
+            "../../static/other/exit_button.png",
+        ]
+        _CACHED_TEXTURES = all_images + other_images
+    return _CACHED_TEXTURES
+
+
+def handle_players():
+    player_keys = (
+        list(realm.REDIS_CONNECTION.scan_iter(match="player_*"))
+        if hasattr(realm.REDIS_CONNECTION, "scan_iter")
+        else realm.REDIS_CONNECTION.keys(pattern="player_*")
+    )
+
+    for key in player_keys:
+        key_str = key.decode() if isinstance(key, bytes) else str(key)
 
         player_name = key_str.replace("player_", "")
 
@@ -309,24 +340,6 @@ def send_map_data(
     tiles,
     particles,
 ):
-    all_images = (
-        [inheritor.image for inheritor in BaseObject.__subclasses__()]
-        + [inheritor.image for inheritor in BaseTile.__subclasses__()]
-        + [inheritor.image for inheritor in BaseParticle.__subclasses__()]
-    )
-
-    other_images = [
-        "../../static/other/health_bar_green.png",
-        "../../static/other/health_bar_red.png",
-        "../../static/other/health_bar_yellow.png",
-        "../../static/other/circle.png",
-        "../../map_image.png",
-        "../../static/other/red_cross.png",
-        "../../static/other/joystick_center.png",
-        "../../static/other/joystick_outside.png",
-        "../../static/other/exit_button.png",
-    ]
-
     unix_timestamp = time.time()
 
     if object_type == "object":
@@ -353,7 +366,7 @@ def send_map_data(
             "map_view_size": realm.MAP_VIEW_SIZE,
             "map_size_x": realm.MAP.size_x,
             "epoch": realm.EPOCH_COUNTER,
-            "textures": all_images + other_images,
+            "textures": get_all_textures(),
             "timestamp": unix_timestamp,
             "new_map_timestamp": unix_timestamp + realm.TIME_INTERVAL,
             "large_message": large_message,
@@ -383,37 +396,44 @@ def send_score_data(player_name):
 
 def send_map_data_all():
 
-    for player_name, player_object in realm.PLAYER_LIST.items():
+    with realm.LOCK:
+        for player_name, player_object in realm.PLAYER_LIST.items():
 
-        objects, tiles, particles = find_all_types(player_object)
+            objects, tiles, particles = find_all_types(player_object)
 
-        send_map_data(
-            player_object,
-            player_object.player_name,
-            None,
-            None,
-            "object",
-            objects,
-            tiles,
-            particles,
-        )
+            send_map_data(
+                player_object,
+                player_object.player_name,
+                None,
+                None,
+                "object",
+                objects,
+                tiles,
+                particles,
+            )
 
-    for i, spectator in realm.SPECTATOR_LIST.items():
-        objects, tiles, particles = find_all_types(spectator.obj)
+        for i, spectator in realm.SPECTATOR_LIST.items():
+            objects, tiles, particles = find_all_types(spectator.obj)
 
-        send_map_data(
-            spectator.obj,
-            spectator.player_name,
-            spectator.large_message,
-            spectator.title_indicative_message,
-            spectator.object_type,
-            objects,
-            tiles,
-            particles,
-        )
+            send_map_data(
+                spectator.obj,
+                spectator.player_name,
+                spectator.large_message,
+                spectator.title_indicative_message,
+                spectator.object_type,
+                objects,
+                tiles,
+                particles,
+            )
 
-    for key in realm.REDIS_CONNECTION.keys(pattern="player_*"):
-        key_str = key.decode()
+    player_keys = (
+        list(realm.REDIS_CONNECTION.scan_iter(match="player_*"))
+        if hasattr(realm.REDIS_CONNECTION, "scan_iter")
+        else realm.REDIS_CONNECTION.keys(pattern="player_*")
+    )
+
+    for key in player_keys:
+        key_str = key.decode() if isinstance(key, bytes) else str(key)
 
         player_name = key_str.replace("player_", "")
 
@@ -432,30 +452,28 @@ def evaluate_player_control():
 
         control_data = json.loads(control_data_str)
 
-        if control_data["ArrowDown"]:
+        if control_data.get("ArrowDown"):
             if player_object.rotation == Rotations.DOWN:
                 player_object.intent = Actions.MOVE_FORWARD
             else:
                 player_object.intent = Actions.ROTATE_DOWN
-        elif control_data["ArrowUp"]:
+        elif control_data.get("ArrowUp"):
             if player_object.rotation == Rotations.UP:
                 player_object.intent = Actions.MOVE_FORWARD
             else:
                 player_object.intent = Actions.ROTATE_UP
-        elif control_data["ArrowRight"]:
+        elif control_data.get("ArrowRight"):
             if player_object.rotation == Rotations.RIGHT:
                 player_object.intent = Actions.MOVE_FORWARD
             else:
                 player_object.intent = Actions.ROTATE_RIGHT
-        elif control_data["ArrowLeft"]:
+        elif control_data.get("ArrowLeft"):
             if player_object.rotation == Rotations.LEFT:
                 player_object.intent = Actions.MOVE_FORWARD
             else:
                 player_object.intent = Actions.ROTATE_LEFT
         else:
             player_object.intent = None
-
-        realm.REDIS_CONNECTION.delete(f"control_{player_name}")
 
 
 def evaluate_effects():
@@ -605,14 +623,13 @@ def worker_generate_plots(q, thread_id):
             )  # Block until an item is available or timeout
             print(f"Thread {thread_id}: Processing {item}")
 
-            generate_map()
+            with realm.LOCK:
+                generate_map()
 
-            get_plot_by_spicies(interval=30)
-            get_refresh_time_plot(interval=30)
+                get_plot_by_spicies(interval=30)
+                get_refresh_time_plot(interval=30)
 
-            generate_summary_yaml()
-
-            send_map_data_all()
+                generate_summary_yaml()
 
             q.task_done()  # Indicate that a formerly enqueued task is complete
         except queue.Empty as e:
@@ -656,20 +673,25 @@ def main_loop(steps=None):
     thread_send_map_data_all = threading.Thread(
         target=worker_send_map_data_all,
         args=(q_send_map_data_all, "thread_send_map_data_all"),
+        daemon=True,
     )
     thread_send_map_data_all.start()
     threads.append(thread_send_map_data_all)
 
     q_generate_plots = queue.Queue()
     thread_generate_plots = threading.Thread(
-        target=worker_generate_plots, args=(q_generate_plots, "thread_generate_plots")
+        target=worker_generate_plots,
+        args=(q_generate_plots, "thread_generate_plots"),
+        daemon=True,
     )
     thread_generate_plots.start()
     threads.append(thread_generate_plots)
 
     q_backup_redis = queue.Queue()
     thread_backup_redis = threading.Thread(
-        target=worker_backup_redis, args=(q_backup_redis, "thread_backup_redis")
+        target=worker_backup_redis,
+        args=(q_backup_redis, "thread_backup_redis"),
+        daemon=True,
     )
     thread_backup_redis.start()
     threads.append(thread_backup_redis)
@@ -677,14 +699,15 @@ def main_loop(steps=None):
     while True:
 
         start_time = time.time()
-        handle_players()
-        evaluate_thinking()
+        with realm.LOCK:
+            handle_players()
+            evaluate_thinking()
 
-        if realm.MODE == "full":
-            evaluate_player_control()
+            if realm.MODE == "full":
+                evaluate_player_control()
 
-        evaluate_effects()
-        evaluate_moves()
+            evaluate_effects()
+            evaluate_moves()
 
         if realm.MODE == "full":
             q_send_map_data_all.put(realm.EPOCH_COUNTER)
@@ -703,9 +726,9 @@ def main_loop(steps=None):
             "ms",
         )
 
-        while (end_time - start_time) < realm.TIME_INTERVAL:
-            end_time = time.time()
-            time.sleep(0.01)
+        sleep_time = realm.TIME_INTERVAL - (end_time - start_time)
+        if sleep_time > 0:
+            time.sleep(sleep_time)
 
         end_time = time.time()
         print("Total epoch time :", (end_time - start_time) * 10**3, "ms")
