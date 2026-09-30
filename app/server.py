@@ -1,4 +1,5 @@
 import json
+import os
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -27,25 +28,45 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 31
 
 app = FastAPI()
-r = redis.Redis(host="localhost", port=6379, db=0)
+r = redis.Redis(host="pymageddon-redis-server", port=6379, db=0)
 
 origins = [
-    "http://localhost:8000",  # Your frontend's origin
-    "http://localhost:8000",  # Replace with your frontend's port if different
-    "http://127.0.0.1:8000",
+    "http://localhost:80",  # Your frontend's origin
+    "http://localhost:80",  # Replace with your frontend's port if different
+    "http://127.0.0.1:80",
+    "http://0.0.0.0:80",
+    "http://0.0.0.0:80",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, PUT, etc.)
     allow_headers=["*"],  # Allow all headers
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
-templates = Jinja2Templates(directory="templates")
+@app.middleware("http")
+async def no_cache_static_assets(request: Request, call_next):
+    """Force browsers to revalidate /static assets on every load instead of
+    serving them from the disk cache. StaticFiles still sends ETag/
+    Last-Modified, so unchanged files get a cheap 304 while files replaced by
+    a rebuild/deploy are always re-fetched instead of staying stuck on an
+    old cached copy."""
+    response = await call_next(request)
+    if request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
 def time_ago(seconds):
@@ -451,7 +472,7 @@ async def player(request: Request, player_name: str):
     )
 
 
-@app.get("/world_map", response_class=HTMLResponse)
+@app.get("/ ", response_class=HTMLResponse)
 async def world_map(request: Request):
 
     return templates.TemplateResponse(
@@ -525,7 +546,10 @@ def create_player(new_user: UserCreate):
 
     user = User(username=new_user.username, hashed_password=hashed_password)
 
-    r.set(f"player_{user.username}", user.json())
+    user_data = (
+        user.model_dump_json() if hasattr(user, "model_dump_json") else user.json()
+    )
+    r.set(f"player_{user.username}", user_data)
 
     return {"status": "success"}
 
@@ -535,8 +559,12 @@ def control(
     current_user: Annotated[User, Depends(get_current_active_user)],
     my_keys: KeysPressed,
 ):
-
-    r.set(f"control_{current_user.username}", my_keys.json())
+    keys_data = (
+        my_keys.model_dump_json()
+        if hasattr(my_keys, "model_dump_json")
+        else my_keys.json()
+    )
+    r.set(f"control_{current_user.username}", keys_data)
 
     return {"status": "success"}
 
@@ -546,12 +574,15 @@ def create_bot(
     current_user: Annotated[User, Depends(get_current_active_user)],
     code: BotCode,
 ):
-    print(code.code_str)
     new_bot_data = BotCreate(
         request_type="spectator", spectator_follow_type="object", code=code.code_str
     )
-    print(new_bot_data.json())
-    r.set(f"game_{current_user.username}", new_bot_data.json())
+    bot_json = (
+        new_bot_data.model_dump_json()
+        if hasattr(new_bot_data, "model_dump_json")
+        else new_bot_data.json()
+    )
+    r.set(f"game_{current_user.username}", bot_json)
 
     return {"status": "success"}
 
@@ -569,15 +600,13 @@ def scores(current_user: Annotated[User, Depends(get_current_active_user)]):
 @app.get("/get_map")
 def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
 
-    # time.sleep(0.1)
-
     map_data_str = r.get(f"map_{current_user.username}")
 
     if not map_data_str:
         map_data = {
             "global_params": {
                 "status": "stopped",
-                "time_interval": 1,
+                "time_interval": 0.33,
                 "map_view_size": 11,
                 "epoch": 0,
             },
@@ -593,21 +622,25 @@ def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
     status = map_data["global_params"]["status"]
 
     if status == "running":
-
         unix_timestamp = time.time()
         new_map_timestamp = map_data["global_params"]["new_map_timestamp"]
-
-        timestamp = map_data["global_params"]["timestamp"]
-        print(new_map_timestamp - unix_timestamp)
-        map_data["global_params"]["time_left"] = new_map_timestamp - unix_timestamp
+        map_data["global_params"]["time_left"] = max(
+            0.0, new_map_timestamp - unix_timestamp
+        )
 
     return map_data
 
 
 @app.get("/ping")
-def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
+def ping(current_user: Annotated[User, Depends(get_current_active_user)]):
 
     return {"status": "success"}
+
+
+@app.get("/ping2/{size}")
+def ping2(size: int):
+
+    return "a" * size
 
 
 @app.get("/sitemap.xml")

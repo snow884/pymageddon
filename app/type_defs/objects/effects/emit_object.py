@@ -1,5 +1,6 @@
 import random
 
+from common_utils import ecosystem
 from common_utils.utils import obj_fut
 from singleton import realm
 from type_defs.objects.effects.base_effect import BaseEffect
@@ -17,8 +18,9 @@ class EmitObject(BaseEffect):
 
     def description(self):
 
+        obj_name = getattr(self.object_to_emit, "type_name", str(self.object_to_emit))
         return f"""
-        Emits {self.object_to_emit} every {self.time_to_emit} cycles.
+        Emits {obj_name} every {self.time_to_emit} cycles.
         """
 
     def run_effect(self, parent_object):
@@ -36,7 +38,7 @@ class EmitObject(BaseEffect):
 
             tile = realm.TILES.get((x_new, y_new))
 
-            if tile:
+            if tile and ecosystem.birth_allowed(obj_object_to_emit.type_name):
                 if tile.occupied_by is None:
                     obj_object_to_emit(x_new=x_new, y_new=y_new)
 

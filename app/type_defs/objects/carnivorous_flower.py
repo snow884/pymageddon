@@ -5,6 +5,7 @@ from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.eat_object_stepping_in import EatObjectSteppingIn
 from type_defs.objects.effects.emit_object import EmitObject
 from type_defs.objects.effects.hp_depletion import HpDepletion
+from type_defs.objects.wildlife_specs import CARNIVOROUS_FLOWER_PREY
 
 
 class CarnivorousFlower(BaseObject):
@@ -32,9 +33,7 @@ class CarnivorousFlower(BaseObject):
 
     effects = [
         EmitObject(object_to_emit="CarnivorousFlowerSeed", time_to_emit=101),
-        EatObjectSteppingIn(
-            types_eaten_to_hp_conv={"Cow": 50, "Chicken": 50, "Fox": 50}
-        ),
+        EatObjectSteppingIn(types_eaten_to_hp_conv=dict(CARNIVOROUS_FLOWER_PREY)),
         HpDepletion(hp_loss_per_cycle=1, skip_cycles=20),
     ]
 

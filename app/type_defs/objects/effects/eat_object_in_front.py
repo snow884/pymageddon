@@ -1,3 +1,4 @@
+from common_utils import ecosystem
 from common_utils.common_enums import Actions
 from common_utils.utils import obj_fut
 from singleton import realm
@@ -19,8 +20,9 @@ class EatObjectInFront(BaseEffect):
 
         for obj_type, reward in self.types_eaten_to_hp_conv.items():
 
+            type_name = getattr(obj_type, "type_name", str(obj_type))
             type_to_hp_str = (
-                type_to_hp_str + f"* {obj_type.type_name} - receives {reward} hp <br>"
+                type_to_hp_str + f"* {type_name} - receives {reward} hp <br>"
             )
 
         return f"Can eat the types the following types:<br>" + type_to_hp_str
@@ -31,7 +33,9 @@ class EatObjectInFront(BaseEffect):
             obj_fut(t): r for t, r in self.types_eaten_to_hp_conv.items()
         }
 
-        if parent_object.intent == Actions.MOVE_FORWARD:
+        if parent_object.intent == Actions.MOVE_FORWARD and (
+            parent_object.hp < ecosystem.SATIATED_HP
+        ):
             x_new, y_new = parent_object.get_next_coords()
 
             tile = realm.TILES.get((x_new, y_new))
@@ -41,6 +45,9 @@ class EatObjectInFront(BaseEffect):
                 occupied_by_obj_index = tile.occupied_by
                 if occupied_by_obj_index:
                     obj_on_location = realm.OBJECT_LIST[occupied_by_obj_index]
+
+                    if not ecosystem.hunt_allowed(obj_on_location.type_name):
+                        return
 
                     for obj_type, reward in self.types_eaten_to_hp_conv.items():
                         if isinstance(obj_on_location, obj_type):

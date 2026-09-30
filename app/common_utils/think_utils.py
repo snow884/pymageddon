@@ -1,6 +1,7 @@
 import random
 
 from common_utils.common_enums import Actions, Rotations
+from common_utils.ecosystem import SATIATED_HP, huntable
 from common_utils.grid_utils import find_nearest
 from singleton import realm
 
@@ -110,7 +111,10 @@ def simple_chase(parent_object, chase_after=[], chase_from=[]):
             run_away_num = 0
             mode = "random"
 
-        found_obj = find_nearest(parent_object, chase_after, rad=10)
+        if parent_object.hp >= SATIATED_HP:
+            found_obj = None
+        else:
+            found_obj = find_nearest(parent_object, huntable(chase_after), rad=10)
 
         if found_obj:
 

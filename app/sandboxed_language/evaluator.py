@@ -15,13 +15,14 @@ binary_operators = {
     ast.Div: op.truediv,
     ast.Pow: op.pow,
     ast.BitXor: op.xor,
-    ast.USub: op.neg,
     ast.Mod: op.mod,
     ast.FloorDiv: op.floordiv,
 }
 
 unary_operators = {
     ast.Not: op.not_,
+    ast.USub: op.neg,
+    ast.UAdd: op.pos,
 }
 
 
@@ -38,7 +39,7 @@ comparison_operators = {
     ast.GtE: op.ge,
     ast.Is: op.is_,
     ast.IsNot: op.is_not,
-    ast.In: op.contains,
+    ast.In: lambda left, right: left in right,
     ast.NotIn: not_in,
 }
 
@@ -223,6 +224,9 @@ class MathVisitor(ast.NodeVisitor):
                 return funct(left, right)
 
         raise ValueError(f"Unknown operator {op_ast_type}")
+
+    def visit_Constant(self, node):
+        return node.value
 
     def visit_Num(self, node):
         return node.n

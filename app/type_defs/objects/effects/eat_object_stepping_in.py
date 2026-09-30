@@ -1,3 +1,4 @@
+from common_utils import ecosystem
 from common_utils.utils import obj_fut
 from singleton import realm
 from type_defs.objects.effects.base_effect import BaseEffect
@@ -22,12 +23,9 @@ class EatObjectSteppingIn(BaseEffect):
                 type_to_hp_str + f"* {obj_type} - receives {reward} hp <br>"
             )
 
-        return (
-            f"""
+        return f"""
         Can eat the the following types that step in:<br>
-        """
-            + type_to_hp_str
-        )
+        """ + type_to_hp_str
 
     def run_effect(self, parent_object):
 
@@ -47,6 +45,9 @@ class EatObjectSteppingIn(BaseEffect):
                 occupied_by_obj_index = tile.occupied_by
                 if occupied_by_obj_index:
                     obj_on_location = realm.OBJECT_LIST[occupied_by_obj_index]
+
+                    if not ecosystem.hunt_allowed(obj_on_location.type_name):
+                        continue
 
                     for obj_type, reward in self.types_eaten_to_hp_conv.items():
                         if isinstance(obj_on_location, obj_type):

@@ -9,7 +9,9 @@ from singleton import realm
 def backup_to_s3():
 
     if not realm.REDIS_CONNECTION:
-        realm.REDIS_CONNECTION = redis.Redis(host="localhost", port=6379, db=0)
+        realm.REDIS_CONNECTION = redis.Redis(
+            host="pymageddon-redis-server", port=6379, db=0
+        )
 
     # Get all keys
     all_keys = realm.REDIS_CONNECTION.keys()
@@ -39,7 +41,9 @@ def backup_to_s3():
 def restore_from_s3():
 
     if not realm.REDIS_CONNECTION:
-        realm.REDIS_CONNECTION = redis.Redis(host="localhost", port=6379, db=0)
+        realm.REDIS_CONNECTION = redis.Redis(
+            host="pymageddon-redis-server", port=6379, db=0
+        )
 
     client = boto3.client("s3")
     bucket_name = "pymageddon-redis-backup"

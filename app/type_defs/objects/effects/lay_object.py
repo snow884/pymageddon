@@ -1,5 +1,6 @@
 import random
 
+from common_utils import ecosystem
 from common_utils.utils import obj_fut
 from singleton import realm
 from type_defs.objects.effects.base_effect import BaseEffect
@@ -9,17 +10,29 @@ from type_defs.particles.laying_particle import LayingParticle
 class LayObject(BaseEffect):
     effect_name = "Can lay object behind it"
 
-    def __init__(self, object_to_lay, time_to_lay, effect_name=effect_name):
+    def __init__(
+        self,
+        object_to_lay,
+        time_to_lay,
+        effect_name=effect_name,
+        min_hp=0,
+        hp_cost=0,
+    ):
         super().__init__()
 
         self.object_to_lay = object_to_lay
         self.time_to_lay = time_to_lay
         self.effect_name = effect_name
+        # Well-fed parents only: breeding needs min_hp and costs hp_cost.
+        self.min_hp = min_hp
+        self.hp_cost = hp_cost
 
     def description(self):
 
+        lay_name = getattr(self.object_to_lay, "type_name", str(self.object_to_lay))
+        condition = f" when it has at least {self.min_hp} hp" if self.min_hp else ""
         return f"""
-        Every {self.time_to_lay} cycles lays a {self.object_to_lay.type_name}.
+        Every {self.time_to_lay} cycles lays a {lay_name}{condition}.
         """
 
     def run_effect(self, parent_object):
@@ -34,6 +47,14 @@ class LayObject(BaseEffect):
         family_name = parent_object.family_name
 
         cycle_counter = cycle_counter + 1
+
+        if cycle_counter > self.time_to_lay and not ecosystem.birth_allowed(
+            self.object_to_lay.type_name
+        ):
+            cycle_counter = 0
+
+        if cycle_counter > self.time_to_lay and parent_object.hp < self.min_hp:
+            cycle_counter = self.time_to_lay
 
         if cycle_counter > self.time_to_lay:
 
@@ -87,6 +108,7 @@ class LayObject(BaseEffect):
                         code_store=code,
                         family_name=family_name,
                     )
+                    parent_object.hp -= self.hp_cost
                     cycle_counter = 0
 
         parent_object.variables[
