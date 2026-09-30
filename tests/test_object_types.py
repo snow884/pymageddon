@@ -287,3 +287,9 @@ def test_world_map_and_species_plot_cover_all_types(empty_world, run_epochs):
 
     assert realm.REDIS_CONNECTION["map_image"]
     assert realm.REDIS_CONNECTION["counts_historical_plot"]
+
+
+def test_every_object_texture_is_sent_to_clients():
+    textures = main.get_all_textures()
+    missing = [t for t in OBJ_TYPE_LIST if obj_fut(t).image not in textures]
+    assert not missing, f"textures not preloaded by the client: {missing}"

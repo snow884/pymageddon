@@ -23,6 +23,7 @@ from common_utils.image_utils import (
     get_plot_by_spicies,
     get_refresh_time_plot,
 )
+from common_utils.utils import OBJ_TYPE_LIST, obj_fut
 from singleton import realm
 from type_defs.objects.angel import Angel
 from type_defs.objects.badger import Badger
@@ -115,8 +116,10 @@ _CACHED_TEXTURES = None
 def get_all_textures():
     global _CACHED_TEXTURES
     if _CACHED_TEXTURES is None:
+        # The registry covers types whose modules are imported lazily.
+        object_images = [obj_fut(type_name).image for type_name in OBJ_TYPE_LIST]
         all_images = (
-            [inheritor.image for inheritor in BaseObject.__subclasses__()]
+            list(dict.fromkeys(object_images))
             + [inheritor.image for inheritor in BaseTile.__subclasses__()]
             + [inheritor.image for inheritor in BaseParticle.__subclasses__()]
         )
