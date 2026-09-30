@@ -2,6 +2,7 @@ import hashlib
 import time
 from dataclasses import dataclass
 
+from common_utils import ecosystem
 from common_utils.common_enums import Actions, Rotations
 from dataclasses_json import dataclass_json
 from sandboxed_language.evaluator import evaluate_code
@@ -82,6 +83,7 @@ class BaseObject:
 
         realm.OBJECT_LIST[self.index] = self
         realm.TILES[(x_new, y_new)].occupied_by = self.index
+        ecosystem.register_birth(self.type_name)
 
         if is_player:
             self.player_name = player_name
@@ -308,6 +310,7 @@ class BaseObject:
         realm.TILES[(self.x, self.y)].occupied_by = None
 
         del realm.OBJECT_LIST[self.index]
+        ecosystem.register_death(self.type_name)
 
         if self.index in realm.SPECTATOR_LIST:
 

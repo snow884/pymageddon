@@ -1,0 +1,1997 @@
+{
+  "acorn": {
+    "image": "app/static/objects/acorn.png",
+    "kind": "seed",
+    "subject": "a single shiny brown acorn with its textured cap",
+    "prompt": "Top-down view game asset of a single shiny brown acorn with its textured cap, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 270280477490926,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "anthill": {
+    "image": "app/static/objects/anthill.png",
+    "kind": "object",
+    "subject": "a cone shaped anthill of reddish soil and pine needles with tiny ants",
+    "prompt": "Top-down view game asset of a cone shaped anthill of reddish soil and pine needles with tiny ants, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 133900430969434,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "apple": {
+    "image": "app/static/objects/apple.png",
+    "kind": "seed",
+    "subject": "a single shiny red apple with a small green leaf",
+    "prompt": "Top-down view game asset of a single shiny red apple with a small green leaf, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 229515230192062,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "apple_sapling": {
+    "image": "app/static/objects/apple_sapling.png",
+    "kind": "sapling",
+    "subject": "a young apple tree sapling with a few fresh green leaves",
+    "prompt": "Top-down view game asset of a young apple tree sapling with a few fresh green leaves, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 267016956021246,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "apple_tree": {
+    "image": "app/static/objects/apple_tree.png",
+    "kind": "plant",
+    "subject": "a round leafy apple tree crown full of bright red apples",
+    "prompt": "Top-down view game asset of a round leafy apple tree crown full of bright red apples, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 240879185314703,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "baby_snail": {
+    "image": "app/static/objects/baby_snail.png",
+    "kind": "juvenile",
+    "subject": "tiny cute car decorated as a baby snail, small spiral shell on the roof, two short eye stalks on the front",
+    "prompt": "Top-down racing game sprite: a tiny cute car decorated as a baby snail, small spiral shell on the roof, two short eye stalks on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 148726302615721,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "badger_cub": {
+    "image": "app/static/objects/badger_cub.png",
+    "kind": "juvenile",
+    "subject": "small cute car decorated as a baby badger, grey fur paint with a black and white striped face on the front",
+    "prompt": "Top-down racing game sprite: a small cute car decorated as a baby badger, grey fur paint with a black and white striped face on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 247417509476673,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "bear": {
+    "image": "app/static/objects/bear.png",
+    "kind": "adult",
+    "subject": "big bulky truck decorated as a brown grizzly bear, thick brown fur paint, round ears on the roof, big snout with black nose on the front bumper, huge paws with claws at the corners",
+    "prompt": "Top-down racing game sprite: a big bulky truck decorated as a brown grizzly bear, thick brown fur paint, round ears on the roof, big snout with black nose on the front bumper, huge paws with claws at the corners. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 10951863258971,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "bear_cub": {
+    "image": "app/static/objects/bear_cub.png",
+    "kind": "juvenile",
+    "subject": "small chubby cute car decorated as a brown bear cub, fluffy brown fur paint, round ears on the roof, black nose on the front",
+    "prompt": "Top-down racing game sprite: a small chubby cute car decorated as a brown bear cub, fluffy brown fur paint, round ears on the roof, black nose on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 59843453628164,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "bear_den": {
+    "image": "app/static/objects/bear_den.png",
+    "kind": "egg",
+    "subject": "a cozy cave den lined with moss with two tiny sleeping brown bear cubs",
+    "prompt": "Top-down view game asset of a cozy cave den lined with moss with two tiny sleeping brown bear cubs, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 184993422698842,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "berry_bush": {
+    "image": "app/static/objects/berry_bush.png",
+    "kind": "plant",
+    "subject": "a round leafy green bush full of clusters of red raspberries and dark blueberries",
+    "prompt": "Top-down view game asset of a round leafy green bush full of clusters of red raspberries and dark blueberries, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 95545752194922,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "berry_seed": {
+    "image": "app/static/objects/berry_seed.png",
+    "kind": "seed",
+    "subject": "a single ripe dark purple blueberry",
+    "prompt": "Top-down view game asset of a single ripe dark purple blueberry, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 188056837520668,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "blackberry": {
+    "image": "app/static/objects/blackberry.png",
+    "kind": "seed",
+    "subject": "a single glossy ripe blackberry",
+    "prompt": "Top-down view game asset of a single glossy ripe blackberry, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 3856850706230,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "blackberry_bramble": {
+    "image": "app/static/objects/blackberry_bramble.png",
+    "kind": "plant",
+    "subject": "a thorny blackberry bramble bush with white flowers and clusters of black and red berries",
+    "prompt": "Top-down view game asset of a thorny blackberry bramble bush with white flowers and clusters of black and red berries, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 260059596420259,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "bramble_sprout": {
+    "image": "app/static/objects/bramble_sprout.png",
+    "kind": "sapling",
+    "subject": "a young thorny bramble shoot with serrated leaves",
+    "prompt": "Top-down view game asset of a young thorny bramble shoot with serrated leaves, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 208132263172561,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "bunny": {
+    "image": "app/static/objects/bunny.png",
+    "kind": "juvenile",
+    "subject": "tiny cute baby car decorated as a fluffy grey baby bunny, short round ears on the roof, pink nose on the front bumper, cotton tail at the rear",
+    "prompt": "Top-down racing game sprite: a tiny cute baby car decorated as a fluffy grey baby bunny, short round ears on the roof, pink nose on the front bumper, cotton tail at the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 153609166965186,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "butterfly": {
+    "image": "app/static/objects/butterfly.png",
+    "kind": "adult",
+    "subject": "small car decorated as a monarch butterfly, large orange and black patterned wings spread out on both sides, thin antennae on the front",
+    "prompt": "Top-down racing game sprite: a small car decorated as a monarch butterfly, large orange and black patterned wings spread out on both sides, thin antennae on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 205082131408621,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "butterfly_egg": {
+    "image": "app/static/objects/butterfly_egg.png",
+    "kind": "egg",
+    "subject": "a tiny cluster of pale green ribbed butterfly eggs on a leaf",
+    "prompt": "Top-down view game asset of a tiny cluster of pale green ribbed butterfly eggs on a leaf, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 200644288689623,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "cactus": {
+    "image": "app/static/objects/cactus.png",
+    "kind": "plant",
+    "subject": "a round green barrel cactus with ribs, white spines and a pink flower on top",
+    "prompt": "Top-down view game asset of a round green barrel cactus with ribs, white spines and a pink flower on top, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 215428949060324,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "cactus_seed": {
+    "image": "app/static/objects/cactus_seed.png",
+    "kind": "seed",
+    "subject": "a small pink prickly pear cactus fruit",
+    "prompt": "Top-down view game asset of a small pink prickly pear cactus fruit, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 171978146620166,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "calf": {
+    "image": "app/static/objects/calf.png",
+    "kind": "juvenile",
+    "subject": "small cute car decorated as a baby calf, white paint with black patches, tiny ears on the roof, pink nose on the front",
+    "prompt": "Top-down racing game sprite: a small cute car decorated as a baby calf, white paint with black patches, tiny ears on the roof, pink nose on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 19866128457407,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "carrot": {
+    "image": "app/static/objects/carrot.png",
+    "kind": "plant",
+    "subject": "an orange carrot top poking out of the soil with a bushy tuft of green leaves",
+    "prompt": "Top-down view game asset of an orange carrot top poking out of the soil with a bushy tuft of green leaves, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 238317757756629,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "carrot_seed": {
+    "image": "app/static/objects/carrot_seed.png",
+    "kind": "seed",
+    "subject": "a few tiny ridged brown carrot seeds",
+    "prompt": "Top-down view game asset of a few tiny ridged brown carrot seeds, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 39035634802419,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "caterpillar": {
+    "image": "app/static/objects/caterpillar.png",
+    "kind": "juvenile",
+    "subject": "long segmented car decorated as a green caterpillar, round green body segments with yellow spots, small antennae on the front",
+    "prompt": "Top-down racing game sprite: a long segmented car decorated as a green caterpillar, round green body segments with yellow spots, small antennae on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 77262741784040,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 90,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "chick": {
+    "image": "app/static/objects/chick.png",
+    "kind": "juvenile",
+    "subject": "tiny cute round car decorated as a fluffy yellow baby chick, small orange beak on the front",
+    "prompt": "Top-down racing game sprite: a tiny cute round car decorated as a fluffy yellow baby chick, small orange beak on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 260656927870065,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "chrysalis": {
+    "image": "app/static/objects/chrysalis.png",
+    "kind": "pupa",
+    "subject": "a jade green butterfly chrysalis with tiny golden dots lying on a leaf",
+    "prompt": "Top-down view game asset of a jade green butterfly chrysalis with tiny golden dots lying on a leaf, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 16929402079800,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "clover": {
+    "image": "app/static/objects/clover.png",
+    "kind": "plant",
+    "subject": "a lush patch of green three-leaf clover with a few round white-pink clover blossoms",
+    "prompt": "Top-down view game asset of a lush patch of green three-leaf clover with a few round white-pink clover blossoms, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 262495967919958,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "clover_seed": {
+    "image": "app/static/objects/clover_seed.png",
+    "kind": "seed",
+    "subject": "a few tiny heart shaped yellow-brown clover seeds",
+    "prompt": "Top-down view game asset of a few tiny heart shaped yellow-brown clover seeds, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 214055677298578,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "crystal_cluster": {
+    "image": "app/static/objects/crystal_cluster.png",
+    "kind": "object",
+    "subject": "a cluster of glowing purple amethyst crystals growing out of a rock",
+    "prompt": "Top-down view game asset of a cluster of glowing purple amethyst crystals growing out of a rock, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 71266556237056,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "dandelion": {
+    "image": "app/static/objects/dandelion.png",
+    "kind": "plant",
+    "subject": "a rosette of jagged green dandelion leaves with three bright yellow dandelion flowers",
+    "prompt": "Top-down view game asset of a rosette of jagged green dandelion leaves with three bright yellow dandelion flowers, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 4634504913384,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "dandelion_seed": {
+    "image": "app/static/objects/dandelion_seed.png",
+    "kind": "seed",
+    "subject": "a round white fluffy dandelion seed head puffball",
+    "prompt": "Top-down view game asset of a round white fluffy dandelion seed head puffball, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 275787628137383,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "deer": {
+    "image": "app/static/objects/deer.png",
+    "kind": "adult",
+    "subject": "elegant car decorated as a red deer stag, brown fur paint, large branching antlers mounted on the hood, dark eyes and black nose on the front bumper, white tail at the rear",
+    "prompt": "Top-down racing game sprite: a elegant car decorated as a red deer stag, brown fur paint, large branching antlers mounted on the hood, dark eyes and black nose on the front bumper, white tail at the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 271530709312699,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "deer_newborn": {
+    "image": "app/static/objects/deer_newborn.png",
+    "kind": "egg",
+    "subject": "a newborn spotted fawn curled up asleep in a bed of flattened grass",
+    "prompt": "Top-down view game asset of a newborn spotted fawn curled up asleep in a bed of flattened grass, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 7647695683642,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "fallen_log": {
+    "image": "app/static/objects/fallen_log.png",
+    "kind": "object",
+    "subject": "a fallen mossy tree log lying on the ground",
+    "prompt": "Top-down view game asset of a fallen mossy tree log lying on the ground, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 202026248384712,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "fawn": {
+    "image": "app/static/objects/fawn.png",
+    "kind": "juvenile",
+    "subject": "small cute car decorated as a baby fawn, light brown paint with white spots on the roof, big dark eyes and black nose on the front bumper, tiny white tail at the rear",
+    "prompt": "Top-down racing game sprite: a small cute car decorated as a baby fawn, light brown paint with white spots on the roof, big dark eyes and black nose on the front bumper, tiny white tail at the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 265908113008011,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "fern": {
+    "image": "app/static/objects/fern.png",
+    "kind": "plant",
+    "subject": "a lush green fern with long feathery fronds spreading out in a circle",
+    "prompt": "Top-down view game asset of a lush green fern with long feathery fronds spreading out in a circle, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 111389357255172,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "fern_spore": {
+    "image": "app/static/objects/fern_spore.png",
+    "kind": "seed",
+    "subject": "a tiny curled up green fern fiddlehead sprout",
+    "prompt": "Top-down view game asset of a tiny curled up green fern fiddlehead sprout, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 238884868344035,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "fox_kit": {
+    "image": "app/static/objects/fox_kit.png",
+    "kind": "juvenile",
+    "subject": "small cute car decorated as a baby fox kit, fluffy orange fur paint, big pointed ears on the roof, white chest and black nose on the front, white tipped tail at the rear",
+    "prompt": "Top-down racing game sprite: a small cute car decorated as a baby fox kit, fluffy orange fur paint, big pointed ears on the roof, white chest and black nose on the front, white tipped tail at the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 205229115118260,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "frog": {
+    "image": "app/static/objects/frog.png",
+    "kind": "adult",
+    "subject": "compact car decorated as a green tree frog, bright green glossy paint, big bulging eyes on the front corners of the roof, webbed feet at the four corners",
+    "prompt": "Top-down racing game sprite: a compact car decorated as a green tree frog, bright green glossy paint, big bulging eyes on the front corners of the roof, webbed feet at the four corners. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 197778784362756,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "frogspawn": {
+    "image": "app/static/objects/frogspawn.png",
+    "kind": "egg",
+    "subject": "a clump of clear jelly frogspawn with black dots in a small puddle of water",
+    "prompt": "Top-down view game asset of a clump of clear jelly frogspawn with black dots in a small puddle of water, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 239093652968989,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "hay_bale": {
+    "image": "app/static/objects/hay_bale.png",
+    "kind": "object",
+    "subject": "a round golden hay bale",
+    "prompt": "Top-down view game asset of a round golden hay bale, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 252931124329207,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "hazel_bush": {
+    "image": "app/static/objects/hazel_bush.png",
+    "kind": "plant",
+    "subject": "a dense round hazel bush with broad green leaves and clusters of hazelnuts",
+    "prompt": "Top-down view game asset of a dense round hazel bush with broad green leaves and clusters of hazelnuts, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 179153031425005,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "hazel_sapling": {
+    "image": "app/static/objects/hazel_sapling.png",
+    "kind": "sapling",
+    "subject": "a young hazel sapling with round serrated leaves",
+    "prompt": "Top-down view game asset of a young hazel sapling with round serrated leaves, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 215830826595684,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "hazelnut": {
+    "image": "app/static/objects/hazelnut.png",
+    "kind": "seed",
+    "subject": "a single brown hazelnut in its frilly green husk",
+    "prompt": "Top-down view game asset of a single brown hazelnut in its frilly green husk, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 271059379350074,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "hedgehog": {
+    "image": "app/static/objects/hedgehog.png",
+    "kind": "adult",
+    "subject": "round car decorated as a hedgehog, the whole roof covered in brown spikes, pointed snout with a shiny black nose on the front bumper",
+    "prompt": "Top-down racing game sprite: a round car decorated as a hedgehog, the whole roof covered in brown spikes, pointed snout with a shiny black nose on the front bumper. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 217368850769098,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "hedgehog_nest": {
+    "image": "app/static/objects/hedgehog_nest.png",
+    "kind": "egg",
+    "subject": "a nest of dry autumn leaves with tiny pale baby hedgehogs with soft white spines",
+    "prompt": "Top-down view game asset of a nest of dry autumn leaves with tiny pale baby hedgehogs with soft white spines, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 138542648821301,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "hoglet": {
+    "image": "app/static/objects/hoglet.png",
+    "kind": "juvenile",
+    "subject": "tiny cute car decorated as a baby hedgehog, short soft pale spines covering the roof, little pointed snout with black nose on the front",
+    "prompt": "Top-down racing game sprite: a tiny cute car decorated as a baby hedgehog, short soft pale spines covering the roof, little pointed snout with black nose on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 136131335333895,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "lithops_seed": {
+    "image": "app/static/objects/lithops_seed.png",
+    "kind": "seed",
+    "subject": "a tiny dried lithops seed capsule shaped like a pebble",
+    "prompt": "Top-down view game asset of a tiny dried lithops seed capsule shaped like a pebble, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 213714815817099,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "lithops_sprout": {
+    "image": "app/static/objects/lithops_sprout.png",
+    "kind": "sapling",
+    "subject": "two tiny pebble-like lithops leaves poking out of sand among small stones",
+    "prompt": "Top-down view game asset of two tiny pebble-like lithops leaves poking out of sand among small stones, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 237242166620182,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "living_stones": {
+    "image": "app/static/objects/living_stones.png",
+    "kind": "plant",
+    "subject": "a cluster of lithops living stones succulents that look like round grey and beige pebbles with a white daisy flower",
+    "prompt": "Top-down view game asset of a cluster of lithops living stones succulents that look like round grey and beige pebbles with a white daisy flower, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 240747985989628,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "lotus_bud": {
+    "image": "app/static/objects/lotus_bud.png",
+    "kind": "sapling",
+    "subject": "a closed pink lotus bud on a round lily pad floating in a small pool of water",
+    "prompt": "Top-down view game asset of a closed pink lotus bud on a round lily pad floating in a small pool of water, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 249033700905818,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "lotus_flower": {
+    "image": "app/static/objects/lotus_flower.png",
+    "kind": "plant",
+    "subject": "an open pink lotus flower on large round lily pads floating in a small pool of water",
+    "prompt": "Top-down view game asset of an open pink lotus flower on large round lily pads floating in a small pool of water, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 26919677601397,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "lotus_seed": {
+    "image": "app/static/objects/lotus_seed.png",
+    "kind": "seed",
+    "subject": "a green lotus seed pod with round holes",
+    "prompt": "Top-down view game asset of a green lotus seed pod with round holes, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 184387194435292,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "moss_carpet": {
+    "image": "app/static/objects/moss_carpet.png",
+    "kind": "plant",
+    "subject": "a cluster of round grey stones covered by a thick velvety green moss carpet",
+    "prompt": "Top-down view game asset of a cluster of round grey stones covered by a thick velvety green moss carpet, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 20051040840919,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "moss_spore": {
+    "image": "app/static/objects/moss_spore.png",
+    "kind": "seed",
+    "subject": "a small pebble with a few tiny green moss spore capsules",
+    "prompt": "Top-down view game asset of a small pebble with a few tiny green moss spore capsules, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 121678206753837,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "moss_tuft": {
+    "image": "app/static/objects/moss_tuft.png",
+    "kind": "sapling",
+    "subject": "a small grey stone with a soft green moss tuft on top",
+    "prompt": "Top-down view game asset of a small grey stone with a soft green moss tuft on top, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 274881649538569,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "mossy_boulder": {
+    "image": "app/static/objects/mossy_boulder.png",
+    "kind": "object",
+    "subject": "a large grey boulder partially covered in green moss",
+    "prompt": "Top-down view game asset of a large grey boulder partially covered in green moss, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 44681578292207,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "mouse": {
+    "image": "app/static/objects/mouse.png",
+    "kind": "adult",
+    "subject": "small compact car decorated as a grey field mouse, big round ears on the roof, whiskers and pink nose on the front bumper, long thin pink tail trailing from the rear",
+    "prompt": "Top-down racing game sprite: a small compact car decorated as a grey field mouse, big round ears on the roof, whiskers and pink nose on the front bumper, long thin pink tail trailing from the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 173748179381423,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "mouse_nest": {
+    "image": "app/static/objects/mouse_nest.png",
+    "kind": "egg",
+    "subject": "a tiny ball-shaped nest of shredded straw and leaves with pink newborn mice inside",
+    "prompt": "Top-down view game asset of a tiny ball-shaped nest of shredded straw and leaves with pink newborn mice inside, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 231353202899173,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "mouse_pup": {
+    "image": "app/static/objects/mouse_pup.png",
+    "kind": "juvenile",
+    "subject": "tiny cute toy car decorated as a baby grey mouse, round ears on the roof, pink nose and whiskers on the front, thin pink tail at the rear",
+    "prompt": "Top-down racing game sprite: a tiny cute toy car decorated as a baby grey mouse, round ears on the roof, pink nose and whiskers on the front, thin pink tail at the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 276181463853586,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "oak_tree": {
+    "image": "app/static/objects/oak_tree.png",
+    "kind": "plant",
+    "subject": "a round leafy oak tree crown with lobed green leaves and a few acorns",
+    "prompt": "Top-down view game asset of a round leafy oak tree crown with lobed green leaves and a few acorns, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 219524734097053,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "owl": {
+    "image": "app/static/objects/owl.png",
+    "kind": "adult",
+    "subject": "car decorated as a brown barn owl, feather pattern paint, wide feathered wings folded along the sides, round face with big eyes and a hooked beak on the front",
+    "prompt": "Top-down racing game sprite: a car decorated as a brown barn owl, feather pattern paint, wide feathered wings folded along the sides, round face with big eyes and a hooked beak on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 48872671571242,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "owl_egg": {
+    "image": "app/static/objects/owl_egg.png",
+    "kind": "egg",
+    "subject": "two round white owl eggs in a nest of twigs and feathers",
+    "prompt": "Top-down view game asset of two round white owl eggs in a nest of twigs and feathers, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 140207641759543,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "owlet": {
+    "image": "app/static/objects/owlet.png",
+    "kind": "juvenile",
+    "subject": "tiny cute car decorated as a fluffy baby owl, white downy feathers, huge round yellow eyes on the front",
+    "prompt": "Top-down racing game sprite: a tiny cute car decorated as a fluffy baby owl, white downy feathers, huge round yellow eyes on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 113925336864947,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "pine_cone": {
+    "image": "app/static/objects/pine_cone.png",
+    "kind": "seed",
+    "subject": "a single brown woody pine cone",
+    "prompt": "Top-down view game asset of a single brown woody pine cone, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 87543566547522,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "pine_seedling": {
+    "image": "app/static/objects/pine_seedling.png",
+    "kind": "sapling",
+    "subject": "a tiny pine seedling with a star of soft green needles",
+    "prompt": "Top-down view game asset of a tiny pine seedling with a star of soft green needles, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 169629000218797,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "pine_tree": {
+    "image": "app/static/objects/pine_tree.png",
+    "kind": "plant",
+    "subject": "a tall evergreen pine tree seen from above, layered dark green needle branches in a star shape",
+    "prompt": "Top-down view game asset of a tall evergreen pine tree seen from above, layered dark green needle branches in a star shape, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 136610070445955,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "puddle": {
+    "image": "app/static/objects/puddle.png",
+    "kind": "object",
+    "subject": "a small shallow puddle of clear blue water with a few pebbles",
+    "prompt": "Top-down view game asset of a small shallow puddle of clear blue water with a few pebbles, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 207683192886741,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "pumpkin": {
+    "image": "app/static/objects/pumpkin.png",
+    "kind": "plant",
+    "subject": "a big ripe orange pumpkin on a curly green vine with broad leaves",
+    "prompt": "Top-down view game asset of a big ripe orange pumpkin on a curly green vine with broad leaves, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 104536836690941,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "pumpkin_seed": {
+    "image": "app/static/objects/pumpkin_seed.png",
+    "kind": "seed",
+    "subject": "a single flat cream colored pumpkin seed",
+    "prompt": "Top-down view game asset of a single flat cream colored pumpkin seed, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 172315242987534,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "rabbit": {
+    "image": "app/static/objects/rabbit.png",
+    "kind": "adult",
+    "subject": "sports car decorated as a white rabbit, white fur texture on the body, two long rabbit ears folded back along the roof, black eyes and pink nose on the front bumper, fluffy round tail on the rear bumper",
+    "prompt": "Top-down racing game sprite: a sports car decorated as a white rabbit, white fur texture on the body, two long rabbit ears folded back along the roof, black eyes and pink nose on the front bumper, fluffy round tail on the rear bumper. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 119910046748210,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "rabbit_nest": {
+    "image": "app/static/objects/rabbit_nest.png",
+    "kind": "egg",
+    "subject": "a small round nest of dry grass and white fur with three tiny sleeping pink newborn rabbits",
+    "prompt": "Top-down view game asset of a small round nest of dry grass and white fur with three tiny sleeping pink newborn rabbits, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 221397879590398,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "reed": {
+    "image": "app/static/objects/reed.png",
+    "kind": "plant",
+    "subject": "a clump of tall green reeds and brown cattails growing from a small pool of water",
+    "prompt": "Top-down view game asset of a clump of tall green reeds and brown cattails growing from a small pool of water, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 270251145508240,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "reed_seed": {
+    "image": "app/static/objects/reed_seed.png",
+    "kind": "seed",
+    "subject": "a thick fluffy brown cattail seed head bursting with white fluff",
+    "prompt": "Top-down view game asset of a thick fluffy brown cattail seed head bursting with white fluff, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 95834703241473,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "salt_crystal": {
+    "image": "app/static/objects/salt_crystal.png",
+    "kind": "sapling",
+    "subject": "a growing cubic white salt crystal on a flat grey stone",
+    "prompt": "Top-down view game asset of a growing cubic white salt crystal on a flat grey stone, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 272875992191969,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "salt_deposit": {
+    "image": "app/static/objects/salt_deposit.png",
+    "kind": "plant",
+    "subject": "a white and pale pink mineral salt rock deposit with cubic crystals",
+    "prompt": "Top-down view game asset of a white and pale pink mineral salt rock deposit with cubic crystals, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 242624896215761,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "salt_grain": {
+    "image": "app/static/objects/salt_grain.png",
+    "kind": "seed",
+    "subject": "a few small sparkling white salt crystal grains",
+    "prompt": "Top-down view game asset of a few small sparkling white salt crystal grains, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 149615817782159,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "scarecrow": {
+    "image": "app/static/objects/scarecrow.png",
+    "kind": "object",
+    "subject": "a scarecrow with a straw hat, patched shirt and outstretched arms",
+    "prompt": "Top-down view game asset of a scarecrow with a straw hat, patched shirt and outstretched arms, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 195053241643237,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "signpost": {
+    "image": "app/static/objects/signpost.png",
+    "kind": "object",
+    "subject": "a wooden signpost with arrow shaped signs pointing in different directions",
+    "prompt": "Top-down view game asset of a wooden signpost with arrow shaped signs pointing in different directions, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 163549868446763,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "snail": {
+    "image": "app/static/objects/snail.png",
+    "kind": "adult",
+    "subject": "compact beetle car with four visible black wheels, glossy grey paint, a big brown spiral snail shell mounted on the roof, two eye stalks sticking up from the front bumper, headlights",
+    "prompt": "Top-down racing game sprite: a compact beetle car with four visible black wheels, glossy grey paint, a big brown spiral snail shell mounted on the roof, two eye stalks sticking up from the front bumper, headlights. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 158693876499687,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "snail_egg": {
+    "image": "app/static/objects/snail_egg.png",
+    "kind": "egg",
+    "subject": "a small cluster of shiny translucent pearly white snail eggs on a leaf",
+    "prompt": "Top-down view game asset of a small cluster of shiny translucent pearly white snail eggs on a leaf, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 35137623341656,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "snake": {
+    "image": "app/static/objects/snake.png",
+    "kind": "adult",
+    "subject": "long slim car decorated as a python snake, yellow and green scale pattern, long tail stretching behind, snake head with forked red tongue on the front bumper",
+    "prompt": "Top-down racing game sprite: a long slim car decorated as a python snake, yellow and green scale pattern, long tail stretching behind, snake head with forked red tongue on the front bumper. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 22566413043989,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "snake_egg": {
+    "image": "app/static/objects/snake_egg.png",
+    "kind": "egg",
+    "subject": "a clutch of five oval leathery cream colored snake eggs",
+    "prompt": "Top-down view game asset of a clutch of five oval leathery cream colored snake eggs, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 201799146514099,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "snake_hatchling": {
+    "image": "app/static/objects/snake_hatchling.png",
+    "kind": "juvenile",
+    "subject": "small slim car decorated as a baby green snake, long thin body stretched behind, small head with a forked red tongue at the front",
+    "prompt": "Top-down racing game sprite: a small slim car decorated as a baby green snake, long thin body stretched behind, small head with a forked red tongue at the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 14918580739203,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "squirrel": {
+    "image": "app/static/objects/squirrel.png",
+    "kind": "adult",
+    "subject": "sporty car decorated as a red squirrel, orange fur paint, tufted ears on the roof, black eyes and nose on the front bumper, huge fluffy bushy tail curling over the rear",
+    "prompt": "Top-down racing game sprite: a sporty car decorated as a red squirrel, orange fur paint, tufted ears on the roof, black eyes and nose on the front bumper, huge fluffy bushy tail curling over the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 68357737912724,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "squirrel_drey": {
+    "image": "app/static/objects/squirrel_drey.png",
+    "kind": "egg",
+    "subject": "a round squirrel nest made of twigs and dry leaves with baby squirrels peeking out",
+    "prompt": "Top-down view game asset of a round squirrel nest made of twigs and dry leaves with baby squirrels peeking out, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 249754717395081,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "squirrel_kit": {
+    "image": "app/static/objects/squirrel_kit.png",
+    "kind": "juvenile",
+    "subject": "tiny cute car decorated as a baby red squirrel, orange fur paint, small tufted ears on the roof, big fluffy curled tail at the rear",
+    "prompt": "Top-down racing game sprite: a tiny cute car decorated as a baby red squirrel, orange fur paint, small tufted ears on the roof, big fluffy curled tail at the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 40203222884883,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "stone_well": {
+    "image": "app/static/objects/stone_well.png",
+    "kind": "object",
+    "subject": "a round old stone water well with a small wooden roof",
+    "prompt": "Top-down view game asset of a round old stone water well with a small wooden roof, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 109584960858005,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "strawberry": {
+    "image": "app/static/objects/strawberry.png",
+    "kind": "seed",
+    "subject": "a single ripe red strawberry with a green leafy cap",
+    "prompt": "Top-down view game asset of a single ripe red strawberry with a green leafy cap, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 211884096021724,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "strawberry_patch": {
+    "image": "app/static/objects/strawberry_patch.png",
+    "kind": "plant",
+    "subject": "a low strawberry plant with toothed green leaves, small white flowers and red strawberries",
+    "prompt": "Top-down view game asset of a low strawberry plant with toothed green leaves, small white flowers and red strawberries, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 86948905185351,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "strawberry_runner": {
+    "image": "app/static/objects/strawberry_runner.png",
+    "kind": "sapling",
+    "subject": "a small strawberry plantlet with three toothed leaves",
+    "prompt": "Top-down view game asset of a small strawberry plantlet with three toothed leaves, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 13872475628280,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "sunflower": {
+    "image": "app/static/objects/sunflower.png",
+    "kind": "plant",
+    "subject": "a big sunflower head with bright yellow petals and a brown seed center surrounded by large green leaves",
+    "prompt": "Top-down view game asset of a big sunflower head with bright yellow petals and a brown seed center surrounded by large green leaves, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 183037115329245,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "sunflower_seed": {
+    "image": "app/static/objects/sunflower_seed.png",
+    "kind": "seed",
+    "subject": "a single striped black and white sunflower seed",
+    "prompt": "Top-down view game asset of a single striped black and white sunflower seed, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 39273203667665,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "tadpole": {
+    "image": "app/static/objects/tadpole.png",
+    "kind": "juvenile",
+    "subject": "small car decorated as a dark tadpole, round black glossy body and a long wavy tail at the rear",
+    "prompt": "Top-down racing game sprite: a small car decorated as a dark tadpole, round black glossy body and a long wavy tail at the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 130972781251920,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "tortoise": {
+    "image": "app/static/objects/tortoise.png",
+    "kind": "adult",
+    "subject": "sturdy car decorated as a giant tortoise, high domed hexagon patterned brown and olive shell on the roof, wrinkly head at the front and stubby legs at the corners",
+    "prompt": "Top-down racing game sprite: a sturdy car decorated as a giant tortoise, high domed hexagon patterned brown and olive shell on the roof, wrinkly head at the front and stubby legs at the corners. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 140874847965238,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "tortoise_egg": {
+    "image": "app/static/objects/tortoise_egg.png",
+    "kind": "egg",
+    "subject": "three round white leathery tortoise eggs in a shallow sandy hollow",
+    "prompt": "Top-down view game asset of three round white leathery tortoise eggs in a shallow sandy hollow, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 23402262753218,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "tortoise_hatchling": {
+    "image": "app/static/objects/tortoise_hatchling.png",
+    "kind": "juvenile",
+    "subject": "tiny cute car decorated as a baby tortoise, small domed patterned shell on the roof, little head at the front",
+    "prompt": "Top-down racing game sprite: a tiny cute car decorated as a baby tortoise, small domed patterned shell on the roof, little head at the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 31588108441968,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "tree_stump": {
+    "image": "app/static/objects/tree_stump.png",
+    "kind": "object",
+    "subject": "an old tree stump with visible growth rings and roots",
+    "prompt": "Top-down view game asset of an old tree stump with visible growth rings and roots, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 196674412554899,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  },
+  "wheat_grain": {
+    "image": "app/static/objects/wheat_grain.png",
+    "kind": "seed",
+    "subject": "a small pile of golden wheat grains",
+    "prompt": "Top-down view game asset of a small pile of golden wheat grains, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 242201715455809,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 260,
+      "canvas": 676
+    }
+  },
+  "wheat_sprout": {
+    "image": "app/static/objects/wheat_sprout.png",
+    "kind": "sapling",
+    "subject": "a tuft of young bright green wheat sprouts",
+    "prompt": "Top-down view game asset of a tuft of young bright green wheat sprouts, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 2662982431045,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 400,
+      "canvas": 676
+    }
+  },
+  "wheat_stalks": {
+    "image": "app/static/objects/wheat_stalks.png",
+    "kind": "plant",
+    "subject": "a clump of ripe golden wheat stalks with heavy ears",
+    "prompt": "Top-down view game asset of a clump of ripe golden wheat stalks with heavy ears, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 101128191184389,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 560,
+      "canvas": 676
+    }
+  },
+  "wolf": {
+    "image": "app/static/objects/wolf.png",
+    "kind": "adult",
+    "subject": "muscular sports car decorated as a grey wolf, grey and white fur paint, pointed ears on the roof, fierce yellow eyes and black nose on the front bumper, bushy tail at the rear",
+    "prompt": "Top-down racing game sprite: a muscular sports car decorated as a grey wolf, grey and white fur paint, pointed ears on the roof, fierce yellow eyes and black nose on the front bumper, bushy tail at the rear. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 180094212002042,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 580,
+      "canvas": 676
+    }
+  },
+  "wolf_den": {
+    "image": "app/static/objects/wolf_den.png",
+    "kind": "egg",
+    "subject": "a small earthen den entrance among rocks with two grey wolf pups sleeping inside",
+    "prompt": "Top-down view game asset of a small earthen den entrance among rocks with two grey wolf pups sleeping inside, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 46730437999345,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 300,
+      "canvas": 676
+    }
+  },
+  "wolf_pup": {
+    "image": "app/static/objects/wolf_pup.png",
+    "kind": "juvenile",
+    "subject": "small cute car decorated as a grey wolf pup, fluffy grey fur paint, pointy ears on the roof, black nose on the front",
+    "prompt": "Top-down racing game sprite: a small cute car decorated as a grey wolf pup, fluffy grey fur paint, pointy ears on the roof, black nose on the front. Seen exactly from directly overhead (orthographic top view, roof visible, no perspective). Sharp detailed digital painting, crisp dark outlines, glossy highlights, single object centered on a plain white background",
+    "seed": 173494414384461,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 180,
+      "longest_side": 430,
+      "canvas": 676
+    }
+  },
+  "wooden_barrel": {
+    "image": "app/static/objects/wooden_barrel.png",
+    "kind": "object",
+    "subject": "an old wooden barrel with iron rings",
+    "prompt": "Top-down view game asset of an old wooden barrel with iron rings, seen from directly above, sharp detailed digital painting, crisp outlines, soft shading, vivid colors, single object centered on a plain white background",
+    "seed": 91060365328582,
+    "steps": 28,
+    "workflow": "app/common_utils/workflow_files/i_gen_sprite.json",
+    "model": "flux1-dev-Q4_K_S.gguf + rembg isnet-general-use",
+    "resolution": [
+      768,
+      768
+    ],
+    "postprocess": {
+      "rotation_ccw": 0,
+      "longest_side": 540,
+      "canvas": 676
+    }
+  }
+}

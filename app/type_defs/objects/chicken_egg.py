@@ -9,7 +9,7 @@ class ChickenEgg(BaseObject):
     type_name: str = "ChickenEgg"
     image = "../../static/objects/egg.png"
 
-    effects = [TurnInto(future_object_class="Chicken", time_to_turn=100)]
+    effects = [TurnInto(future_object_class="Chick", time_to_turn=100)]
 
     rgb_map = (255, 255, 255)
 

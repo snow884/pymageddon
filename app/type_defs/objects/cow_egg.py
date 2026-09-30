@@ -9,7 +9,7 @@ class CowEgg(BaseObject):
     type_name: str = "CowEgg"
     image = "../../static/objects/egg.png"
 
-    effects = [TurnInto(future_object_class="Cow", time_to_turn=100)]
+    effects = [TurnInto(future_object_class="Calf", time_to_turn=100)]
 
     rgb_map = (255, 255, 255)
 
@@ -30,4 +30,4 @@ class CowEgg(BaseObject):
 
     def get_description_short(self) -> str:
 
-        return "An egg that will hatch into cow."
+        return "An egg that will hatch into a calf."

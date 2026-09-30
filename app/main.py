@@ -6,6 +6,7 @@ import time
 
 import cython
 import redis
+from common_utils import ecosystem
 from common_utils.backup_utils import backup_to_s3, restore_from_s3
 from common_utils.common_enums import Actions, EnumEncoder, Rotations
 from common_utils.grid_utils import (
@@ -44,6 +45,7 @@ from type_defs.objects.seed3 import Seed3
 from type_defs.objects.spore import Spore
 from type_defs.objects.stone import Stone
 from type_defs.objects.stone2 import Stone2
+from type_defs.objects.wildlife import POPULATE_TYPES, WILDLIFE_CLASSES
 from type_defs.particles.base_particle import BaseParticle
 from type_defs.tiles.base_tile import BaseTile
 from type_defs.tiles.tile1 import Tile1
@@ -61,35 +63,35 @@ def populate_map_full(sz=100):
 
     realm.SCORE_LIST = {"players": {}, "ranking": {}}
 
+    populate_types = [
+        Cow,
+        Grass,
+        Grass2,
+        Grass3,
+        Seed,
+        Seed2,
+        Seed3,
+        Stone,
+        Stone2,
+        Chicken,
+        ChickenEgg,
+        Fox,
+        Spore,
+        Mushroom,
+        Mushroom2,
+        Badger,
+        BadgerEgg,
+        Bee,
+        BeeEgg,
+        # Seed,
+        # CarnivorousFlower,
+    ] + [WILDLIFE_CLASSES[name] for name in POPULATE_TYPES]
+
     for i in range(0, realm.MAP.size_x):
         for j in range(0, realm.MAP.size_y):
             realm.TILES[(i, j)] = Tile1(x=i, y=j)
             if random.randint(0, 10) == 9:
-                random.choice(
-                    [
-                        Cow,
-                        Grass,
-                        Grass2,
-                        Grass3,
-                        Seed,
-                        Seed2,
-                        Seed3,
-                        Stone,
-                        Stone2,
-                        Chicken,
-                        ChickenEgg,
-                        Fox,
-                        Spore,
-                        Mushroom,
-                        Mushroom2,
-                        Badger,
-                        BadgerEgg,
-                        Bee,
-                        BeeEgg,
-                        # Seed,
-                        # CarnivorousFlower,
-                    ]
-                )(x_new=i, y_new=j)
+                random.choice(populate_types)(x_new=i, y_new=j)
 
             else:
 
@@ -514,6 +516,18 @@ def count_object():
         print(f"{type_name} : {cnt}")
 
 
+def simulate_epoch(player_control=False):
+
+    evaluate_thinking()
+
+    if player_control:
+        evaluate_player_control()
+
+    evaluate_effects()
+    evaluate_moves()
+    ecosystem.rebalance()
+
+
 def generate_summary_yaml():
 
     summary_json = {}
@@ -701,13 +715,7 @@ def main_loop(steps=None):
         start_time = time.time()
         with realm.LOCK:
             handle_players()
-            evaluate_thinking()
-
-            if realm.MODE == "full":
-                evaluate_player_control()
-
-            evaluate_effects()
-            evaluate_moves()
+            simulate_epoch(player_control=realm.MODE == "full")
 
         if realm.MODE == "full":
             q_send_map_data_all.put(realm.EPOCH_COUNTER)
