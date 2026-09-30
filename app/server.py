@@ -46,6 +46,20 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+
+@app.middleware("http")
+async def no_cache_static_assets(request: Request, call_next):
+    """Force browsers to revalidate /static assets on every load instead of
+    serving them from the disk cache. StaticFiles still sends ETag/
+    Last-Modified, so unchanged files get a cheap 304 while files replaced by
+    a rebuild/deploy are always re-fetched instead of staying stuck on an
+    old cached copy."""
+    response = await call_next(request)
+    if request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
+
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
