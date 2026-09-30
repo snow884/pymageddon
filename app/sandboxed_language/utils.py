@@ -28,7 +28,7 @@ def find_nearest_xy(x, y, type_in, rad: int = 10):
     for i in range(max(0, x - rad), min(x + rad, realm.MAP.size_x)):
         for j in range(max(0, y - rad), min(y + rad, realm.MAP.size_x)):
             obj_index_found = realm.TILES[(i, j)].occupied_by
-            if obj_index_found:
+            if obj_index_found is not None:
                 if type_in:
 
                     if isinstance(type_in, list):

@@ -19,8 +19,9 @@ class EatObjectInFront(BaseEffect):
 
         for obj_type, reward in self.types_eaten_to_hp_conv.items():
 
+            type_name = getattr(obj_type, "type_name", str(obj_type))
             type_to_hp_str = (
-                type_to_hp_str + f"* {obj_type.type_name} - receives {reward} hp <br>"
+                type_to_hp_str + f"* {type_name} - receives {reward} hp <br>"
             )
 
         return f"Can eat the types the following types:<br>" + type_to_hp_str

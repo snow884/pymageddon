@@ -17,8 +17,9 @@ class EmitObject(BaseEffect):
 
     def description(self):
 
+        obj_name = getattr(self.object_to_emit, "type_name", str(self.object_to_emit))
         return f"""
-        Emits {self.object_to_emit} every {self.time_to_emit} cycles.
+        Emits {obj_name} every {self.time_to_emit} cycles.
         """
 
     def run_effect(self, parent_object):

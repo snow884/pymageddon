@@ -18,8 +18,9 @@ class LayObject(BaseEffect):
 
     def description(self):
 
+        lay_name = getattr(self.object_to_lay, "type_name", str(self.object_to_lay))
         return f"""
-        Every {self.time_to_lay} cycles lays a {self.object_to_lay.type_name}.
+        Every {self.time_to_lay} cycles lays a {lay_name}.
         """
 
     def run_effect(self, parent_object):

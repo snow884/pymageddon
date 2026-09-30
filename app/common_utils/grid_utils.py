@@ -5,10 +5,10 @@ from type_defs.objects.base_object import BaseObject
 
 def find_nearest(obj, type_in, rad: int = 10):
 
-    if isinstance(type_in, list):
-        type_in = [obj_fut(t) for t in type_in]
+    if isinstance(type_in, (list, tuple)):
+        type_tuple = tuple(obj_fut(t) for t in type_in)
     else:
-        type_in = obj_fut(type_in)
+        type_tuple = obj_fut(type_in)
 
     rad_check = 0
 
@@ -23,23 +23,10 @@ def find_nearest(obj, type_in, rad: int = 10):
                 max(0, obj.y - rad_check), min(obj.y + rad_check, realm.MAP.size_y)
             ):
                 tile = realm.TILES[(i, j)]
-                if tile.occupied_by:
-                    obj_index_found = tile.occupied_by
-                    obj_in_type = False
-                    if isinstance(type_in, list):
-                        obj_in_type = any(
-                            [
-                                isinstance(realm.OBJECT_LIST[obj_index_found], t)
-                                for t in type_in
-                            ]
-                        )
-                    else:
-                        obj_in_type = isinstance(
-                            realm.OBJECT_LIST[obj_index_found], type_in
-                        )
-
-                    if obj_in_type:
-                        return realm.OBJECT_LIST[obj_index_found]
+                if tile.occupied_by is not None:
+                    target_obj = realm.OBJECT_LIST.get(tile.occupied_by)
+                    if target_obj is not None and isinstance(target_obj, type_tuple):
+                        return target_obj
 
         for i in range(
             max(0, obj.x - rad_check), min(obj.x + rad_check, realm.MAP.size_x)
@@ -49,23 +36,10 @@ def find_nearest(obj, type_in, rad: int = 10):
                 min(obj.y + rad_check, realm.MAP.size_y - 1),
             ]:
                 tile = realm.TILES[(i, j)]
-                if tile.occupied_by:
-                    obj_index_found = tile.occupied_by
-                    obj_in_type = False
-                    if isinstance(type_in, list):
-                        obj_in_type = any(
-                            [
-                                isinstance(realm.OBJECT_LIST[obj_index_found], t)
-                                for t in type_in
-                            ]
-                        )
-                    else:
-                        obj_in_type = isinstance(
-                            realm.OBJECT_LIST[obj_index_found], type_in
-                        )
-
-                    if obj_in_type:
-                        return realm.OBJECT_LIST[obj_index_found]
+                if tile.occupied_by is not None:
+                    target_obj = realm.OBJECT_LIST.get(tile.occupied_by)
+                    if target_obj is not None and isinstance(target_obj, type_tuple):
+                        return target_obj
 
     return None
 
@@ -78,7 +52,7 @@ def find_objects_location(x: int, y: int, rad: int = 30):
         for j in range(max(0, y - rad), min(y + rad, realm.MAP.size_x)):
             obj_index_found = realm.TILES[(i, j)].occupied_by
 
-            if obj_index_found:
+            if obj_index_found is not None:
 
                 objects_found[obj_index_found] = realm.OBJECT_LIST[obj_index_found]
 

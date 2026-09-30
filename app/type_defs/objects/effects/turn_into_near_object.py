@@ -21,10 +21,18 @@ class TurnIntoNearObject(BaseEffect):
 
     def description(self):
 
-        str_near_obj_list = ",".join(self.object_class_to_turn_when_earby)
+        str_near_obj_list = ",".join(
+            [
+                getattr(o, "type_name", str(o))
+                for o in self.object_class_to_turn_when_earby
+            ]
+        )
+        future_name = getattr(
+            self.future_object_class, "type_name", str(self.future_object_class)
+        )
 
         return f"""
-        When located near {str_near_obj_list} turns into {self.future_object_class.type_name}.
+        When located near {str_near_obj_list} turns into {future_name}.
         """
 
     def run_effect(self, parent_object):

@@ -12,3 +12,4 @@ matplotlib
 pygments
 python-avatars
 boto3==1.20.51
+gunicorn
