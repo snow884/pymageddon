@@ -1,4 +1,5 @@
 import pytest
+from common_utils import ecosystem
 from common_utils.common_enums import Actions, Rotations
 from singleton import realm
 from type_defs.objects.angel import Angel
@@ -168,6 +169,11 @@ class TestAllObjectTypes:
 
 
 class TestEffects:
+    @pytest.fixture(autouse=True)
+    def _ignore_prey_scarcity(self, monkeypatch):
+        # Lone test animals would otherwise be protected by prey switching.
+        monkeypatch.setattr(ecosystem, "hunt_allowed", lambda _type_name: True)
+
     def test_eat_object_in_front(self, setup_small_grid):
         setup_small_grid(10, 10)
         cow = Cow(x_new=2, y_new=2)

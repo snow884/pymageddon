@@ -1,4 +1,5 @@
 import json
+import math
 
 import fakeredis
 from common_utils.utils import OBJ_TYPE_LIST, obj_fut
@@ -50,10 +51,10 @@ def verify_grid_invariants(map_size=10):
 class TestGameEngine10x10:
     def test_full_engine_execution_with_all_objects_10x10(self):
         """
-        Execute full game engine ticks on a 10x10 world where EVERY object type
-        is present, plus human player and coded bot.
+        Execute full game engine ticks on the smallest square world (at least
+        10x10) where EVERY object type is present, plus human player and coded bot.
         """
-        map_size = 10
+        map_size = max(10, math.ceil(math.sqrt(len(OBJ_TYPE_LIST) + 2)))
         realm.MODE = "test"
         realm.MAP = Map(size_x=map_size, size_y=map_size)
         fake_r = fakeredis.FakeRedis()
@@ -66,7 +67,7 @@ class TestGameEngine10x10:
         realm.OBJ_COUNTER = 0
         realm.SCORE_LIST = {"players": {}, "ranking": {}}
 
-        # 1. Initialize all 100 tiles (10x10)
+        # 1. Initialize all tiles
         for i in range(map_size):
             for j in range(map_size):
                 realm.TILES[(i, j)] = Tile1(x=i, y=j)
@@ -77,9 +78,9 @@ class TestGameEngine10x10:
             for y in range(map_size):
                 spawn_coords.append((x, y))
 
-        assert len(OBJ_TYPE_LIST) <= len(
+        assert len(OBJ_TYPE_LIST) + 2 <= len(
             spawn_coords
-        ), "More object types than 10x10 grid tiles"
+        ), "More object types than grid tiles"
 
         created_objects = []
         for idx, type_name in enumerate(OBJ_TYPE_LIST):
@@ -136,7 +137,7 @@ else:
         )
 
         # Verify initial state invariants
-        verify_grid_invariants(map_size=10)
+        verify_grid_invariants(map_size=map_size)
         assert len(realm.OBJECT_LIST) == len(OBJ_TYPE_LIST) + 2
         assert len(realm.PLAYER_LIST) == 1
         assert len(realm.SPECTATOR_LIST) == 1
@@ -168,7 +169,7 @@ else:
             generate_summary_yaml()
 
             # Verify grid invariants hold after each engine tick
-            verify_grid_invariants(map_size=10)
+            verify_grid_invariants(map_size=map_size)
 
             # Check that map data was published to Redis for player and spectator
             player_map_raw = fake_r.get("map_test_hero")
@@ -176,7 +177,7 @@ else:
                 assert player_map_raw is not None
                 player_map = json.loads(player_map_raw)
                 assert player_map["global_params"]["status"] == "running"
-                assert player_map["global_params"]["map_size_x"] == 10
+                assert player_map["global_params"]["map_size_x"] == map_size
                 assert player_map["player"]["object_id"] == str(player_cow.index)
 
             spectator_map_raw = fake_r.get("map_spectator_user")

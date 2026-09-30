@@ -3,8 +3,8 @@ Long-running ecosystem stability simulation.
 
 This exercises the *production* world-population code path
 (`main.populate_map_full`, the same function `main_loop` uses to seed a fresh
-game world) and then runs the core game engine tick (`evaluate_thinking`,
-`evaluate_effects`, `evaluate_moves`) for a large number of epochs with **no
+game world) and then runs the production engine tick (`main.simulate_epoch`:
+thinking, effects, moves and ecosystem regulation) for a large number of epochs with **no
 human players and no bot code** - only the built-in AI (`think()`), hunger/
 eating/egg-laying effects, and movement resolution drive the simulation.
 
@@ -38,30 +38,26 @@ if app_dir not in sys.path:
     sys.path.insert(0, app_dir)
 
 import fakeredis  # noqa: E402
-from main import (  # noqa: E402
-    evaluate_effects,
-    evaluate_moves,
-    evaluate_thinking,
-    populate_map_full,
-)
+from common_utils.ecosystem import SPECIES  # noqa: E402
+from main import populate_map_full, simulate_epoch  # noqa: E402
 from singleton import realm  # noqa: E402
 
-# Species that `populate_map_full` actually seeds the world with, grouped
-# into "lineages": a living form paired with the reproductive/dormant stage
-# that precedes it (egg / seed / spore). A lineage only truly dies out when
-# BOTH stages are absent at once - an egg sitting on the map will still
-# hatch back into the parent a bit later.
+# Lineages checked for extinction, with every development stage (egg / seed /
+# spore, juvenile, adult) - a lineage only dies out when all stages are gone.
 LINEAGES = {
-    "Cow": ("Cow", "CowEgg"),
-    "Chicken": ("Chicken", "ChickenEgg"),
-    "Fox": ("Fox", "FoxEgg"),
-    "Badger": ("Badger", "BadgerEgg"),
-    "Bee": ("Bee", "BeeEgg"),
-    "Grass": ("Grass", "Seed"),
-    "Grass2": ("Grass2", "Seed2"),
-    "Grass3": ("Grass3", "Seed3"),
-    "Mushroom": ("Mushroom", "Spore"),
-    "Mushroom2": ("Mushroom2", "Spore2"),
+    name: tuple(SPECIES[name])
+    for name in [
+        "Cow",
+        "Chicken",
+        "Fox",
+        "Badger",
+        "Bee",
+        "Grass",
+        "Grass2",
+        "Grass3",
+        "Mushroom",
+        "Mushroom2",
+    ]
 }
 
 ANIMAL_LINEAGES = ["Cow", "Chicken", "Fox", "Badger", "Bee"]
@@ -104,9 +100,7 @@ def _run_simulation(epochs, sample_every, seed):
     for epoch in range(1, epochs + 1):
         realm.EPOCH_COUNTER = epoch
 
-        evaluate_thinking()
-        evaluate_effects()
-        evaluate_moves()
+        simulate_epoch()
 
         if epoch % sample_every == 0 or epoch == epochs:
             history.append((epoch, _count_by_type()))
@@ -138,18 +132,18 @@ class TestEcosystemEquilibrium:
         ]
 
         extinct = []
-        for name, (alive_type, precursor_type) in LINEAGES.items():
+        for name, stages in LINEAGES.items():
             zero_epochs = [
                 epoch
                 for epoch, cnt in equilibrium_window
-                if cnt.get(alive_type, 0) + cnt.get(precursor_type, 0) == 0
+                if sum(cnt.get(stage, 0) for stage in stages) == 0
             ]
             if zero_epochs:
                 extinct.append((name, zero_epochs))
 
         assert not extinct, (
-            "The following lineages had zero population (both the living"
-            " form and its egg/seed/spore form) during the equilibrium"
+            "The following lineages had zero population (no individual in"
+            " any development stage) during the equilibrium"
             f" window (last {EQUILIBRIUM_WINDOW_FRACTION:.0%} of a"
             f" {TOTAL_EPOCHS}-epoch run): {extinct}"
         )
@@ -160,8 +154,7 @@ class TestEcosystemEquilibrium:
         ever_seen = {name: False for name in ANIMAL_LINEAGES}
         for _, cnt in ecosystem_history:
             for name in ANIMAL_LINEAGES:
-                alive_type, precursor_type = LINEAGES[name]
-                if cnt.get(alive_type, 0) + cnt.get(precursor_type, 0) > 0:
+                if sum(cnt.get(stage, 0) for stage in LINEAGES[name]) > 0:
                     ever_seen[name] = True
 
         assert all(

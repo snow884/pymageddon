@@ -63,6 +63,15 @@ def populate_map_full(sz=100):
 
     realm.SCORE_LIST = {"players": {}, "ranking": {}}
 
+    # Start from an empty world so tiles, objects and the census stay consistent.
+    realm.TILES.clear()
+    realm.OBJECT_LIST.clear()
+    realm.PLAYER_LIST.clear()
+    realm.SPECTATOR_LIST.clear()
+    realm.PARTICLE_LIST.clear()
+    realm.TYPE_COUNTS.clear()
+    realm.SPECIES_LIMITS.clear()
+
     populate_types = [
         Cow,
         Grass,
