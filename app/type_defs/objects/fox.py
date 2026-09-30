@@ -1,6 +1,7 @@
 import random
 
 from common_utils.common_enums import Rotations
+from common_utils.ecosystem import BREED_HP_COST, BREED_MIN_HP, DIETS, predators_of
 from common_utils.think_utils import simple_chase
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
@@ -19,17 +20,14 @@ class Fox(BaseObject):
     is_alive = True
 
     effects = [
-        EatObjectInFront(
-            types_eaten_to_hp_conv={
-                "Cow": 50,
-                "Chicken": 50,
-                "Badger": 50,
-                "CowEgg": 25,
-                "ChickenEgg": 25,
-            }
-        ),
+        EatObjectInFront(types_eaten_to_hp_conv=DIETS["Fox"]),
         HpDepletion(),
-        LayObject(object_to_lay="FoxEgg", time_to_lay=202),
+        LayObject(
+            object_to_lay="FoxEgg",
+            time_to_lay=202,
+            min_hp=BREED_MIN_HP,
+            hp_cost=BREED_HP_COST,
+        ),
     ]
 
     rgb_map = (255, 153, 000)
@@ -61,15 +59,8 @@ class Fox(BaseObject):
 
         return simple_chase(
             self,
-            chase_after=[
-                "Chicken",
-                "Cow",
-                "Badger",
-                "ChickenEgg",
-                "CowEgg",
-                "BadgerEgg",
-            ],
-            chase_from=["CarnivorousFlower"],
+            chase_after=list(DIETS["Fox"]),
+            chase_from=predators_of("Fox"),
         )
 
     def move_to_position(self, x_new: int, y_new: int):
@@ -90,6 +81,6 @@ class Fox(BaseObject):
     def get_description_short(self) -> str:
 
         return (
-            "An animal representing a fox. A fox moves, eats chickens, cows and eggs."
-            " Foxes can also lay eggs."
+            "An animal representing a fox. A fox moves, eats chickens, cows,"
+            " rabbits, mice, squirrels and eggs. Foxes can also lay eggs."
         )

@@ -1,6 +1,8 @@
 import re
 import sys
 
+from type_defs.objects.wildlife_specs import new_type_names
+
 
 def replace_with_html(text):
     # text = text.replace("**", "<b>")
@@ -35,14 +37,25 @@ OBJ_TYPE_LIST = [
     "BadgerEgg",
     "Bee",
     "BeeEgg",
-]
+] + new_type_names()
+
+_TYPE_CACHE = {}
 
 
 def obj_fut(str_in):
 
     if not isinstance(str_in, str):
         return str_in
-    elif str_in == "Angel":
+
+    cls = _TYPE_CACHE.get(str_in)
+    if cls is None:
+        cls = _TYPE_CACHE[str_in] = _resolve_type(str_in)
+    return cls
+
+
+def _resolve_type(str_in):
+
+    if str_in == "Angel":
         if "Angel" not in sys.modules:
             from type_defs.objects.angel import Angel
         return Angel
@@ -166,6 +179,10 @@ def obj_fut(str_in):
         return BeeEgg
 
     else:
+        from type_defs.objects.wildlife import WILDLIFE_CLASSES
+
+        if str_in in WILDLIFE_CLASSES:
+            return WILDLIFE_CLASSES[str_in]
         raise Exception(f"class name {str_in} not found")
 
 

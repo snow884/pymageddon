@@ -3,6 +3,7 @@ import random
 from common_utils.common_enums import Rotations
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.emit_object import EmitObject
+from type_defs.objects.effects.hp_depletion import HpDepletion
 
 
 class Grass2(BaseObject):
@@ -26,7 +27,10 @@ class Grass2(BaseObject):
             [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
         )
 
-    effects = [EmitObject(object_to_emit="Seed2", time_to_emit=40)]
+    effects = [
+        EmitObject(object_to_emit="Seed2", time_to_emit=40),
+        HpDepletion(skip_cycles=12),
+    ]
 
     rgb_map = (0, 204, 0)
 

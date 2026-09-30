@@ -1,6 +1,7 @@
 import random
 
 from common_utils.common_enums import Rotations
+from common_utils.ecosystem import BREED_HP_COST, BREED_MIN_HP, DIETS, predators_of
 from common_utils.think_utils import simple_chase
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
@@ -18,19 +19,14 @@ class Cow(BaseObject):
     is_alive = True
 
     effects = [
-        EatObjectInFront(
-            types_eaten_to_hp_conv={
-                "Seed": 10,
-                "Seed2": 10,
-                "Seed3": 10,
-                "Grass": 20,
-                "Grass2": 20,
-                "Grass3": 20,
-                "CarnivorousFlowerSeed": 10,
-            }
-        ),
+        EatObjectInFront(types_eaten_to_hp_conv=DIETS["Cow"]),
         HpDepletion(hp_loss_per_cycle=1, skip_cycles=1),
-        LayObject(object_to_lay="CowEgg", time_to_lay=50),
+        LayObject(
+            object_to_lay="CowEgg",
+            time_to_lay=50,
+            min_hp=BREED_MIN_HP,
+            hp_cost=BREED_HP_COST,
+        ),
     ]
 
     rgb_map = (0, 0, 0)
@@ -62,16 +58,8 @@ class Cow(BaseObject):
         if not self.code:
             return simple_chase(
                 self,
-                chase_after=[
-                    "Seed",
-                    "Seed2",
-                    "Seed3",
-                    "CarnivorousFlowerSeed",
-                    "Grass",
-                    "Grass2",
-                    "Grass3",
-                ],
-                chase_from=["Fox", "CarnivorousFlower"],
+                chase_after=list(DIETS["Cow"]),
+                chase_from=predators_of("Cow"),
             )
         else:
             return super().think()

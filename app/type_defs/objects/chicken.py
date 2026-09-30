@@ -1,13 +1,13 @@
 import random
 
 from common_utils.common_enums import Rotations
+from common_utils.ecosystem import BREED_HP_COST, BREED_MIN_HP, DIETS, predators_of
 from common_utils.think_utils import simple_chase
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.chicken_egg import ChickenEgg
 from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
 from type_defs.objects.effects.hp_depletion import HpDepletion
 from type_defs.objects.effects.lay_object import LayObject
-from type_defs.objects.seed import Seed
 from type_defs.particles.blood_mark_particle import BlookMarkParticle
 from type_defs.particles.death_particle import DeathParticle
 from type_defs.particles.track_particle import TrackParticle
@@ -20,9 +20,14 @@ class Chicken(BaseObject):
     is_alive = True
 
     effects = [
-        EatObjectInFront(types_eaten_to_hp_conv={Seed: 10}),
+        EatObjectInFront(types_eaten_to_hp_conv=DIETS["Chicken"]),
         HpDepletion(),
-        LayObject(object_to_lay=ChickenEgg, time_to_lay=350),
+        LayObject(
+            object_to_lay=ChickenEgg,
+            time_to_lay=350,
+            min_hp=BREED_MIN_HP,
+            hp_cost=BREED_HP_COST,
+        ),
     ]
 
     rgb_map = (255, 204, 51)
@@ -54,8 +59,8 @@ class Chicken(BaseObject):
 
         return simple_chase(
             self,
-            chase_after=["Seed", "Seed2", "Seed3"],
-            chase_from=["Fox", "CarnivorousFlower"],
+            chase_after=list(DIETS["Chicken"]),
+            chase_from=predators_of("Chicken"),
         )
 
     def move_to_position(self, x_new: int, y_new: int):
@@ -76,6 +81,6 @@ class Chicken(BaseObject):
     def get_description_short(self) -> str:
 
         return (
-            "Animal representing a chicken that can move, eats seeds and lays eggs."
-            " Chicken can be eaten by a fox."
+            "Animal representing a chicken that can move, eats seeds and"
+            " caterpillars and lays eggs. Chicken can be eaten by a fox."
         )

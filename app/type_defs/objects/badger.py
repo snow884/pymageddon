@@ -1,6 +1,7 @@
 import random
 
 from common_utils.common_enums import Rotations
+from common_utils.ecosystem import BREED_HP_COST, BREED_MIN_HP, DIETS, predators_of
 from common_utils.think_utils import simple_chase
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
@@ -18,16 +19,14 @@ class Badger(BaseObject):
     is_alive = True
 
     effects = [
-        EatObjectInFront(
-            types_eaten_to_hp_conv={
-                "Mushroom": 50,
-                "Mushroom2": 50,
-                "Spore": 5,
-                "Spore2": 5,
-            }
-        ),
+        EatObjectInFront(types_eaten_to_hp_conv=DIETS["Badger"]),
         HpDepletion(hp_loss_per_cycle=1, skip_cycles=1),
-        LayObject(object_to_lay="BadgerEgg", time_to_lay=50),
+        LayObject(
+            object_to_lay="BadgerEgg",
+            time_to_lay=50,
+            min_hp=BREED_MIN_HP,
+            hp_cost=BREED_HP_COST,
+        ),
     ]
 
     rgb_map = (0, 0, 0)
@@ -59,8 +58,8 @@ class Badger(BaseObject):
         if not self.code:
             return simple_chase(
                 self,
-                chase_after=["Mushroom", "Mushroom2", "Spore", "Spore2"],
-                chase_from=["Fox", "CarnivorousFlower"],
+                chase_after=list(DIETS["Badger"]),
+                chase_from=predators_of("Badger"),
             )
         else:
             return super().think()
@@ -83,6 +82,6 @@ class Badger(BaseObject):
     def get_description_short(self) -> str:
 
         return (
-            "Animal representing a badger that moves, eats mushrooms and lays"
-            " eggs. A badger can also be eaten by a fox."
+            "Animal representing a badger that moves, eats mushrooms, snails and"
+            " tortoise eggs and lays eggs. A badger can be eaten by a fox or a wolf."
         )

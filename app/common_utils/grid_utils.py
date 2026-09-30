@@ -20,7 +20,7 @@ def find_nearest(obj, type_in, rad: int = 10):
             min(obj.x + rad_check, realm.MAP.size_x - 1),
         ]:
             for j in range(
-                max(0, obj.y - rad_check), min(obj.y + rad_check, realm.MAP.size_y)
+                max(0, obj.y - rad_check), min(obj.y + rad_check + 1, realm.MAP.size_y)
             ):
                 tile = realm.TILES[(i, j)]
                 if tile.occupied_by is not None:

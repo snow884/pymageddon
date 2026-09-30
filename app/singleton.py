@@ -16,6 +16,9 @@ class Realm:
     MAP = None
     SCORE_LIST = None
     REDIS_CONNECTION = None
+    TYPE_COUNTS = {}
+    IMMIGRATION_COUNTS = {}
+    SPECIES_LIMITS = {}
 
     # Guards concurrent access to the shared game state (TILES, OBJECT_LIST,
     # PLAYER_LIST, SPECTATOR_LIST, PARTICLE_LIST) which is mutated by the main
@@ -47,6 +50,9 @@ class Realm:
         self.MAP = None
         self.SCORE_LIST = None
         self.REDIS_CONNECTION = None
+        self.TYPE_COUNTS = {}
+        self.IMMIGRATION_COUNTS = {}
+        self.SPECIES_LIMITS = {}
         self.LOCK = threading.RLock()
 
 

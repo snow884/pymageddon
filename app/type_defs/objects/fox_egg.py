@@ -9,7 +9,7 @@ class FoxEgg(BaseObject):
     type_name: str = "FoxEgg"
     image = "../../static/objects/egg.png"
 
-    effects = [TurnInto(future_object_class="Fox", time_to_turn=100)]
+    effects = [TurnInto(future_object_class="FoxKit", time_to_turn=100)]
 
     rgb_map = (255, 255, 255)
 

@@ -1,0 +1,37 @@
+{
+  "description": "Prompt experiments run through app/common_utils/run_comfy_graph.py (Flux text-to-image) before the final templates in generate_object_sprites.py were fixed. Final per-sprite prompts are in manifest.json.",
+  "experiments": [
+    {
+      "id": 1,
+      "workflow": "i_gen_sprite.json v1 (rembg output saved directly, node 51 -> SaveImage)",
+      "seed": 12345,
+      "steps": 20,
+      "prompt": "Top-down view from directly above of a cute cartoon sports car designed to look like a rabbit, white and grey fur texture on the car body, long rabbit ears lying on the roof, pink nose on the front bumper, fluffy round tail at the rear, car front pointing up, centered, single object isolated on plain white background, glossy game asset illustration, clean dark outlines, soft cel shading",
+      "outcome": "Rejected: rembg image output lost the alpha channel and was blurred; 3/4 perspective, front of the car pointing down. Led to joining the raw image with the inverted rembg mask (nodes 53/54)."
+    },
+    {
+      "id": 2,
+      "workflow": "i_gen_sprite.json v2 (current: JoinImageWithAlpha)",
+      "seed": 777,
+      "steps": 20,
+      "prompt": "Bird's-eye view, looking straight down from above, of a cute cartoon car designed to look like a white rabbit. The front of the car with the pink rabbit nose points to the top of the image, the fluffy round white tail is at the bottom rear. Long rabbit ears lie flat on the hood. Game sprite, centered, isolated on plain white background, glossy illustration, clean dark outlines, soft cel shading",
+      "outcome": "Rejected: transparency correct, but still 3/4 view and soft/blurry."
+    },
+    {
+      "id": 3,
+      "workflow": "i_gen_sprite.json v2",
+      "seed": 101,
+      "steps": 28,
+      "prompt": "Top-down racing game sprite: a sports car seen exactly from directly overhead (orthographic top view, roof visible, no perspective), the car is decorated as a white rabbit: white fur texture on the body, two long rabbit ears folded back along the roof, black eyes and a pink nose on the front bumper, fluffy round tail on the rear bumper. The car faces up, front at the top of the image. Sharp detailed digital painting, crisp dark outlines, glossy highlights, centered on a plain white background",
+      "outcome": "Adopted as CAR_TEMPLATE (animals, juveniles). True top-down and sharp; Flux still tends to draw the nose down, so car sprites are rotated 180 degrees in post-processing unless overridden."
+    },
+    {
+      "id": 4,
+      "workflow": "i_gen_sprite.json v2",
+      "seed": 102,
+      "steps": 28,
+      "prompt": "Top-down view game asset of a clump of blue bellflowers with green leaves, seen from directly above, sharp detailed digital painting, crisp outlines, vivid colors, centered on a plain white background",
+      "outcome": "Adopted as STATIC_TEMPLATE (eggs, nests, pupae, seeds, plants, inanimate objects), with 'soft shading' and 'single object' added."
+    }
+  ]
+}

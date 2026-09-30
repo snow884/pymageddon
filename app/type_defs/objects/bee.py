@@ -1,6 +1,7 @@
 import random
 
 from common_utils.common_enums import Rotations
+from common_utils.ecosystem import DIETS
 from common_utils.think_utils import simple_defend
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.effects.eat_object_in_front import EatObjectInFront
@@ -19,21 +20,7 @@ class Bee(BaseObject):
     is_alive = True
 
     effects = [
-        EatObjectInFront(
-            types_eaten_to_hp_conv={
-                "Fox": 50,
-                "Cow": 50,
-                "Seed": 1,
-                "Seed2": 1,
-                "Seed3": 1,
-                "Spore": 1,
-                "Spore2": 1,
-                "Chicken": 50,
-                "Badger": 50,
-                "CowEgg": 25,
-                "ChickenEgg": 25,
-            }
-        ),
+        EatObjectInFront(types_eaten_to_hp_conv=DIETS["Bee"]),
         HpDepletion(),
         LayObject(object_to_lay="BeeEgg", time_to_lay=302),
     ]
