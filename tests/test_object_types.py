@@ -293,3 +293,28 @@ def test_every_object_texture_is_sent_to_clients():
     textures = main.get_all_textures()
     missing = [t for t in OBJ_TYPE_LIST if obj_fut(t).image not in textures]
     assert not missing, f"textures not preloaded by the client: {missing}"
+
+
+@pytest.mark.parametrize("food", ["Strawberry", "StrawberryRunner", "StrawberryPatch"])
+def test_cow_and_calf_eat_strawberries(food):
+    assert food in ecosystem.DIETS["Cow"]
+    assert food in ecosystem.DIETS["Calf"]
+
+
+def test_cow_grazes_most_plants():
+    plant_types = {t for s in ecosystem.PLANT_SPECIES for t in ecosystem.SPECIES[s]}
+    assert len(plant_types & set(ecosystem.DIETS["Cow"])) >= 0.75 * len(plant_types)
+
+
+def test_player_cow_eats_without_ai_restrictions(empty_world):
+    empty_world(20)
+    cow = obj_fut("Cow")(x_new=10, y_new=10, is_player=True, player_name="hero")
+    strawberry = WILDLIFE_CLASSES["Strawberry"](x_new=10, y_new=9)
+    _face(cow, Rotations.UP)
+    cow.hp = ecosystem.SATIATED_HP
+    eat = next(e for e in cow.effects if isinstance(e, EatObjectInFront))
+
+    assert not ecosystem.hunt_allowed("Strawberry")
+    eat.run_effect(cow)
+    assert strawberry.index not in realm.OBJECT_LIST
+    assert cow.hp > ecosystem.SATIATED_HP

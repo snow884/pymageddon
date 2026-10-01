@@ -2,116 +2,137 @@
 
 {% block content %}
 
-<article>
-    <br>
-    
+{% macro medal(rank) -%}
+    {%- if rank == 1 %}🥇{% elif rank == 2 %}🥈{% elif rank == 3 %}🥉{% endif -%}
+{%- endmacro %}
+
+{% macro status_badge(ago) -%}
+    {%- if ago and ago < 60 -%}
+        <span class="pm-status pm-status-online">Playing now</span>
+    {%- elif ago and ago < 3600 -%}
+        <span class="pm-status pm-status-recent">Played recently</span>
+    {%- else -%}
+        <span class="pm-status pm-status-offline">Offline</span>
+    {%- endif -%}
+{%- endmacro %}
+
+{% set ns = namespace(online=0, games=0) %}
+{% for player_name, scores in all_players.items() %}
+    {% set s = scores['player_scores'] %}
+    {% if s['last_game_ago'] and s['last_game_ago'] < 60 %}{% set ns.online = ns.online + 1 %}{% endif %}
+    {% set ns.games = ns.games + (s['player_games'] or 0) %}
+{% endfor %}
+
+<section class="pm-page-header">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Player list</li>
+            <li class="breadcrumb-item active" aria-current="page">Players</li>
         </ol>
     </nav>
-    <p>List of all players in Pymageddon.</p>
-    <div class="row  row-cols-1 row-cols-md-2 g-4">
-        {% for player_name, scores in all_players.items() %}
-        <div class="col">
-            
-            <div class="card">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img id='{{player_name}}_image' src="{{ url_for('player_image', player_name=player_name) }}" alt="{{player_name}} avatar" width="100%" style="image-rendering: pixelated;">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                        <h5 class="card-title"><a href="{{ url_for('player', player_name=player_name) }}">{{ player_name }}</a></h5>
-                        <p class="card-text">
+    <h1 class="mb-2">Players</h1>
+    <p class="lead mb-0">Everyone who has entered the ecosystem, their best runs and their bot families.</p>
+</section>
 
-                            <div class="bd-example m-0 border-0">
-    
-                                <table class="table table-sm table-borderless">
-                                    <tbody>
-                                        <tr>
-                                            <th scope="row">Status:</th>
-                                            <td>
-                                                {% if scores['player_scores']['last_game_ago'] and scores['player_scores']['last_game_ago'] < 60 %}
-                                                    🟢 Playing now 
-                                                {% elif scores['player_scores']['last_game_ago'] and scores['player_scores']['last_game_ago'] < 3600 %}
-                                                    🟡 Played recently
-                                                {% else %}
-                                                    ⚫️ Offline
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Max score:</th>
-                                            <td>
-                                                {% if scores['player_scores']['player_score'] %}
-                                                    {{ scores['player_scores']['player_score'] }} ( Ranked {{ scores['player_scores']['player_score_rank'] }})
-                                                    {% if scores['player_scores']['player_score'] == 1%} 🥇 {% endif %}
-                                                    {% if scores['player_scores']['player_score'] == 2%} 🥈 {% endif %}
-                                                    {% if scores['player_scores']['player_score'] == 3%} 🥉 {% endif %}
-                                                {% else %}
-                                                    N/A
-                                                {% endif %}
-                                                </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Games played:</th>
-                                            <td>
-                                                {% if scores['player_scores']['player_games'] %}
-                                                    {{ scores['player_scores']['player_games'] }} ( Ranked {{ scores['player_scores']['player_games_rank'] }})
-                                                    {% if scores['player_scores']['player_games'] == 1%} 🥇 {% endif %}
-                                                    {% if scores['player_scores']['player_games'] == 2%} 🥈 {% endif %}
-                                                    {% if scores['player_scores']['player_games'] == 3%} 🥉 {% endif %}
-                                                {% else %}
-                                                    N/A
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Max bot score:</th>
-                                            <td>
-                                                {% if scores['player_scores']['family_score'] %}
-                                                    {{ scores['player_scores']['family_score'] }} ( Ranked {{ scores['player_scores']['family_score_rank'] }})
-                                                    {% if scores['player_scores']['family_score'] == 1%} 🥇 {% endif %}
-                                                    {% if scores['player_scores']['family_score'] == 2%} 🥈 {% endif %}
-                                                    {% if scores['player_scores']['family_score'] == 3%} 🥉 {% endif %}
-                                                {% else %}
-                                                    N/A
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Bots created total:</th>
-                                            <td>
-                                                {% if scores['player_scores']['family_games'] %}
-                                                    {{ scores['player_scores']['family_games'] }} ( Ranked {{ scores['player_scores']['family_games_rank'] }}) 
-                                                    {% if scores['player_scores']['family_games_rank'] == 1%} 🥇 {% endif %}
-                                                    {% if scores['player_scores']['family_games_rank'] == 2%} 🥈 {% endif %}
-                                                    {% if scores['player_scores']['family_games_rank'] == 3%} 🥉 {% endif %}
-                                                {% else %}
-                                                    N/A
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                
-                          </div>
-                        </p>
-                        <p class="card-text"><small class="text-body-secondary">Last played {{ scores['player_scores']['last_game_ago_str'] }}</small></p>
-                        </div>
-                    </div>
+<div class="row g-3 mb-4">
+    <div class="col-4">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><span class="pm-stat-icon"><i class="bi bi-people"></i></span>Players</div>
+            <div class="pm-stat-value">{{ all_players | length }}</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><span class="pm-stat-icon"><i class="bi bi-broadcast"></i></span>Online now</div>
+            <div class="pm-stat-value">{{ ns.online }}</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><span class="pm-stat-icon"><i class="bi bi-controller"></i></span>Games played</div>
+            <div class="pm-stat-value">{{ ns.games }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="pm-toolbar">
+    <div class="pm-search">
+        <i class="bi bi-search"></i>
+        <input id="player_search" type="search" class="form-control" placeholder="Search players..." aria-label="Search players">
+    </div>
+    <select id="player_sort" class="form-select w-auto" aria-label="Sort players">
+        <option value="score">Sort by max score</option>
+        <option value="games">Sort by games played</option>
+        <option value="bot">Sort by bot score</option>
+        <option value="recent">Sort by last played</option>
+        <option value="name">Sort by name</option>
+    </select>
+    <span id="player_count" class="small text-body-secondary ms-auto"></span>
+</div>
+
+<div id="player_grid" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+    {% for player_name, scores in all_players.items() %}
+    {% set s = scores['player_scores'] %}
+    <div class="col player-item" data-name="{{ player_name | lower }}" data-score="{{ s['player_score'] or 0 }}"
+         data-games="{{ s['player_games'] or 0 }}" data-bot="{{ s['family_score'] or 0 }}" data-recent="{{ -(s['last_game_ago'] or 1e12) }}">
+        <div class="pm-card pm-card-hover h-100 position-relative">
+            <div class="p-3 d-flex align-items-center gap-3">
+                <div class="pm-sprite pm-sprite-sm">
+                    <img id="{{ player_name }}_image" src="{{ url_for('player_image', player_name=player_name) }}" alt="{{ player_name }} avatar" loading="lazy">
+                </div>
+                <div class="min-w-0">
+                    <h2 class="h6 card-title mb-1 stretched-link-title text-truncate">
+                        <a class="stretched-link" href="{{ url_for('player', player_name=player_name) }}">{{ player_name }}</a>
+                    </h2>
+                    {{ status_badge(s['last_game_ago']) }}
                 </div>
             </div>
-            
+            <div class="px-3 pb-3">
+                <div class="row g-2">
+                    <div class="col-6"><div class="pm-mini-stat"><div class="k">Max score</div><div class="v">{{ s['player_score'] or '–' }} {{ medal(s['player_score_rank']) if s['player_score'] }}</div></div></div>
+                    <div class="col-6"><div class="pm-mini-stat"><div class="k">Games</div><div class="v">{{ s['player_games'] or '–' }} {{ medal(s['player_games_rank']) if s['player_games'] }}</div></div></div>
+                    <div class="col-6"><div class="pm-mini-stat"><div class="k">Bot score</div><div class="v">{{ s['family_score'] or '–' }} {{ medal(s['family_score_rank']) if s['family_score'] }}</div></div></div>
+                    <div class="col-6"><div class="pm-mini-stat"><div class="k">Bots</div><div class="v">{{ s['family_games'] or '–' }} {{ medal(s['family_games_rank']) if s['family_games'] }}</div></div></div>
+                </div>
+                <div class="small text-body-secondary mt-2"><i class="bi bi-clock me-1"></i>Last played {{ s['last_game_ago_str'] }}</div>
+            </div>
         </div>
-        {% endfor %}
-
     </div>
+    {% endfor %}
+</div>
 
-</article>
+<div id="player_empty" class="pm-empty d-none"><i class="bi bi-person-x"></i>No players found.</div>
 
-<hr class="featurette-divider">
+<script>
+    (() => {
+        const grid = document.getElementById('player_grid');
+        const search = document.getElementById('player_search');
+        const sort = document.getElementById('player_sort');
+        const count = document.getElementById('player_count');
+        const empty = document.getElementById('player_empty');
+        const items = Array.from(grid.querySelectorAll('.player-item'));
+
+        function render() {
+            const q = search.value.trim().toLowerCase();
+            const key = sort.value;
+            const sorted = items.slice().sort((a, b) => key === 'name'
+                ? a.dataset.name.localeCompare(b.dataset.name)
+                : Number(b.dataset[key]) - Number(a.dataset[key]));
+            let shown = 0;
+            sorted.forEach(el => {
+                const match = el.dataset.name.includes(q);
+                el.classList.toggle('d-none', !match);
+                if (match) shown++;
+                grid.appendChild(el);
+            });
+            count.textContent = shown + ' of ' + items.length + ' players';
+            empty.classList.toggle('d-none', shown > 0);
+        }
+
+        search.addEventListener('input', render);
+        sort.addEventListener('change', render);
+        render();
+    })();
+</script>
 
 {% endblock %}

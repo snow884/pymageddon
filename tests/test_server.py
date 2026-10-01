@@ -309,6 +309,7 @@ class TestHTMLRoutes:
             "/explorer",
             "/explorer/type/Cow/",
             "/players",
+            "/world_map",
             "/robots.txt",
             "/sitemap.xml",
         ]:

@@ -1,77 +1,134 @@
 {% extends "_menu_bar.html" %}
 
 {% block content %}
-<article>
-    <br>
-    
+{% set name = type_summary.type_name %}
+{% set objs = (type_summary.objects or {}).values() | list %}
+{% set pop = type_summary.total_objects or objs | length %}
+{% set hps = objs | map(attribute='hp') | list %}
+{% set scores = objs | map(attribute='score') | select | list %}
+{% set bots = objs | selectattr('family_name') | list %}
+{% set families = bots | map(attribute='family_name') | unique | list %}
+
+<section class="pm-page-header">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="{{ url_for('explorer') }}">Explorer</a></li>
-          <li class="breadcrumb-item active" aria-current="page">{{type_summary.type_name}}</li>
+          <li class="breadcrumb-item"><a href="{{ url_for('explorer') }}">Species</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ name }}</li>
       </ol>
     </nav>
-    <p>Description of the animal/plant type {{type_summary.type_name}}</p>
-    <div class="row  row-cols-1 row-cols-md-2 g-4">
-        <div class="col">
-          <div class="card">
-            <img id='{{type_summary.type_name}}_image' src="../{{type_summary.image}}" alt="{{type_summary.type_name}}" width="100%" style="image-rendering: pixelated;">
-            <div class="card-body">
-              <h5 class="card-title">{{type_summary.type_name}}</h5>
-              <p class="card-text">{{type_summary.description_short}}</p>
-            </div>
-          </div>
+    <div class="d-flex flex-column flex-md-row align-items-md-center gap-4">
+        <div class="pm-sprite pm-card" style="width: 128px; flex: 0 0 128px;">
+            <img id="{{ name }}_image" src="../{{ type_summary.image }}" alt="{{ name }}">
         </div>
-        <div class="col">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Abilities and effects</h5>
-              <p class="card-text">List of all abilities that {{type_summary.type_name}} has.</p>
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="pm-chip"><span class="pm-swatch" style="background-color: rgb{{ type_summary.rgb_map }};"></span>Map color</span>
+                <span class="pm-chip"><i class="bi bi-lightning-charge"></i>{{ (type_summary.effects or []) | length }} abilities</span>
             </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">
-                <h5>Total health / HP</h5>
-                {{ type_summary.hp }} 
-              </li>
-              <li class="list-group-item">
-                <h5>Color on map</h5>
-                <div style="width: 15px; height: 15px; display:inline-block; background-color: rgb{{ type_summary.rgb_map }};"></div>
-              </li>
-              {% for effect in type_summary.effects %}
-              <li class="list-group-item">
-                <h5>{{ effect.effect_name }}</h5>
-                {{ effect.description | safe }} 
-              </li>
-              {% endfor %}
-            </ul>
-            <div class="card-body">
-            </div>
-          </div>
+            <h1 class="mb-2">{{ name }}</h1>
+            <p class="lead mb-0">{{ type_summary.description_short }}</p>
         </div>
+    </div>
+</section>
 
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><i class="bi bi-people"></i>Population</div>
+            <div class="pm-stat-value">{{ pop }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><i class="bi bi-heart-pulse"></i>Average HP</div>
+            <div class="pm-stat-value">{{ ((hps | sum) / (hps | length)) | round | int if hps else (type_summary.hp or 0) | round | int }}</div>
+            {% if hps %}<div class="pm-stat-sub">min {{ hps | min | round | int }} &middot; max {{ hps | max | round | int }}</div>{% endif %}
+        </div>
+    </div>
+    <div class="col-6 col-lg">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><i class="bi bi-trophy"></i>Top score</div>
+            <div class="pm-stat-value">{{ scores | max | default(0) }}</div>
+            {% if scores %}<div class="pm-stat-sub">avg {{ ((scores | sum) / (scores | length)) | round(1) }}</div>{% endif %}
+        </div>
+    </div>
+    <div class="col-6 col-lg">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><i class="bi bi-cpu"></i>Player bots</div>
+            <div class="pm-stat-value">{{ bots | length }}</div>
+            <div class="pm-stat-sub">{{ families | length }} player famil{{ 'y' if families | length == 1 else 'ies' }}</div>
+        </div>
+    </div>
+</div>
 
-      </div>
-      
-      <hr class="featurette-divider">
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="pm-card h-100">
+            <div class="pm-card-header"><h2><i class="bi bi-lightning-charge me-2"></i>Abilities &amp; effects</h2></div>
+            {% for effect in type_summary.effects %}
+            <div class="pm-effect">
+                <h3>{{ effect.effect_name }}</h3>
+                <div class="pm-effect-body">{{ effect.description | safe }}</div>
+            </div>
+            {% else %}
+            <div class="pm-empty"><i class="bi bi-dash-circle"></i>This species has no special abilities.</div>
+            {% endfor %}
+        </div>
+    </div>
 
-      <div class="bd-example m-0 border-0">
-    
-        <ul class="list-group">
-          
-          <li class="list-group-item disabled" aria-disabled="true">List of animals of this type</li>
-          {% for object_index, object in type_summary.objects.items() %}
-          <li class="list-group-item">
-            <h6><a id="button_{{type_summary.type_name}}_{{object_index}}" href=""=>{{type_summary.type_name}} bot {{object_index}}</a></h6>
-              HP: {{object.hp}} / 100 | SCORE: {{object.score}} {% if object.family_name %} | FAMILY: <a href="{{ url_for('player',player_name=object.family_name) }}">{{object.family_name}}</a> | CODE: <a href="{{ url_for('player',player_name=object.family_name) }}#{{ object.code_sha1 }}">{{object.code_sha1}} </a> {% endif %}
-          </li>
-          {% endfor %}
-        </ul>
-        
-      </div>
-
-</article>
-
-<hr class="featurette-divider">
+    <div class="col-lg-7">
+        <div class="pm-card h-100">
+            <div class="pm-card-header">
+                <h2><i class="bi bi-list-ul me-2"></i>Living individuals</h2>
+                <span class="small text-body-secondary">Click <i class="bi bi-eye"></i> to spectate</span>
+            </div>
+            {% if objs %}
+            <div class="table-responsive" style="max-height: 640px;">
+                <table class="table pm-table" id="objects_table">
+                    <thead class="sticky-top bg-body">
+                        <tr>
+                            <th class="sortable" data-type="num">#</th>
+                            <th class="sortable" data-type="num" style="min-width: 140px;">HP</th>
+                            <th class="sortable num" data-type="num">Score</th>
+                            <th class="sortable" data-type="text">Owner</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for object_index, object in type_summary.objects.items() %}
+                    {% set hp = object.hp or 0 %}
+                    <tr>
+                        <td data-value="{{ object_index }}" class="text-body-secondary">{{ object_index }}</td>
+                        <td data-value="{{ hp }}">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="pm-progress flex-grow-1 {{ 'hp-low' if hp < 25 else ('hp-mid' if hp < 50 else '') }}"><span style="width: {{ [hp, 100] | min }}%"></span></div>
+                                <span class="small" style="min-width: 2.5rem;">{{ hp | round | int }}</span>
+                            </div>
+                        </td>
+                        <td class="num" data-value="{{ object.score or 0 }}">{{ object.score or 0 }}</td>
+                        <td data-value="{{ object.family_name or '' }}">
+                            {% if object.family_name %}
+                                <a href="{{ url_for('player', player_name=object.family_name) }}">{{ object.family_name }}</a>
+                                <a class="small text-body-secondary ms-1" href="{{ url_for('player', player_name=object.family_name) }}#{{ object.code_sha1 }}" title="Bot code"><i class="bi bi-code-slash"></i></a>
+                            {% else %}
+                                <span class="text-body-secondary small">Wild</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-ghost" data-spectate="{{ object_index }}" title="Spectate {{ name }} {{ object_index }}"><i class="bi bi-eye"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="pm-empty"><i class="bi bi-moon-stars"></i>No living {{ name }} right now.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 <script>
   console.log("JS executing...")
@@ -159,15 +216,33 @@
       throw new Error("Polling timeout exceeded");
     }
 
-    {% for object_index, object in type_summary.objects.items() %}
+    document.addEventListener('click', function(event) {
+      const button = event.target.closest('[data-spectate]');
+      if (!button) return;
+      event.preventDefault();
+      button.disabled = true;
+      button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+      start_new_game(Number(button.dataset.spectate), "{{ type_summary.type_name }}");
+    });
 
-      const button_{{type_summary.type_name}}_{{object_index}} = document.getElementById('button_{{type_summary.type_name}}_{{object_index}}');
-
-      button_{{type_summary.type_name}}_{{object_index}}.addEventListener('click', function() {
-        start_new_game({{object_index}}, "{{type_summary.type_name}}");
+    const objects_table = document.getElementById('objects_table');
+    if (objects_table) {
+      objects_table.querySelectorAll('th.sortable').forEach((th, col) => {
+        th.addEventListener('click', () => {
+          const asc = !th.classList.contains('sort-asc');
+          objects_table.querySelectorAll('th').forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+          th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+          const tbody = objects_table.tBodies[0];
+          const val = row => row.cells[col].dataset.value;
+          Array.from(tbody.rows)
+            .sort((a, b) => {
+              const cmp = th.dataset.type === 'num' ? Number(val(a)) - Number(val(b)) : val(a).localeCompare(val(b));
+              return asc ? cmp : -cmp;
+            })
+            .forEach(row => tbody.appendChild(row));
+        });
       });
-
-    {% endfor %}
+    }
 
 </script>
 
