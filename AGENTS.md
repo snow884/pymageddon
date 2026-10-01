@@ -2,6 +2,8 @@
 
 Pymageddon is a browser MMO survival game built on an ecosystem simulation. It has three processes: a FastAPI server (`app/server.py`), a game node (`app/main.py`, started by `app/run.py`), and Redis between them. For the architecture, API and bot language, see [README.md](README.md).
 
+For a dated summary of recent repository work, validation evidence, and the current follow-up item, see [HANDOFF.md](HANDOFF.md).
+
 ## Environment
 - Game code lives in `app/` (run scripts from `app/`, or rely on pytest's `pythonpath`). Use the local venv: `.venv/bin/python`.
 - Redis host is hard-coded as `pymageddon-redis-server`. Tests use `fakeredis` by monkeypatching `server.r`.
