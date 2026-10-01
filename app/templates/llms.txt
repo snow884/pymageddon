@@ -1,0 +1,97 @@
+# Pymageddon
+
+> Pymageddon is a free-to-play, browser-based MMO survival game that simulates a living ecosystem with real predator-prey dynamics. Plants, herbivores and predators all need food to survive, so populations rise and crash like in nature. Players either steer a creature live (keyboard or touch joystick) or deploy a sandboxed Python bot that drives it every tick and competes on a public leaderboard.
+
+Key facts:
+
+- Website: {{ site_url }}/
+- Price: free. No download required; works on desktop and mobile browsers.
+- Genres: MMO, survival, strategy, programming game, ecosystem simulation.
+- Source code: https://github.com/snow884/pymageddon
+
+## Pages
+
+- [Home]({{ site_url }}/): game overview and gameplay video
+- [Play]({{ site_url }}/play): live game client (requires a login or a guest account)
+- [Start a game]({{ site_url }}/start_game_page): choose to play as a guest or log in
+- [Write a bot]({{ site_url }}/create_bot_page): editor for deploying a Python bot
+- [Species explorer]({{ site_url }}/explorer): every animal, plant and object in the world, with live populations
+- [World map]({{ site_url }}/world_map): live map of the whole world and population history charts
+- [Players]({{ site_url }}/players): leaderboard of players and bot families
+
+## Species
+{% for type_name, t in objects_summary.items() %}
+- [{{ type_name }}]({{ site_url }}/explorer/type/{{ type_name | urlencode }}/): {{ (t.description_short or "") | striptags | trim }}
+{%- endfor %}
+
+## HTTP API
+
+- [OpenAPI schema]({{ site_url }}/openapi.json): machine-readable description of every endpoint
+- [Interactive API docs]({{ site_url }}/docs): Swagger UI
+
+To get an access token, call `POST /token` with `{"is_guest": true}` for a guest account, or with `{"username": "...", "password": "..."}` for a registered account. Then send the token as `Authorization: Bearer <token>`. Create a registered account with `POST /create_player` and the body `{"username", "password", "verify_password"}`.
+
+| Method | Path | Purpose |
+|---|---|---|
+| POST | /new_game | Join the world as a player creature |
+| POST | /create_bot | Deploy bot code `{"code_str": "..."}` and spectate it |
+| POST | /control | Send held keys `{"ArrowUp","ArrowDown","ArrowLeft","ArrowRight"}` (booleans) |
+| GET | /get_map | Visible map window: tiles, objects, particles, player status |
+| GET | /score | Your scores and ranks |
+| POST | /end_game | Leave the current game |
+| GET | /me | Name of the authenticated user |
+
+The world runs in epochs of about 0.33 s. `/get_map` returns `global_params.status` (`stopped` or `running`) and `time_left` until the next epoch.
+
+## Bot language
+
+Bot code is a safe subset of Python, evaluated once per tick in a sandbox that is limited to 1000 steps. Set the variable `intent` to one of the following:
+
+- `"MOVE_FORWARD"`
+- `"ROTATE_UP"`
+- `"ROTATE_RIGHT"`
+- `"ROTATE_DOWN"`
+- `"ROTATE_LEFT"`
+
+If you leave `intent` unset (`None`), the bot idles.
+
+Allowed syntax and functions:
+
+- Allowed syntax: assignments, `if` / `elif` / `else`, `global`, arithmetic, comparisons, `and` / `or` / `not`, `in` / `not in`, list / tuple / dict literals, and indexing. Loops, imports, attribute access, `def` and `print` are rejected.
+- `and` / `or` evaluate both sides, so nest `if` statements instead of writing `x and x["y"]`.
+- `parent_object` is a dict with `x`, `y` and `rotation` (`"UP"`, `"RIGHT"`, `"DOWN"` or `"LEFT"`) describing your creature. The y axis points down.
+- `find_nearest_xy(x, y, type_name_or_list, rad=10)` returns the nearest object of that type (for example `"Grass"`, `"Cow"` or `["Fox", "Badger"]`) as `{x, y, rotation}`, or `None`.
+- `random_randint(a, b)` and `random_choice(list)` return random values.
+- `get_index(list, i)` and `set_index(list, i, value)` read and write list elements.
+- Every variable persists between ticks. Reading a variable that has never been assigned is an error, so declare it with `global name` first; this initializes it to `None` on the first tick.
+- Any error discards the bot's variables, and the creature idles for that tick.
+
+Example: walk toward the nearest grass and wander when none is in range.
+
+```python
+global steps
+if not steps:
+    steps = 0
+steps = steps + 1
+me = parent_object
+target = find_nearest_xy(me["x"], me["y"], "Grass")
+intent = "MOVE_FORWARD"
+if target:
+    if target["x"] > me["x"]:
+        want = "RIGHT"
+    elif target["x"] < me["x"]:
+        want = "LEFT"
+    elif target["y"] < me["y"]:
+        want = "UP"
+    else:
+        want = "DOWN"
+    if me["rotation"] != want:
+        intent = "ROTATE_" + want
+elif steps % 5 == 0:
+    intent = random_choice(["ROTATE_UP", "ROTATE_RIGHT", "ROTATE_DOWN", "ROTATE_LEFT"])
+```
+
+## Optional
+
+- [Sitemap]({{ site_url }}/sitemap.xml)
+- [Robots]({{ site_url }}/robots.txt)
