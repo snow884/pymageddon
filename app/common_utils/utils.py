@@ -11,33 +11,38 @@ def replace_with_html(text):
     return text
 
 
-OBJ_TYPE_LIST = [
-    "Angel",
-    "Seed",
-    "Seed2",
-    "Seed3",
-    "Grass",
-    "Grass2",
-    "Grass3",
-    "Stone",
-    "Stone2",
-    "Chicken",
-    "Cow",
-    "Fox",
-    "ChickenEgg",
-    "CowEgg",
-    "FoxEgg",
-    "CarnivorousFlowerSeed",
-    "CarnivorousFlower",
-    "Mushroom",
-    "Mushroom2",
-    "Spore",
-    "Spore2",
-    "Badger",
-    "BadgerEgg",
-    "Bee",
-    "BeeEgg",
-] + new_type_names()
+OBJ_TYPE_LIST = list(
+    dict.fromkeys(
+        [
+            "Angel",
+            "Seed",
+            "Seed2",
+            "Seed3",
+            "Grass",
+            "Grass2",
+            "Grass3",
+            "Stone",
+            "Stone2",
+            "Chicken",
+            "Cow",
+            "Fox",
+            "ChickenEgg",
+            "CowEgg",
+            "FoxEgg",
+            "CarnivorousFlowerSeed",
+            "CarnivorousFlower",
+            "Mushroom",
+            "Mushroom2",
+            "Spore",
+            "Spore2",
+            "Badger",
+            "BadgerEgg",
+            "Bee",
+            "BeeEgg",
+        ]
+        + new_type_names()
+    )
+)
 
 _TYPE_CACHE = {}
 
@@ -54,81 +59,15 @@ def obj_fut(str_in):
 
 
 def _resolve_type(str_in):
+    from type_defs.objects.wildlife import WILDLIFE_CLASSES
+
+    if str_in in WILDLIFE_CLASSES:
+        return WILDLIFE_CLASSES[str_in]
 
     if str_in == "Angel":
         if "Angel" not in sys.modules:
             from type_defs.objects.angel import Angel
         return Angel
-
-    elif str_in == "Seed":
-        if "Seed" not in sys.modules:
-            from type_defs.objects.seed import Seed
-        return Seed
-
-    elif str_in == "Seed2":
-        if "Seed2" not in sys.modules:
-            from type_defs.objects.seed2 import Seed2
-        return Seed2
-
-    elif str_in == "Seed3":
-        if "Seed3" not in sys.modules:
-            from type_defs.objects.seed3 import Seed3
-        return Seed3
-
-    elif str_in == "Grass":
-        if "Grass" not in sys.modules:
-            from type_defs.objects.grass import Grass
-        return Grass
-
-    elif str_in == "Grass2":
-        if "Grass2" not in sys.modules:
-            from type_defs.objects.grass2 import Grass2
-        return Grass2
-
-    elif str_in == "Grass3":
-        if "Grass" not in sys.modules:
-            from type_defs.objects.grass3 import Grass3
-        return Grass3
-
-    elif str_in == "Stone":
-        if "Stone" not in sys.modules:
-            from type_defs.objects.stone import Stone
-        return Stone
-
-    elif str_in == "Stone2":
-        if "Stone2" not in sys.modules:
-            from type_defs.objects.stone2 import Stone2
-        return Stone2
-
-    elif str_in == "Chicken":
-        if "Chicken" not in sys.modules:
-            from type_defs.objects.chicken import Chicken
-        return Chicken
-
-    elif str_in == "Cow":
-        if "Cow" not in sys.modules:
-            from type_defs.objects.cow import Cow
-        return Cow
-
-    elif str_in == "Fox":
-        if "Fox" not in sys.modules:
-            from type_defs.objects.fox import Fox
-        return Fox
-
-    elif str_in == "ChickenEgg":
-        if "ChickenEgg" not in sys.modules:
-            from type_defs.objects.chicken_egg import ChickenEgg
-        return ChickenEgg
-
-    elif str_in == "CowEgg":
-        if "CowEgg" not in sys.modules:
-            from type_defs.objects.cow_egg import CowEgg
-        return CowEgg
-
-    elif str_in == "FoxEgg":
-        if "FoxEgg" not in sys.modules:
-            from type_defs.objects.fox_egg import FoxEgg
-        return FoxEgg
 
     elif str_in == "CarnivorousFlowerSeed":
         if "CarnivorousFlowerSeed" not in sys.modules:
@@ -160,15 +99,6 @@ def _resolve_type(str_in):
             from type_defs.objects.mushroom2 import Mushroom2
         return Mushroom2
 
-    elif str_in == "Badger":
-        if "Badger" not in sys.modules:
-            from type_defs.objects.badger import Badger
-        return Badger
-    elif str_in == "BadgerEgg":
-        if "BadgerEgg" not in sys.modules:
-            from type_defs.objects.badger_egg import BadgerEgg
-        return BadgerEgg
-
     elif str_in == "Bee":
         if "Bee" not in sys.modules:
             from type_defs.objects.bee import Bee
@@ -179,10 +109,6 @@ def _resolve_type(str_in):
         return BeeEgg
 
     else:
-        from type_defs.objects.wildlife import WILDLIFE_CLASSES
-
-        if str_in in WILDLIFE_CLASSES:
-            return WILDLIFE_CLASSES[str_in]
         raise Exception(f"class name {str_in} not found")
 
 

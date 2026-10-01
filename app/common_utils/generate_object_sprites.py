@@ -19,7 +19,6 @@ from common_utils.run_comfy_graph import run_comfyui_workflow
 from PIL import Image, ImageFilter
 from type_defs.objects.wildlife_specs import (
     ANIMALS,
-    EXISTING_ANIMAL_JUVENILES,
     INANIMATE,
     PLANTS,
 )
@@ -146,8 +145,6 @@ def manifest_entry(name, kind, subject, seed):
 
 def sprite_jobs():
     jobs = []
-    for juv in EXISTING_ANIMAL_JUVENILES.values():
-        jobs.append((juv["image"], "juvenile", juv["prompt"]))
     for spec in ANIMALS.values():
         for stage in spec["stages"]:
             jobs.append((stage["image"], stage["kind"], stage["prompt"]))
@@ -159,7 +156,7 @@ def sprite_jobs():
         jobs.append((spec["plant"]["image"], "plant", spec["plant"]["prompt"]))
     for spec in INANIMATE.values():
         jobs.append((spec["image"], "object", spec["prompt"]))
-    return jobs
+    return list({job[0]: job for job in jobs}.values())
 
 
 def build_prompt(kind, subject):

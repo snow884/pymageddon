@@ -13,7 +13,6 @@ from type_defs.objects.effects.lay_object import LayObject
 from type_defs.objects.effects.turn_into import TurnInto
 from type_defs.objects.wildlife_specs import (
     ANIMALS,
-    EXISTING_ANIMAL_JUVENILES,
     INANIMATE,
     PLANTS,
 )
@@ -64,11 +63,12 @@ class _Wildlife:
 class _MobileWildlife(_Wildlife):
     is_alive = True
     speed = 1.0
+    uses_code = True
     chase_after = ()
     chase_from = ()
 
     def think(self):
-        if self.code:
+        if self.code and self.uses_code:
             return BaseObject.think(self)
         if self.speed < 1.0 and random.random() > self.speed:
             return None
@@ -114,27 +114,13 @@ def _mobile_attrs(name, speed):
     }
 
 
-for _species, _juv in EXISTING_ANIMAL_JUVENILES.items():
-    _register(
-        _juv["name"],
-        _MobileWildlife,
-        {
-            **_common_attrs(_juv["name"], _juv["image"], _juv["desc"], _juv["rgb"]),
-            **_mobile_attrs(_juv["name"], 1.0),
-            "effects": [
-                EatObjectInFront(types_eaten_to_hp_conv=DIETS[_juv["name"]]),
-                HpDepletion(skip_cycles=_juv["hp_skip"]),
-                TurnInto(future_object_class=_species, time_to_turn=_juv["grow_time"]),
-            ],
-        },
-    )
-
-
 for _species, _spec in ANIMALS.items():
     _stages = _spec["stages"]
     for _i, _stage in enumerate(_stages):
         _name, _kind = _stage["name"], _stage["kind"]
-        _attrs = _common_attrs(_name, _stage["image"], _stage["desc"], _spec["rgb"])
+        _attrs = _common_attrs(
+            _name, _stage["image"], _stage["desc"], _stage.get("rgb", _spec["rgb"])
+        )
         _next = _stages[_i + 1]["name"] if _i + 1 < len(_stages) else None
 
         if _kind == "egg":
@@ -149,17 +135,19 @@ for _species, _spec in ANIMALS.items():
             _register(_name, _Wildlife, _attrs)
         elif _kind == "juvenile":
             _attrs.update(_mobile_attrs(_name, _stage.get("speed", _spec["speed"])))
+            _attrs["uses_code"] = _stage.get("uses_code", True)
             _attrs["effects"] = [
                 EatObjectInFront(types_eaten_to_hp_conv=DIETS[_name]),
-                HpDepletion(skip_cycles=_spec["hp_skip"]),
+                HpDepletion(skip_cycles=_stage.get("hp_skip", _spec["hp_skip"])),
                 TurnInto(future_object_class=_next, time_to_turn=_spec["grow_time"]),
             ]
             _register(_name, _MobileWildlife, _attrs)
         else:
             _attrs.update(_mobile_attrs(_name, _stage.get("speed", _spec["speed"])))
+            _attrs["uses_code"] = _stage.get("uses_code", True)
             _attrs["effects"] = [
                 EatObjectInFront(types_eaten_to_hp_conv=DIETS[_name]),
-                HpDepletion(skip_cycles=_spec["hp_skip"]),
+                HpDepletion(skip_cycles=_stage.get("hp_skip", _spec["hp_skip"])),
                 LayObject(
                     object_to_lay=_stages[0]["name"],
                     time_to_lay=_spec["lay_time"],
@@ -178,7 +166,12 @@ for _species, _spec in PLANTS.items():
         _seed["name"],
         _Wildlife,
         {
-            **_common_attrs(_seed["name"], _seed["image"], _seed["desc"], _spec["rgb"]),
+            **_common_attrs(
+                _seed["name"],
+                _seed["image"],
+                _seed["desc"],
+                _seed.get("rgb", _spec["rgb"]),
+            ),
             "effects": [
                 TurnInto(
                     future_object_class=(_sapling or _plant)["name"],
@@ -208,7 +201,10 @@ for _species, _spec in PLANTS.items():
         _Wildlife,
         {
             **_common_attrs(
-                _plant["name"], _plant["image"], _plant["desc"], _spec["rgb"]
+                _plant["name"],
+                _plant["image"],
+                _plant["desc"],
+                _plant.get("rgb", _spec["rgb"]),
             ),
             "effects": [
                 EmitObject(

@@ -1,33 +1,3 @@
-import random
+from type_defs.objects.wildlife import Seed
 
-from common_utils.common_enums import Rotations
-from type_defs.objects.base_object import BaseObject
-from type_defs.objects.effects.turn_into import TurnInto
-
-
-class Seed(BaseObject):
-    type_name: str = "Seed"
-    image = "../../static/objects/seed.png"
-
-    effects = [TurnInto(future_object_class="Grass", time_to_turn=30)]
-
-    rgb_map = (255, 204, 0)
-
-    def __init__(
-        self,
-        x_new: int,
-        y_new: int,
-        code: str = None,
-        code_store: str = None,
-        family_name: str = None,
-    ):
-        super().__init__(
-            x_new, y_new, code=code, code_store=code_store, family_name=family_name
-        )
-        self.rotation = random.choice(
-            [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
-        )
-
-    def get_description_short(self) -> str:
-
-        return "A seed that turns into a flower"
+__all__ = ["Seed"]

@@ -21,7 +21,6 @@ from type_defs.objects.wildlife_specs import (
     ANIMALS,
     CARNIVOROUS_FLOWER_PREY,
     EXISTING_ANIMAL_DIETS,
-    EXISTING_ANIMAL_JUVENILES,
     PLANTS,
 )
 
@@ -40,14 +39,7 @@ FOOD_ENERGY_MULTIPLIER = 1.5
 
 # Species -> development stages (type names), in life-cycle order.
 SPECIES = {
-    "Cow": ["CowEgg", "Calf", "Cow"],
-    "Chicken": ["ChickenEgg", "Chick", "Chicken"],
-    "Fox": ["FoxEgg", "FoxKit", "Fox"],
-    "Badger": ["BadgerEgg", "BadgerCub", "Badger"],
     "Bee": ["BeeEgg", "Bee"],
-    "Grass": ["Seed", "Grass"],
-    "Grass2": ["Seed2", "Grass2"],
-    "Grass3": ["Seed3", "Grass3"],
     "Mushroom": ["Spore", "Mushroom"],
     "Mushroom2": ["Spore2", "Mushroom2"],
     "CarnivorousFlower": ["CarnivorousFlowerSeed", "CarnivorousFlower"],
@@ -62,9 +54,6 @@ for _name, _spec in PLANTS.items():
 SPECIES_OF_TYPE = {t: s for s, types in SPECIES.items() for t in types}
 
 PLANT_SPECIES = {
-    "Grass",
-    "Grass2",
-    "Grass3",
     "Mushroom",
     "Mushroom2",
     "CarnivorousFlower",
@@ -80,8 +69,6 @@ RESCUE_TYPE["Mushroom2"] = "Mushroom2"
 DIETS = {}
 for _name, _diet in EXISTING_ANIMAL_DIETS.items():
     DIETS[_name] = dict(_diet)
-for _name, _juv in EXISTING_ANIMAL_JUVENILES.items():
-    DIETS[_juv["name"]] = dict(EXISTING_ANIMAL_DIETS[_name])
 for _spec in ANIMALS.values():
     for _stage in _spec["stages"]:
         if _stage["kind"] in ("juvenile", "adult"):

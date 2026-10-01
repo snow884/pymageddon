@@ -1,9 +1,11 @@
+import importlib
 from pathlib import Path
 
 import main
 import pytest
 from common_utils import ecosystem, image_utils
 from common_utils.common_enums import Actions, Rotations
+from common_utils.generate_object_sprites import sprite_jobs
 from common_utils.grid_utils import find_nearest
 from common_utils.utils import OBJ_TYPE_LIST, obj_fut
 from PIL import Image
@@ -45,6 +47,36 @@ def test_type_resolves_to_class(type_name):
     assert cls.type_name == type_name
 
 
+@pytest.mark.parametrize(
+    ("module_name", "type_name"),
+    [
+        (f"type_defs.objects.{module}", name)
+        for module, names in {
+            "cow": ["Cow"],
+            "chicken": ["Chicken"],
+            "fox": ["Fox"],
+            "badger": ["Badger"],
+            "cow_egg": ["CowEgg"],
+            "chicken_egg": ["ChickenEgg"],
+            "fox_egg": ["FoxEgg"],
+            "badger_egg": ["BadgerEgg"],
+            "grass": ["Grass"],
+            "grass2": ["Grass2"],
+            "grass3": ["Grass3"],
+            "seed": ["Seed"],
+            "seed2": ["Seed2"],
+            "seed3": ["Seed3"],
+            "stone": ["Stone"],
+            "stone2": ["Stone2"],
+        }.items()
+        for name in names
+    ],
+)
+def test_legacy_modules_export_generated_classes(module_name, type_name):
+    module = importlib.import_module(module_name)
+    assert getattr(module, type_name) is obj_fut(type_name)
+
+
 @pytest.mark.parametrize("type_name", OBJ_TYPE_LIST)
 def test_type_has_sprite(type_name):
     path = _image_path(obj_fut(type_name))
@@ -59,6 +91,12 @@ def test_new_sprite_matches_existing_format(type_name):
         # Transparent background like the hand-made sprites.
         assert im.getpixel((0, 0))[3] == 0
         assert im.getpixel((675, 675))[3] == 0
+
+
+def test_sprite_jobs_have_unique_output_images():
+    jobs = sprite_jobs()
+    output_images = [image for image, _, _ in jobs]
+    assert len(output_images) == len(set(output_images))
 
 
 # --- Life cycles and food web ---------------------------------------------------

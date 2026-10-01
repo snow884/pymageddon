@@ -26,26 +26,12 @@ from common_utils.image_utils import (
 from common_utils.utils import OBJ_TYPE_LIST, obj_fut
 from singleton import realm
 from type_defs.objects.angel import Angel
-from type_defs.objects.badger import Badger
-from type_defs.objects.badger_egg import BadgerEgg
 from type_defs.objects.base_object import BaseObject
 from type_defs.objects.bee import Bee
 from type_defs.objects.bee_egg import BeeEgg
-from type_defs.objects.chicken import Chicken
-from type_defs.objects.chicken_egg import ChickenEgg
-from type_defs.objects.cow import Cow
-from type_defs.objects.fox import Fox
-from type_defs.objects.grass import Grass
-from type_defs.objects.grass2 import Grass2
-from type_defs.objects.grass3 import Grass3
 from type_defs.objects.mushroom import Mushroom
 from type_defs.objects.mushroom2 import Mushroom2
-from type_defs.objects.seed import Seed
-from type_defs.objects.seed2 import Seed2
-from type_defs.objects.seed3 import Seed3
 from type_defs.objects.spore import Spore
-from type_defs.objects.stone import Stone
-from type_defs.objects.stone2 import Stone2
 from type_defs.objects.wildlife import POPULATE_TYPES, WILDLIFE_CLASSES
 from type_defs.particles.base_particle import BaseParticle
 from type_defs.tiles.base_tile import BaseTile
@@ -74,23 +60,9 @@ def populate_map_full(sz=100):
     realm.SPECIES_LIMITS.clear()
 
     populate_types = [
-        Cow,
-        Grass,
-        Grass2,
-        Grass3,
-        Seed,
-        Seed2,
-        Seed3,
-        Stone,
-        Stone2,
-        Chicken,
-        ChickenEgg,
-        Fox,
         Spore,
         Mushroom,
         Mushroom2,
-        Badger,
-        BadgerEgg,
         Bee,
         BeeEgg,
         # Seed,

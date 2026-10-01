@@ -913,59 +913,6 @@ ANIMALS = {
     },
 }
 
-# Juvenile stages added to the original animals (egg -> juvenile -> adult).
-EXISTING_ANIMAL_JUVENILES = {
-    "Cow": {
-        "name": "Calf",
-        "image": "calf",
-        "prompt": (
-            "small cute car decorated as a baby calf, white paint with black patches,"
-            " tiny ears on the roof, pink nose on the front"
-        ),
-        "desc": "A young cow. Grazes on grass and seeds and grows into a cow.",
-        "grow_time": 80,
-        "hp_skip": 1,
-        "rgb": (60, 60, 60),
-    },
-    "Chicken": {
-        "name": "Chick",
-        "image": "chick",
-        "prompt": (
-            "tiny cute round car decorated as a fluffy yellow baby chick, small orange"
-            " beak on the front"
-        ),
-        "desc": "A young chicken pecking at seeds.",
-        "grow_time": 80,
-        "hp_skip": 3,
-        "rgb": (255, 230, 100),
-    },
-    "Fox": {
-        "name": "FoxKit",
-        "image": "fox_kit",
-        "prompt": (
-            "small cute car decorated as a baby fox kit, fluffy orange fur paint, big"
-            " pointed ears on the roof, white chest and black nose on the front, white"
-            " tipped tail at the rear"
-        ),
-        "desc": "A young fox.",
-        "grow_time": 100,
-        "hp_skip": 3,
-        "rgb": (255, 180, 80),
-    },
-    "Badger": {
-        "name": "BadgerCub",
-        "image": "badger_cub",
-        "prompt": (
-            "small cute car decorated as a baby badger, grey fur paint with a black and"
-            " white striped face on the front"
-        ),
-        "desc": "A young badger.",
-        "grow_time": 80,
-        "hp_skip": 1,
-        "rgb": (40, 40, 40),
-    },
-}
-
 # Diets of the original animals (the new species carry their diets above).
 EXISTING_ANIMAL_DIETS = {
     "Cow": {
@@ -1154,6 +1101,188 @@ EXISTING_ANIMAL_DIETS = {
     },
 }
 
+# Add the original standard animals to the same stage schema as the newer species.
+ANIMALS.update(
+    {
+        "Cow": {
+            "rgb": (0, 0, 0),
+            "diet": EXISTING_ANIMAL_DIETS["Cow"],
+            "lay_time": 50,
+            "hatch_time": 100,
+            "grow_time": 80,
+            "hp_skip": 1,
+            "speed": 1.0,
+            "stages": [
+                {
+                    "name": "CowEgg",
+                    "kind": "egg",
+                    "image": "egg",
+                    "prompt": "a white egg in a small nest",
+                    "desc": "An egg that will hatch into a calf.",
+                    "rgb": (255, 255, 255),
+                },
+                {
+                    "name": "Calf",
+                    "kind": "juvenile",
+                    "image": "calf",
+                    "prompt": (
+                        "small cute car decorated as a baby calf, white paint with"
+                        " black patches, tiny ears on the roof, pink nose on the front"
+                    ),
+                    "desc": (
+                        "A young cow. Grazes on grass and seeds and grows into a cow."
+                    ),
+                    "rgb": (60, 60, 60),
+                    "hp_skip": 1,
+                },
+                {
+                    "name": "Cow",
+                    "kind": "adult",
+                    "image": "cow",
+                    "prompt": "a top-down game sprite of a black and white dairy cow",
+                    "desc": (
+                        "Animal representing a cow that moves, eats plants, eat seeds"
+                        " and lays eggs. A cow can be eaten by a fox."
+                    ),
+                },
+            ],
+        },
+        "Chicken": {
+            "rgb": (255, 204, 51),
+            "diet": EXISTING_ANIMAL_DIETS["Chicken"],
+            "lay_time": 350,
+            "hatch_time": 100,
+            "grow_time": 80,
+            "hp_skip": 3,
+            "speed": 1.0,
+            "stages": [
+                {
+                    "name": "ChickenEgg",
+                    "kind": "egg",
+                    "image": "egg",
+                    "prompt": "a white chicken egg resting in straw",
+                    "desc": "An egg that will hatch into chicken.",
+                    "rgb": (255, 255, 255),
+                },
+                {
+                    "name": "Chick",
+                    "kind": "juvenile",
+                    "image": "chick",
+                    "prompt": (
+                        "tiny cute round car decorated as a fluffy yellow baby chick,"
+                        " small orange beak on the front"
+                    ),
+                    "desc": "A young chicken pecking at seeds.",
+                    "rgb": (255, 230, 100),
+                    "hp_skip": 3,
+                },
+                {
+                    "name": "Chicken",
+                    "kind": "adult",
+                    "image": "chicken",
+                    "prompt": "a top-down game sprite of a brown hen with a red comb",
+                    "desc": (
+                        "Animal representing a chicken that can move, eats seeds and"
+                        " caterpillars and lays eggs. Chicken can be eaten by a fox."
+                    ),
+                    "uses_code": False,
+                },
+            ],
+        },
+        "Fox": {
+            "rgb": (255, 153, 0),
+            "diet": EXISTING_ANIMAL_DIETS["Fox"],
+            "lay_time": 202,
+            "hatch_time": 100,
+            "grow_time": 100,
+            "hp_skip": 3,
+            "speed": 1.0,
+            "stages": [
+                {
+                    "name": "FoxEgg",
+                    "kind": "egg",
+                    "image": "egg",
+                    "prompt": "a small fox egg nestled in dry leaves",
+                    "desc": "An egg that will hatch into a fox.",
+                    "rgb": (255, 255, 255),
+                },
+                {
+                    "name": "FoxKit",
+                    "kind": "juvenile",
+                    "image": "fox_kit",
+                    "prompt": (
+                        "small cute car decorated as a baby fox kit, fluffy orange fur"
+                        " paint, big pointed ears on the roof, white chest and black"
+                        " nose on the front, white tipped tail at the rear"
+                    ),
+                    "desc": "A young fox.",
+                    "rgb": (255, 180, 80),
+                    "hp_skip": 3,
+                },
+                {
+                    "name": "Fox",
+                    "kind": "adult",
+                    "image": "fox",
+                    "prompt": (
+                        "a top-down game sprite of a red fox with a white-tipped tail"
+                    ),
+                    "desc": (
+                        "An animal representing a fox. A fox moves, eats chickens,"
+                        " cows, rabbits, mice, squirrels and eggs. Foxes can also lay"
+                        " eggs."
+                    ),
+                    "uses_code": False,
+                },
+            ],
+        },
+        "Badger": {
+            "rgb": (0, 0, 0),
+            "diet": EXISTING_ANIMAL_DIETS["Badger"],
+            "lay_time": 50,
+            "hatch_time": 100,
+            "grow_time": 80,
+            "hp_skip": 1,
+            "speed": 1.0,
+            "stages": [
+                {
+                    "name": "BadgerEgg",
+                    "kind": "egg",
+                    "image": "egg",
+                    "prompt": "a white egg tucked into a grass nest",
+                    "desc": "An egg that will hatch into a badger.",
+                    "rgb": (255, 255, 255),
+                },
+                {
+                    "name": "BadgerCub",
+                    "kind": "juvenile",
+                    "image": "badger_cub",
+                    "prompt": (
+                        "small cute car decorated as a baby badger, grey fur paint with"
+                        " a black and white striped face on the front"
+                    ),
+                    "desc": "A young badger.",
+                    "rgb": (40, 40, 40),
+                    "hp_skip": 1,
+                },
+                {
+                    "name": "Badger",
+                    "kind": "adult",
+                    "image": "badger",
+                    "prompt": (
+                        "a top-down game sprite of a European badger with bold black"
+                        " and white facial stripes"
+                    ),
+                    "desc": (
+                        "Animal representing a badger that moves, eats mushrooms,"
+                        " snails and tortoise eggs and lays eggs. A badger can be eaten"
+                        " by a fox or a wolf."
+                    ),
+                },
+            ],
+        },
+    }
+)
+
 # Animals trapped by the carnivorous flower when they step into it.
 CARNIVOROUS_FLOWER_PREY = {
     "Cow": 50,
@@ -1173,6 +1302,63 @@ CARNIVOROUS_FLOWER_PREY = {
 # Plants (new species): seed -> plant.
 # ---------------------------------------------------------------------------
 PLANTS = {
+    "Grass": {
+        "rgb": (0, 204, 0),
+        "emit_time": 40,
+        "sprout_time": 30,
+        "lifespan_skip": 12,
+        "seed": {
+            "name": "Seed",
+            "image": "seed",
+            "rgb": (255, 204, 0),
+            "prompt": "a small golden seed",
+            "desc": "A seed that turns into a flower",
+        },
+        "plant": {
+            "name": "Grass",
+            "image": "grass",
+            "prompt": "a patch of green grass",
+            "desc": "Grass is a plant. Grass can produce seeds.",
+        },
+    },
+    "Grass2": {
+        "rgb": (0, 204, 0),
+        "emit_time": 40,
+        "sprout_time": 30,
+        "lifespan_skip": 12,
+        "seed": {
+            "name": "Seed2",
+            "image": "seed2",
+            "rgb": (255, 204, 0),
+            "prompt": "a small golden seed",
+            "desc": "A seed that turns into a flower",
+        },
+        "plant": {
+            "name": "Grass2",
+            "image": "grass2",
+            "prompt": "a patch of green grass",
+            "desc": "Grass is a plant. Grass can produce seeds.",
+        },
+    },
+    "Grass3": {
+        "rgb": (0, 204, 0),
+        "emit_time": 40,
+        "sprout_time": 30,
+        "lifespan_skip": 12,
+        "seed": {
+            "name": "Seed3",
+            "image": "seed3",
+            "rgb": (255, 204, 0),
+            "prompt": "a small golden seed",
+            "desc": "A seed that turns into a flower",
+        },
+        "plant": {
+            "name": "Grass3",
+            "image": "grass3",
+            "prompt": "a patch of green grass",
+            "desc": "Grass is a plant. Grass can produce seeds.",
+        },
+    },
     "Clover": {
         "rgb": (51, 153, 51),
         "emit_time": 35,
@@ -1682,6 +1868,22 @@ PLANTS.update(
 # Inanimate objects: passive obstacles that shape the terrain.
 # ---------------------------------------------------------------------------
 INANIMATE = {
+    "Stone": {
+        "image": "stone",
+        "rgb": (153, 153, 153),
+        "prompt": "a grey stone",
+        "desc": (
+            "A stone is just passively siting in one place and acts as an obstacle."
+        ),
+    },
+    "Stone2": {
+        "image": "stone2",
+        "rgb": (153, 153, 153),
+        "prompt": "a grey stone",
+        "desc": (
+            "A stone is just passively siting in one place and acts as an obstacle."
+        ),
+    },
     "FallenLog": {
         "image": "fallen_log",
         "rgb": (110, 70, 30),
@@ -1756,7 +1958,7 @@ INANIMATE = {
 
 
 def new_type_names():
-    names = [j["name"] for j in EXISTING_ANIMAL_JUVENILES.values()]
+    names = []
     for spec in ANIMALS.values():
         names += [s["name"] for s in spec["stages"]]
     for spec in PLANTS.values():
@@ -1764,4 +1966,22 @@ def new_type_names():
         if "sapling" in spec:
             names.append(spec["sapling"]["name"])
     names += list(INANIMATE)
-    return names
+    existing_types = {
+        "Seed",
+        "Seed2",
+        "Seed3",
+        "Grass",
+        "Grass2",
+        "Grass3",
+        "Stone",
+        "Stone2",
+        "Chicken",
+        "Cow",
+        "Fox",
+        "Badger",
+        "ChickenEgg",
+        "CowEgg",
+        "FoxEgg",
+        "BadgerEgg",
+    }
+    return [name for name in names if name not in existing_types]
