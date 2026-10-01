@@ -58,6 +58,14 @@ function computeParticleProperties(objData, screenWidth, screenHeight) {
     return { alpha, y_new, height_new, width_new };
 }
 
+// Particle FX spawn rule (mirrors shouldSpawnFx in play.html)
+const FX_PRESETS = { death: {}, score: {} };
+function shouldSpawnFx(particleData) {
+    if (!particleData["fx"] || !FX_PRESETS[particleData["fx"]]) return false;
+    const lifetime = particleData["lifetime"] || 1;
+    return (particleData["life"] || 0) / lifetime < 0.5;
+}
+
 describe('Frontend Game Client Logic', () => {
     describe('Health Bar Color Thresholds', () => {
         test('critical health (hp <= 20) uses red bar', () => {
@@ -135,6 +143,21 @@ describe('Frontend Game Client Logic', () => {
             const res = computeParticleProperties(particleData, 1000, 1000);
             assert.strictEqual(res.alpha, 0.0);
             assert.strictEqual(res.height_new, 1.0 * 15 * 0.05 * 1000); // 750
+        });
+    });
+
+    describe('Particle FX Spawning', () => {
+        test('fresh particle with a known preset spawns an effect', () => {
+            assert.strictEqual(shouldSpawnFx({ fx: 'death', life: 0, lifetime: 3 }), true);
+        });
+
+        test('particle seen late in its life does not replay the effect', () => {
+            assert.strictEqual(shouldSpawnFx({ fx: 'score', life: 2, lifetime: 4 }), false);
+        });
+
+        test('particles without a known preset are left to the sprite renderer', () => {
+            assert.strictEqual(shouldSpawnFx({ fx: '', life: 0, lifetime: 3 }), false);
+            assert.strictEqual(shouldSpawnFx({ fx: 'unknown', life: 0, lifetime: 3 }), false);
         });
     });
 

@@ -39,6 +39,7 @@ flowchart LR
 | Bot sandbox | [app/sandboxed_language/](app/sandboxed_language/) | AST-based interpreter for bot code. |
 | Templates / static | [app/templates/](app/templates/), [app/static/](app/static/) | Jinja2 pages, the game client, and sprites. |
 | Sprite pipeline | [app/common_utils/generate_object_sprites.py](app/common_utils/generate_object_sprites.py) | Generates sprites with ComfyUI. Prompts and seeds are recorded in `images/generated_sprites/manifest.json`. |
+| Particle FX pipeline | [app/common_utils/generate_particle_fx.py](app/common_utils/generate_particle_fx.py) | Animates effects with ComfyUI image-to-video and packs them into additive flipbook sheets in `app/static/particles/fx/`. |
 
 ## Running locally
 

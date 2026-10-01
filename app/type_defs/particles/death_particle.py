@@ -10,3 +10,7 @@ class DeathParticle(BaseParticle):
     lifetime: int = 3
 
     motion: str = "up"
+
+    fx: str = "death"
+    fx_sheet: str = "../../static/particles/fx/death_sheet.png"
+    fx_frames: int = 16

@@ -23,6 +23,12 @@ class BaseParticle:
 
     image: str = ""
 
+    # Client-side effect preset (see FX_PRESETS in play.html) and its I2V flipbook.
+    fx: str = ""
+    fx_sheet: str = ""
+    fx_frames: int = 0
+    fx_label: str = ""
+
     lifetime: int = 3
     life: int = 0
 

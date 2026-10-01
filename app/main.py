@@ -122,6 +122,11 @@ def get_all_textures():
             list(dict.fromkeys(object_images))
             + [inheritor.image for inheritor in BaseTile.__subclasses__()]
             + [inheritor.image for inheritor in BaseParticle.__subclasses__()]
+            + list(
+                dict.fromkeys(
+                    p.fx_sheet for p in BaseParticle.__subclasses__() if p.fx_sheet
+                )
+            )
         )
         other_images = [
             "../../static/other/health_bar_green.png",

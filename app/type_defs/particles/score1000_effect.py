@@ -10,3 +10,8 @@ class Score1000Particle(BaseParticle):
     lifetime: int = 4
 
     motion: str = "scale"
+
+    fx: str = "score"
+    fx_sheet: str = "../../static/particles/fx/score_sheet.png"
+    fx_frames: int = 16
+    fx_label: str = "1000"

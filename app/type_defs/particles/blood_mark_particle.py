@@ -14,6 +14,8 @@ class BlookMarkParticle(BaseParticle):
 
     motion: str = "ground_stuck"
 
+    fx: str = "blood"
+
     def __init__(self, x_new: int, y_new: int):
 
         super().__init__(x_new, y_new)

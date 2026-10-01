@@ -10,3 +10,7 @@ class HetchingParticle(BaseParticle):
     lifetime: int = 3
 
     motion: str = "up"
+
+    fx: str = "hatch"
+    fx_sheet: str = "../../static/particles/fx/hatch_sheet.png"
+    fx_frames: int = 16

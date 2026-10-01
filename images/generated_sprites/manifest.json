@@ -759,6 +759,136 @@
       "canvas": 676
     }
   },
+  "fx_death": {
+    "image": "app/static/particles/fx/death_sheet.png",
+    "kind": "particle_fx",
+    "prompt": "The glowing skull cracks and dissolves into swirling ghostly violet and cyan soul smoke and embers that spiral upward and vanish. Stylized 2D game visual effect, centered, static camera, top-down view, isolated on a pure solid black background, glowing additive light, the effect fully fades out to pure black by the end.",
+    "negative_prompt": "background scenery, ground, floor, texture, text, watermark, camera motion, zoom, pan, blurry, grey background, white background, people, hands",
+    "seed_frame": {
+      "sprite": "skull.png",
+      "sprite_size": 0.45,
+      "glow": [
+        150,
+        90,
+        255
+      ],
+      "glow_radius": 0.2
+    },
+    "seed": 67828338428510,
+    "workflow": "app/common_utils/workflow_files/i2v_exported.json",
+    "model": "Wan2.2-I2V-A14B Q5_K_M + 4-step lora",
+    "postprocess": {
+      "frames": 16,
+      "columns": 4,
+      "frame_size": 160,
+      "black_level": 18,
+      "alpha": "luminance"
+    }
+  },
+  "fx_eat": {
+    "image": "app/static/particles/fx/eat_sheet.png",
+    "kind": "particle_fx",
+    "prompt": "A small glowing green orb bursts into a splash of bright leaf fragments, juicy droplets and sparkles that fly outward and vanish. Stylized 2D game visual effect, centered, static camera, top-down view, isolated on a pure solid black background, glowing additive light, the effect fully fades out to pure black by the end.",
+    "negative_prompt": "background scenery, ground, floor, texture, text, watermark, camera motion, zoom, pan, blurry, grey background, white background, people, hands",
+    "seed_frame": {
+      "glow": [
+        120,
+        255,
+        90
+      ],
+      "glow_radius": 0.12
+    },
+    "seed": 199897648571660,
+    "workflow": "app/common_utils/workflow_files/i2v_exported.json",
+    "model": "Wan2.2-I2V-A14B Q5_K_M + 4-step lora",
+    "postprocess": {
+      "frames": 16,
+      "columns": 4,
+      "frame_size": 160,
+      "black_level": 18,
+      "alpha": "luminance"
+    }
+  },
+  "fx_hatch": {
+    "image": "app/static/particles/fx/hatch_sheet.png",
+    "kind": "particle_fx",
+    "prompt": "The eggshell halves burst apart in a warm golden flash of light, a ring of light expands outward with tiny shell fragments and twinkling sparkles that drift away and vanish. Stylized 2D game visual effect, centered, static camera, top-down view, isolated on a pure solid black background, glowing additive light, the effect fully fades out to pure black by the end.",
+    "negative_prompt": "background scenery, ground, floor, texture, text, watermark, camera motion, zoom, pan, blurry, grey background, white background, people, hands",
+    "seed_frame": {
+      "sprite": "hetching.png",
+      "sprite_size": 0.5,
+      "glow": [
+        255,
+        210,
+        120
+      ],
+      "glow_radius": 0.12
+    },
+    "seed": 75317201969001,
+    "workflow": "app/common_utils/workflow_files/i2v_exported.json",
+    "model": "Wan2.2-I2V-A14B Q5_K_M + 4-step lora",
+    "postprocess": {
+      "frames": 16,
+      "columns": 4,
+      "frame_size": 160,
+      "black_level": 18,
+      "alpha": "luminance"
+    }
+  },
+  "fx_lay": {
+    "image": "app/static/particles/fx/lay_sheet.png",
+    "kind": "particle_fx",
+    "prompt": "The glossy pink heart pulses and bursts into many small glowing pink hearts and soft sparkles that float upward and vanish. Stylized 2D game visual effect, centered, static camera, top-down view, isolated on a pure solid black background, glowing additive light, the effect fully fades out to pure black by the end.",
+    "negative_prompt": "background scenery, ground, floor, texture, text, watermark, camera motion, zoom, pan, blurry, grey background, white background, people, hands",
+    "seed_frame": {
+      "sprite": "laying.png",
+      "sprite_size": 0.3,
+      "glow": [
+        255,
+        90,
+        200
+      ],
+      "glow_radius": 0.18
+    },
+    "seed": 131943720908087,
+    "workflow": "app/common_utils/workflow_files/i2v_exported.json",
+    "model": "Wan2.2-I2V-A14B Q5_K_M + 4-step lora",
+    "postprocess": {
+      "frames": 16,
+      "columns": 4,
+      "frame_size": 160,
+      "black_level": 18,
+      "alpha": "luminance",
+      "frame_range": [
+        21,
+        37
+      ]
+    }
+  },
+  "fx_score": {
+    "image": "app/static/particles/fx/score_sheet.png",
+    "kind": "particle_fx",
+    "prompt": "A small golden star ignites into a radiant firework burst of glittering golden sparks and tiny stars radiating outward in all directions, then the sparks twinkle and vanish. Stylized 2D game visual effect, centered, static camera, top-down view, isolated on a pure solid black background, glowing additive light, the effect fully fades out to pure black by the end.",
+    "negative_prompt": "background scenery, ground, floor, texture, text, watermark, camera motion, zoom, pan, blurry, grey background, white background, people, hands",
+    "seed_frame": {
+      "glow": [
+        255,
+        200,
+        60
+      ],
+      "glow_radius": 0.1
+    },
+    "seed": 167889222351712,
+    "workflow": "app/common_utils/workflow_files/i2v_exported.json",
+    "model": "Wan2.2-I2V-A14B Q5_K_M + 4-step lora",
+    "postprocess": {
+      "frames": 16,
+      "columns": 4,
+      "frame_size": 160,
+      "black_level": 18,
+      "alpha": "luminance"
+    }
+  },
   "hay_bale": {
     "image": "app/static/objects/hay_bale.png",
     "kind": "object",

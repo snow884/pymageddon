@@ -10,3 +10,7 @@ class EatingParticle(BaseParticle):
     lifetime: int = 3
 
     motion: str = "up"
+
+    fx: str = "eat"
+    fx_sheet: str = "../../static/particles/fx/eat_sheet.png"
+    fx_frames: int = 16

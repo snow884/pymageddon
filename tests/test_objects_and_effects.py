@@ -1,6 +1,10 @@
+from pathlib import Path
+
+import main
 import pytest
 from common_utils import ecosystem
 from common_utils.common_enums import Actions, Rotations
+from PIL import Image
 from singleton import realm
 from type_defs.objects.angel import Angel
 from type_defs.objects.badger import Badger
@@ -33,8 +37,11 @@ from type_defs.objects.spore import Spore
 from type_defs.objects.spore2 import Spore2
 from type_defs.objects.stone import Stone
 from type_defs.objects.stone2 import Stone2
+from type_defs.particles.base_particle import BaseParticle
 from type_defs.particles.eating_particle import EatingParticle
 from type_defs.tiles.tile1 import Tile1
+
+APP_DIR = Path(__file__).resolve().parent.parent / "app"
 
 
 class TestBaseObjectLifecycle:
@@ -278,3 +285,22 @@ class TestParticlesAndTiles:
                 particle.effects()
 
         assert p_idx not in realm.PARTICLE_LIST
+
+    @pytest.mark.parametrize(
+        "cls", BaseParticle.__subclasses__(), ids=lambda c: c.__name__
+    )
+    def test_particle_fx_metadata(self, cls, setup_small_grid):
+        setup_small_grid(10, 10)
+        particle = cls.__new__(cls)
+        BaseParticle.__init__(particle, x_new=1, y_new=1)
+        d = particle.to_dict()
+        assert {"fx", "fx_sheet", "fx_frames", "fx_label"} <= d.keys()
+        if d["fx_sheet"]:
+            sheet = APP_DIR / "static" / "particles" / "fx" / Path(d["fx_sheet"]).name
+            with Image.open(sheet) as im:
+                cols = 4
+                assert im.mode == "RGBA"
+                assert im.width % cols == 0
+                frame = im.width // cols
+                assert d["fx_frames"] <= cols * (im.height // frame)
+            assert d["fx_sheet"] in main.get_all_textures()
