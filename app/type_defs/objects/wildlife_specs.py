@@ -29,10 +29,12 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "rabbit_nest",
                 "prompt": (
-                    "a small round nest of dry grass and white fur with three tiny sleeping pink newborn rabbits"
+                    "a small round nest of dry grass and white fur with three tiny"
+                    " sleeping pink newborn rabbits"
                 ),
                 "desc": (
-                    "A fur-lined nest of newborn rabbits. The kits leave the nest after a while."
+                    "A fur-lined nest of newborn rabbits. The kits leave the nest after"
+                    " a while."
                 ),
             },
             {
@@ -40,10 +42,13 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "bunny",
                 "prompt": (
-                    "tiny cute baby car decorated as a fluffy grey baby bunny, short round ears on the roof, pink nose on the front bumper, cotton tail at the rear"
+                    "tiny cute baby car decorated as a fluffy grey baby bunny, short"
+                    " round ears on the roof, pink nose on the front bumper, cotton"
+                    " tail at the rear"
                 ),
                 "desc": (
-                    "A young rabbit. Eats clover, carrots and dandelions and grows into a rabbit."
+                    "A young rabbit. Eats clover, carrots and dandelions and grows into"
+                    " a rabbit."
                 ),
             },
             {
@@ -51,10 +56,14 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "rabbit",
                 "prompt": (
-                    "sports car decorated as a white rabbit, white fur texture on the body, two long rabbit ears folded back along the roof, black eyes and pink nose on the front bumper, fluffy round tail on the rear bumper"
+                    "sports car decorated as a white rabbit, white fur texture on the"
+                    " body, two long rabbit ears folded back along the roof, black eyes"
+                    " and pink nose on the front bumper, fluffy round tail on the rear"
+                    " bumper"
                 ),
                 "desc": (
-                    "A fast herbivore. Eats clover, carrots and dandelions. Hunted by foxes, wolves and owls."
+                    "A fast herbivore. Eats clover, carrots and dandelions. Hunted by"
+                    " foxes, wolves and owls."
                 ),
             },
         ],
@@ -82,7 +91,8 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "deer_newborn",
                 "prompt": (
-                    "a newborn spotted fawn curled up asleep in a bed of flattened grass"
+                    "a newborn spotted fawn curled up asleep in a bed of flattened"
+                    " grass"
                 ),
                 "desc": "A newborn fawn hiding motionless in the grass.",
             },
@@ -91,7 +101,9 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "fawn",
                 "prompt": (
-                    "small cute car decorated as a baby fawn, light brown paint with white spots on the roof, big dark eyes and black nose on the front bumper, tiny white tail at the rear"
+                    "small cute car decorated as a baby fawn, light brown paint with"
+                    " white spots on the roof, big dark eyes and black nose on the"
+                    " front bumper, tiny white tail at the rear"
                 ),
                 "desc": "A young deer. Browses ferns and berry bushes.",
             },
@@ -100,10 +112,13 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "deer",
                 "prompt": (
-                    "elegant car decorated as a red deer stag, brown fur paint, large branching antlers mounted on the hood, dark eyes and black nose on the front bumper, white tail at the rear"
+                    "elegant car decorated as a red deer stag, brown fur paint, large"
+                    " branching antlers mounted on the hood, dark eyes and black nose"
+                    " on the front bumper, white tail at the rear"
                 ),
                 "desc": (
-                    "A large herbivore browsing ferns, berry bushes and oak saplings. Prey of wolves and bears."
+                    "A large herbivore browsing ferns, berry bushes and oak saplings."
+                    " Prey of wolves and bears."
                 ),
             },
         ],
@@ -135,7 +150,8 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "mouse_nest",
                 "prompt": (
-                    "a tiny ball-shaped nest of shredded straw and leaves with pink newborn mice inside"
+                    "a tiny ball-shaped nest of shredded straw and leaves with pink"
+                    " newborn mice inside"
                 ),
                 "desc": "A straw nest full of newborn mice.",
             },
@@ -144,7 +160,9 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "mouse_pup",
                 "prompt": (
-                    "tiny cute toy car decorated as a baby grey mouse, round ears on the roof, pink nose and whiskers on the front, thin pink tail at the rear"
+                    "tiny cute toy car decorated as a baby grey mouse, round ears on"
+                    " the roof, pink nose and whiskers on the front, thin pink tail at"
+                    " the rear"
                 ),
                 "desc": "A young mouse foraging for seeds.",
             },
@@ -153,7 +171,9 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "mouse",
                 "prompt": (
-                    "small compact car decorated as a grey field mouse, big round ears on the roof, whiskers and pink nose on the front bumper, long thin pink tail trailing from the rear"
+                    "small compact car decorated as a grey field mouse, big round ears"
+                    " on the roof, whiskers and pink nose on the front bumper, long"
+                    " thin pink tail trailing from the rear"
                 ),
                 "desc": "A seed eater. Food for foxes, snakes and owls.",
             },
@@ -192,7 +212,8 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "squirrel_drey",
                 "prompt": (
-                    "a round squirrel nest made of twigs and dry leaves with baby squirrels peeking out"
+                    "a round squirrel nest made of twigs and dry leaves with baby"
+                    " squirrels peeking out"
                 ),
                 "desc": "A twig nest (drey) with squirrel kits.",
             },
@@ -201,7 +222,8 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "squirrel_kit",
                 "prompt": (
-                    "tiny cute car decorated as a baby red squirrel, orange fur paint, small tufted ears on the roof, big fluffy curled tail at the rear"
+                    "tiny cute car decorated as a baby red squirrel, orange fur paint,"
+                    " small tufted ears on the roof, big fluffy curled tail at the rear"
                 ),
                 "desc": "A young squirrel collecting acorns.",
             },
@@ -210,10 +232,13 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "squirrel",
                 "prompt": (
-                    "sporty car decorated as a red squirrel, orange fur paint, tufted ears on the roof, black eyes and nose on the front bumper, huge fluffy bushy tail curling over the rear"
+                    "sporty car decorated as a red squirrel, orange fur paint, tufted"
+                    " ears on the roof, black eyes and nose on the front bumper, huge"
+                    " fluffy bushy tail curling over the rear"
                 ),
                 "desc": (
-                    "Eats acorns and seeds and raids owl nests. Hunted by foxes and owls."
+                    "Eats acorns and seeds and raids owl nests. Hunted by foxes and"
+                    " owls."
                 ),
             },
         ],
@@ -247,7 +272,8 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "snail_egg",
                 "prompt": (
-                    "a small cluster of shiny translucent pearly white snail eggs on a leaf"
+                    "a small cluster of shiny translucent pearly white snail eggs on a"
+                    " leaf"
                 ),
                 "desc": "A clutch of snail eggs.",
             },
@@ -256,7 +282,8 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "baby_snail",
                 "prompt": (
-                    "tiny cute car decorated as a baby snail, small spiral shell on the roof, two short eye stalks on the front"
+                    "tiny cute car decorated as a baby snail, small spiral shell on the"
+                    " roof, two short eye stalks on the front"
                 ),
                 "desc": "A young snail slowly munching leaves.",
             },
@@ -265,12 +292,13 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "snail",
                 "prompt": (
-                    "compact beetle car with four visible black wheels, glossy grey paint,"
-                    " a big brown spiral snail shell mounted on the roof, two eye stalks"
-                    " sticking up from the front bumper, headlights"
+                    "compact beetle car with four visible black wheels, glossy grey"
+                    " paint, a big brown spiral snail shell mounted on the roof, two"
+                    " eye stalks sticking up from the front bumper, headlights"
                 ),
                 "desc": (
-                    "A slow herbivore that eats ferns, pumpkins and mushrooms. Food for frogs, hedgehogs and badgers."
+                    "A slow herbivore that eats ferns, pumpkins and mushrooms. Food for"
+                    " frogs, hedgehogs and badgers."
                 ),
             },
         ],
@@ -311,7 +339,8 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "caterpillar",
                 "prompt": (
-                    "long segmented car decorated as a green caterpillar, round green body segments with yellow spots, small antennae on the front"
+                    "long segmented car decorated as a green caterpillar, round green"
+                    " body segments with yellow spots, small antennae on the front"
                 ),
                 "desc": "A hungry larva eating leaves. Turns into a chrysalis.",
                 "speed": 0.5,
@@ -329,7 +358,8 @@ ANIMALS = {
                 "kind": "pupa",
                 "image": "chrysalis",
                 "prompt": (
-                    "a jade green butterfly chrysalis with tiny golden dots lying on a leaf"
+                    "a jade green butterfly chrysalis with tiny golden dots lying on a"
+                    " leaf"
                 ),
                 "desc": "A chrysalis. A butterfly is forming inside.",
             },
@@ -338,7 +368,9 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "butterfly",
                 "prompt": (
-                    "small car decorated as a monarch butterfly, large orange and black patterned wings spread out on both sides, thin antennae on the front"
+                    "small car decorated as a monarch butterfly, large orange and black"
+                    " patterned wings spread out on both sides, thin antennae on the"
+                    " front"
                 ),
                 "desc": "Drinks nectar from flowers. Eaten by frogs and owls.",
             },
@@ -376,7 +408,8 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "tortoise_hatchling",
                 "prompt": (
-                    "tiny cute car decorated as a baby tortoise, small domed patterned shell on the roof, little head at the front"
+                    "tiny cute car decorated as a baby tortoise, small domed patterned"
+                    " shell on the roof, little head at the front"
                 ),
                 "desc": "A young tortoise.",
             },
@@ -385,7 +418,9 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "tortoise",
                 "prompt": (
-                    "sturdy car decorated as a giant tortoise, high domed hexagon patterned brown and olive shell on the roof, wrinkly head at the front and stubby legs at the corners"
+                    "sturdy car decorated as a giant tortoise, high domed hexagon"
+                    " patterned brown and olive shell on the roof, wrinkly head at the"
+                    " front and stubby legs at the corners"
                 ),
                 "desc": (
                     "A slow, long-lived herbivore that eats cacti, pumpkins and reeds."
@@ -421,7 +456,8 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "frogspawn",
                 "prompt": (
-                    "a clump of clear jelly frogspawn with black dots in a small puddle of water"
+                    "a clump of clear jelly frogspawn with black dots in a small puddle"
+                    " of water"
                 ),
                 "desc": "A clump of frog eggs.",
             },
@@ -430,7 +466,8 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "tadpole",
                 "prompt": (
-                    "small car decorated as a dark tadpole, round black glossy body and a long wavy tail at the rear"
+                    "small car decorated as a dark tadpole, round black glossy body and"
+                    " a long wavy tail at the rear"
                 ),
                 "desc": "A tadpole eating reeds. Grows into a frog.",
                 "diet": {
@@ -446,7 +483,9 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "frog",
                 "prompt": (
-                    "compact car decorated as a green tree frog, bright green glossy paint, big bulging eyes on the front corners of the roof, webbed feet at the four corners"
+                    "compact car decorated as a green tree frog, bright green glossy"
+                    " paint, big bulging eyes on the front corners of the roof, webbed"
+                    " feet at the four corners"
                 ),
                 "desc": "Eats insects and snails. Prey of snakes, owls and bears.",
             },
@@ -477,7 +516,8 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "hedgehog_nest",
                 "prompt": (
-                    "a nest of dry autumn leaves with tiny pale baby hedgehogs with soft white spines"
+                    "a nest of dry autumn leaves with tiny pale baby hedgehogs with"
+                    " soft white spines"
                 ),
                 "desc": "A leaf nest of baby hedgehogs.",
             },
@@ -486,7 +526,9 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "hoglet",
                 "prompt": (
-                    "tiny cute car decorated as a baby hedgehog, short soft pale spines covering the roof, little pointed snout with black nose on the front"
+                    "tiny cute car decorated as a baby hedgehog, short soft pale spines"
+                    " covering the roof, little pointed snout with black nose on the"
+                    " front"
                 ),
                 "desc": "A young hedgehog.",
             },
@@ -495,7 +537,8 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "hedgehog",
                 "prompt": (
-                    "round car decorated as a hedgehog, the whole roof covered in brown spikes, pointed snout with a shiny black nose on the front bumper"
+                    "round car decorated as a hedgehog, the whole roof covered in brown"
+                    " spikes, pointed snout with a shiny black nose on the front bumper"
                 ),
                 "desc": "Eats snails, caterpillars and snake eggs.",
             },
@@ -536,7 +579,9 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "snake_hatchling",
                 "prompt": (
-                    "small slim car decorated as a baby green snake, long thin body stretched behind, small head with a forked red tongue at the front"
+                    "small slim car decorated as a baby green snake, long thin body"
+                    " stretched behind, small head with a forked red tongue at the"
+                    " front"
                 ),
                 "desc": "A young snake.",
             },
@@ -545,7 +590,9 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "snake",
                 "prompt": (
-                    "long slim car decorated as a python snake, yellow and green scale pattern, long tail stretching behind, snake head with forked red tongue on the front bumper"
+                    "long slim car decorated as a python snake, yellow and green scale"
+                    " pattern, long tail stretching behind, snake head with forked red"
+                    " tongue on the front bumper"
                 ),
                 "desc": "Hunts mice, frogs and raids nests. Hunted by owls and bears.",
             },
@@ -586,7 +633,8 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "owlet",
                 "prompt": (
-                    "tiny cute car decorated as a fluffy baby owl, white downy feathers, huge round yellow eyes on the front"
+                    "tiny cute car decorated as a fluffy baby owl, white downy"
+                    " feathers, huge round yellow eyes on the front"
                 ),
                 "desc": "A fluffy young owl.",
             },
@@ -595,7 +643,9 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "owl",
                 "prompt": (
-                    "car decorated as a brown barn owl, feather pattern paint, wide feathered wings folded along the sides, round face with big eyes and a hooked beak on the front"
+                    "car decorated as a brown barn owl, feather pattern paint, wide"
+                    " feathered wings folded along the sides, round face with big eyes"
+                    " and a hooked beak on the front"
                 ),
                 "desc": "A night hunter of mice, frogs, snakes and squirrels.",
             },
@@ -629,7 +679,8 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "wolf_den",
                 "prompt": (
-                    "a small earthen den entrance among rocks with two grey wolf pups sleeping inside"
+                    "a small earthen den entrance among rocks with two grey wolf pups"
+                    " sleeping inside"
                 ),
                 "desc": "A den with newborn wolf pups.",
             },
@@ -638,7 +689,8 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "wolf_pup",
                 "prompt": (
-                    "small cute car decorated as a grey wolf pup, fluffy grey fur paint, pointy ears on the roof, black nose on the front"
+                    "small cute car decorated as a grey wolf pup, fluffy grey fur"
+                    " paint, pointy ears on the roof, black nose on the front"
                 ),
                 "desc": "A playful young wolf.",
             },
@@ -647,7 +699,9 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "wolf",
                 "prompt": (
-                    "muscular sports car decorated as a grey wolf, grey and white fur paint, pointed ears on the roof, fierce yellow eyes and black nose on the front bumper, bushy tail at the rear"
+                    "muscular sports car decorated as a grey wolf, grey and white fur"
+                    " paint, pointed ears on the roof, fierce yellow eyes and black"
+                    " nose on the front bumper, bushy tail at the rear"
                 ),
                 "desc": "An apex predator hunting deer, cows, foxes and rabbits.",
             },
@@ -682,7 +736,8 @@ ANIMALS = {
                 "kind": "egg",
                 "image": "bear_den",
                 "prompt": (
-                    "a cozy cave den lined with moss with two tiny sleeping brown bear cubs"
+                    "a cozy cave den lined with moss with two tiny sleeping brown bear"
+                    " cubs"
                 ),
                 "desc": "A den with newborn bear cubs.",
             },
@@ -691,7 +746,8 @@ ANIMALS = {
                 "kind": "juvenile",
                 "image": "bear_cub",
                 "prompt": (
-                    "small chubby cute car decorated as a brown bear cub, fluffy brown fur paint, round ears on the roof, black nose on the front"
+                    "small chubby cute car decorated as a brown bear cub, fluffy brown"
+                    " fur paint, round ears on the roof, black nose on the front"
                 ),
                 "desc": "A young bear.",
             },
@@ -700,10 +756,13 @@ ANIMALS = {
                 "kind": "adult",
                 "image": "bear",
                 "prompt": (
-                    "big bulky truck decorated as a brown grizzly bear, thick brown fur paint, round ears on the roof, big snout with black nose on the front bumper, huge paws with claws at the corners"
+                    "big bulky truck decorated as a brown grizzly bear, thick brown fur"
+                    " paint, round ears on the roof, big snout with black nose on the"
+                    " front bumper, huge paws with claws at the corners"
                 ),
                 "desc": (
-                    "An omnivore eating berries, acorns, honeycombs, deer, wolves and tortoises."
+                    "An omnivore eating berries, acorns, honeycombs, deer, wolves and"
+                    " tortoises."
                 ),
             },
         ],
@@ -736,7 +795,8 @@ EXISTING_ANIMAL_JUVENILES = {
         "name": "Calf",
         "image": "calf",
         "prompt": (
-            "small cute car decorated as a baby calf, white paint with black patches, tiny ears on the roof, pink nose on the front"
+            "small cute car decorated as a baby calf, white paint with black patches,"
+            " tiny ears on the roof, pink nose on the front"
         ),
         "desc": "A young cow. Grazes on grass and seeds and grows into a cow.",
         "grow_time": 80,
@@ -747,7 +807,8 @@ EXISTING_ANIMAL_JUVENILES = {
         "name": "Chick",
         "image": "chick",
         "prompt": (
-            "tiny cute round car decorated as a fluffy yellow baby chick, small orange beak on the front"
+            "tiny cute round car decorated as a fluffy yellow baby chick, small orange"
+            " beak on the front"
         ),
         "desc": "A young chicken pecking at seeds.",
         "grow_time": 80,
@@ -758,7 +819,9 @@ EXISTING_ANIMAL_JUVENILES = {
         "name": "FoxKit",
         "image": "fox_kit",
         "prompt": (
-            "small cute car decorated as a baby fox kit, fluffy orange fur paint, big pointed ears on the roof, white chest and black nose on the front, white tipped tail at the rear"
+            "small cute car decorated as a baby fox kit, fluffy orange fur paint, big"
+            " pointed ears on the roof, white chest and black nose on the front, white"
+            " tipped tail at the rear"
         ),
         "desc": "A young fox.",
         "grow_time": 100,
@@ -769,7 +832,8 @@ EXISTING_ANIMAL_JUVENILES = {
         "name": "BadgerCub",
         "image": "badger_cub",
         "prompt": (
-            "small cute car decorated as a baby badger, grey fur paint with a black and white striped face on the front"
+            "small cute car decorated as a baby badger, grey fur paint with a black and"
+            " white striped face on the front"
         ),
         "desc": "A young badger.",
         "grow_time": 80,
@@ -782,17 +846,57 @@ EXISTING_ANIMAL_JUVENILES = {
 EXISTING_ANIMAL_DIETS = {
     "Cow": {
         "WheatStalks": 20,
-        "WheatSprout": 10,
+        "WheatSprout": 15,
+        "WheatGrain": 10,
         "SaltDeposit": 15,
+        "SaltGrain": 10,
         "Seed": 10,
         "Seed2": 10,
         "Seed3": 10,
-        "Grass": 20,
-        "Grass2": 20,
-        "Grass3": 20,
+        "Grass": 25,
+        "Grass2": 25,
+        "Grass3": 25,
         "CarnivorousFlowerSeed": 10,
-        "Clover": 20,
-        "Dandelion": 20,
+        "Clover": 25,
+        "CloverSeed": 10,
+        "Dandelion": 25,
+        "DandelionSeed": 10,
+        "Strawberry": 30,
+        "StrawberryPatch": 25,
+        "StrawberryRunner": 15,
+        "Carrot": 30,
+        "CarrotSeed": 20,
+        "Pumpkin": 20,
+        "Sunflower": 15,
+        "SunflowerSeed": 10,
+        "BerryBush": 20,
+        "Blackberry": 10,
+        "BlackberryBramble": 15,
+        "Apple": 15,
+        "AppleSapling": 10,
+        "OakTree": 20,
+        "Acorn": 10,
+        "PineTree": 15,
+        "PineCone": 15,
+        "PineSeedling": 10,
+        "Fern": 20,
+        "FernSpore": 10,
+        "Reed": 20,
+        "ReedSeed": 10,
+        "LotusFlower": 15,
+        "LotusBud": 10,
+        "LotusSeed": 10,
+        "MossCarpet": 15,
+        "MossTuft": 10,
+        "MossSpore": 5,
+        "LivingStones": 10,
+        "LithopsSprout": 10,
+        "LithopsSeed": 5,
+        "Cactus": 10,
+        "CactusSeed": 5,
+        "HazelBush": 15,
+        "Hazelnut": 15,
+        "HazelSapling": 10,
     },
     "Chicken": {
         "WheatGrain": 10,
@@ -889,7 +993,8 @@ PLANTS = {
             "name": "Clover",
             "image": "clover",
             "prompt": (
-                "a lush patch of green three-leaf clover with a few round white-pink clover blossoms"
+                "a lush patch of green three-leaf clover with a few round white-pink"
+                " clover blossoms"
             ),
             "desc": "A clover patch loved by rabbits and cows.",
         },
@@ -909,7 +1014,8 @@ PLANTS = {
             "name": "Sunflower",
             "image": "sunflower",
             "prompt": (
-                "a big sunflower head with bright yellow petals and a brown seed center surrounded by large green leaves"
+                "a big sunflower head with bright yellow petals and a brown seed center"
+                " surrounded by large green leaves"
             ),
             "desc": "A sunflower producing seeds.",
         },
@@ -929,7 +1035,8 @@ PLANTS = {
             "name": "BerryBush",
             "image": "berry_bush",
             "prompt": (
-                "a round leafy green bush full of clusters of red raspberries and dark blueberries"
+                "a round leafy green bush full of clusters of red raspberries and dark"
+                " blueberries"
             ),
             "desc": "A berry bush. Deer, bears and tortoises love it.",
         },
@@ -949,7 +1056,8 @@ PLANTS = {
             "name": "Cactus",
             "image": "cactus",
             "prompt": (
-                "a round green barrel cactus with ribs, white spines and a pink flower on top"
+                "a round green barrel cactus with ribs, white spines and a pink flower"
+                " on top"
             ),
             "desc": "A hardy cactus. Only tortoises dare to eat it.",
         },
@@ -991,7 +1099,8 @@ PLANTS = {
             "name": "Reed",
             "image": "reed",
             "prompt": (
-                "a clump of tall green reeds and brown cattails growing from a small pool of water"
+                "a clump of tall green reeds and brown cattails growing from a small"
+                " pool of water"
             ),
             "desc": "Reeds feeding tadpoles and tortoises.",
         },
@@ -1031,7 +1140,8 @@ PLANTS = {
             "name": "Dandelion",
             "image": "dandelion",
             "prompt": (
-                "a rosette of jagged green dandelion leaves with three bright yellow dandelion flowers"
+                "a rosette of jagged green dandelion leaves with three bright yellow"
+                " dandelion flowers"
             ),
             "desc": "A dandelion.",
         },
@@ -1071,7 +1181,8 @@ PLANTS = {
             "name": "Carrot",
             "image": "carrot",
             "prompt": (
-                "an orange carrot top poking out of the soil with a bushy tuft of green leaves"
+                "an orange carrot top poking out of the soil with a bushy tuft of green"
+                " leaves"
             ),
             "desc": "A carrot. A rabbit favourite.",
         },

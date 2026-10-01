@@ -1,5 +1,4 @@
 {
-  "rope_function": "comfy",
   "8": {
     "inputs": {
       "samples": [
@@ -93,8 +92,6 @@
     }
   },
   "68": {
-    "rope_function": "comfy",
-    "prompt": "Combine image 1 and image 2 into one coherent scene with both original characters clearly visible at the same time. Preserve each person's identity, face, body shape, clothing style, and pose cues from their respective source image. Crisp focus, high detail skin texture, detailed eyes, realistic facial features, sharp edges, clean lighting, natural proportions.",
     "inputs": {
       "prompt": "Combine image 1 and image 2 into one coherent scene with both original characters clearly visible at the same time. Preserve each person's identity, face, body shape, clothing style, and pose cues from their respective source image. Crisp focus, high detail skin texture, detailed eyes, realistic facial features, sharp edges, clean lighting, natural proportions.",
       "clip": [
