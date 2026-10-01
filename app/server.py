@@ -27,7 +27,19 @@ SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 31
 
-app = FastAPI()
+SITE_URL = "https://pymageddon.ai-mmo-games.de"
+
+app = FastAPI(
+    title="Pymageddon API",
+    version="1.0.0",
+    description=(
+        "Pymageddon is a free-to-play MMO survival game that simulates a living "
+        "ecosystem with predator-prey dynamics. Players control a creature live "
+        "or deploy a sandboxed Python bot to drive it. Obtain a bearer token "
+        "from `POST /token` (set `is_guest: true` for an instant guest "
+        f"account). Agent-oriented overview: {SITE_URL}/llms.txt"
+    ),
+)
 r = redis.Redis(host="pymageddon-redis-server", port=6379, db=0)
 
 origins = [
@@ -67,6 +79,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
+templates.env.globals["site_url"] = SITE_URL
 
 
 def time_ago(seconds):
@@ -643,14 +656,18 @@ def ping2(size: int):
     return "a" * size
 
 
+def _objects_summary_or_empty():
+    return json.loads(r.get("all_objects_summary") or "{}")
+
+
 @app.get("/sitemap.xml")
 def sitemap(request: Request):
-    objects_summary = json.loads(r.get(f"all_objects_summary"))
 
     return templates.TemplateResponse(
         request=request,
         name="sitemap.xml",
-        context={"objects_summary": objects_summary},
+        context={"objects_summary": _objects_summary_or_empty()},
+        media_type="application/xml",
     )
 
 
@@ -661,6 +678,18 @@ def robots(request: Request):
         request=request,
         name="robots.txt",
         context={},
+        media_type="text/plain",
+    )
+
+
+@app.get("/llms.txt")
+def llms_txt(request: Request):
+
+    return templates.TemplateResponse(
+        request=request,
+        name="llms.txt",
+        context={"objects_summary": _objects_summary_or_empty()},
+        media_type="text/markdown",
     )
 
 

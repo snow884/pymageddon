@@ -8,20 +8,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}PyMageddon - programmable MMO survival game{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="/static/website/assets/pics/favicon_logo_small.png">
 
-    <meta name="description" content="{% block description %}{% endblock %}">
-    <meta name="keywords" content="{% block keywords %}{% endblock %}">
+    {% set page_title = self.title() | trim %}
+    {% set page_description = self.description() | trim %}
+    {% set page_url = site_url ~ request.url.path %}
+    {% set page_image = site_url ~ "/static/website/assets/pics/fox_chasing_cow_image.jpg" %}
+    <meta name="description" content="{% block description %}PyMageddon is a free-to-play browser MMO survival game simulating a living ecosystem with predator-prey dynamics. Play live or program your creature with Python bots.{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}PyMageddon, mmo, browser game, python, programming game, bots, ecosystem, survival{% endblock %}">
     <meta name="author" content="Adam">
-    <meta property="og:type" content="game" />
-    <meta property="og:url" content="https://pymageddon.ai-mmo-games.de"/>
+    <link rel="canonical" href="{{ page_url }}">
+    <link rel="alternate" type="text/markdown" title="LLM-friendly site overview" href="/llms.txt">
+    <link rel="service-desc" type="application/json" href="/openapi.json">
 
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Your title here" />
-    <meta name="twitter:description" content="description here" />
-    <meta name="twitter:url" content="https://pymageddon.ai-mmo-games.de" />
-    <meta name="twitter:image" content="https://pymageddon.ai-mmo-games.de" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PyMageddon" />
+    <meta property="og:title" content="{{ page_title }}" />
+    <meta property="og:description" content="{{ page_description }}" />
+    <meta property="og:url" content="{{ page_url }}" />
+    <meta property="og:image" content="{{ page_image }}" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ page_title }}" />
+    <meta name="twitter:description" content="{{ page_description }}" />
+    <meta name="twitter:url" content="{{ page_url }}" />
+    <meta name="twitter:image" content="{{ page_image }}" />
+
+    {% block structured_data %}{% endblock %}
 
     <!-- Search console -->
     <meta name="google-site-verification" content="evmqjYRoTrRgw6tZvMG4eEVPDgUvSTFBpCkXOeOMdqA" />

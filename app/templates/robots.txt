@@ -1,7 +1,12 @@
-User-agent: Googlebot
-Disallow: /nogooglebot/
-
+# Search engines, AI crawlers and agents are welcome.
+# Agent-oriented site overview: {{ site_url }}/llms.txt
+# API schema: {{ site_url }}/openapi.json
 User-agent: *
 Allow: /
+Disallow: /get_map
+Disallow: /score
+Disallow: /me
+Disallow: /ping
+Disallow: /ping2/
 
-Sitemap: https://pymageddon.ai-mmo-games.de/sitemap.xml
+Sitemap: {{ site_url }}/sitemap.xml

@@ -317,3 +317,53 @@ class TestHTMLRoutes:
             assert (
                 resp.status_code == 200
             ), f"Route {route} failed with {resp.status_code}"
+
+
+class TestDiscoveryEndpoints:
+    def test_discovery_files_without_world_summary(self, client):
+        for route, media in [
+            ("/robots.txt", "text/plain"),
+            ("/sitemap.xml", "application/xml"),
+            ("/llms.txt", "text/markdown"),
+        ]:
+            resp = client.get(route)
+            assert resp.status_code == 200, route
+            assert resp.headers["content-type"].startswith(media), route
+
+    def test_discovery_files_list_species(self, client, fake_redis_server):
+        fake_redis_server.set(
+            "all_objects_summary",
+            json.dumps({"Cow": {"description_short": "<p>A grazer.</p>"}}),
+        )
+        sitemap = client.get("/sitemap.xml").text
+        assert f"{server.SITE_URL}/explorer/type/Cow/" in sitemap
+        assert f"{server.SITE_URL}/players" in sitemap
+
+        llms = client.get("/llms.txt").text
+        assert llms.startswith("# Pymageddon")
+        assert f"[Cow]({server.SITE_URL}/explorer/type/Cow/): A grazer." in llms
+
+        robots = client.get("/robots.txt").text
+        assert f"Sitemap: {server.SITE_URL}/sitemap.xml" in robots
+        assert "Disallow: /get_map" in robots
+
+    def test_html_has_seo_metadata(self, client):
+        html = client.get("/create_bot_page").text
+        assert "<title>Write a Python bot - PyMageddon</title>" in html
+        assert (
+            f'<link rel="canonical" href="{server.SITE_URL}/create_bot_page">' in html
+        )
+        assert 'href="/llms.txt"' in html
+        assert (
+            '<meta property="og:title" content="Write a Python bot - PyMageddon" />'
+            in html
+        )
+
+        home = client.get("/").text
+        assert "application/ld+json" in home
+        assert '"VideoGame"' in home
+
+    def test_openapi_metadata(self, client):
+        info = client.get("/openapi.json").json()["info"]
+        assert info["title"] == "Pymageddon API"
+        assert "/llms.txt" in info["description"]

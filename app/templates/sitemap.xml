@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- for path, freq, prio in [
+    ("/", "weekly", "1.0"),
+    ("/play", "weekly", "0.9"),
+    ("/create_bot_page", "monthly", "0.8"),
+    ("/explorer", "hourly", "0.8"),
+    ("/world_map", "always", "0.7"),
+    ("/players", "hourly", "0.7"),
+    ("/start_game_page", "monthly", "0.5"),
+] %}
 	<url>
-		<loc>https://pymageddon.ai-mmo-games.de/</loc>
-		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
+		<loc>{{ site_url }}{{ path }}</loc>
+		<changefreq>{{ freq }}</changefreq>
+		<priority>{{ prio }}</priority>
 	</url>
+{%- endfor %}
+{%- for type_name in objects_summary %}
 	<url>
-		<loc>https://pymageddon.ai-mmo-games.de/explorer</loc>
-		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
+		<loc>{{ site_url }}/explorer/type/{{ type_name | urlencode }}/</loc>
+		<changefreq>hourly</changefreq>
+		<priority>0.6</priority>
 	</url>
-	<url>
-		<loc>https://pymageddon.ai-mmo-games.de/world_map</loc>
-		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
-	</url>
-	<url>
-		<loc>https://pymageddon.ai-mmo-games.de/play</loc>
-		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
-	</url>
-    {% for key, value in objects_summary.items() %}
-	<url>
-		<loc>{{ url_for('explorer_type', type_name=key) }}</loc>
-		<lastmod>2025-01-01T00:00:00+05:00</lastmod>
-	</url>
-    {% endfor %}
-
-
+{%- endfor %}
 </urlset>

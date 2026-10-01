@@ -9,7 +9,46 @@
 {% endblock %}
 
 {% block description %}
-    PyMageddon is a free to play MMO survival game simulating a real-life ecosystem with predator and pray dynamics.
+    PyMageddon is a free to play MMO survival game simulating a real-life ecosystem with predator and prey dynamics. Play in the browser or program your creature with Python bots.
+{% endblock %}
+
+{% block structured_data %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "{{ site_url }}/#website",
+          "name": "PyMageddon",
+          "url": "{{ site_url }}/"
+        },
+        {
+          "@type": ["VideoGame", "WebApplication"],
+          "name": "PyMageddon",
+          "url": "{{ site_url }}/",
+          "description": "Free-to-play browser MMO survival game simulating a living ecosystem with predator-prey dynamics. Play live or program your creature with sandboxed Python bots.",
+          "image": "{{ site_url }}/static/website/assets/pics/fox_chasing_cow_image.jpg",
+          "genre": ["MMO", "Survival", "Strategy", "Programming game", "Simulation"],
+          "gamePlatform": ["Web browser", "Desktop", "Mobile"],
+          "applicationCategory": "GameApplication",
+          "operatingSystem": "Any",
+          "playMode": ["MultiPlayer", "SinglePlayer"],
+          "isAccessibleForFree": true,
+          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+          "trailer": {
+            "@type": "VideoObject",
+            "name": "PyMageddon gameplay",
+            "description": "PyMageddon gameplay footage",
+            "embedUrl": "https://www.youtube.com/embed/qxT1w_PX9YI",
+            "thumbnailUrl": "https://i.ytimg.com/vi/qxT1w_PX9YI/hqdefault.jpg"
+          },
+          "codeRepository": "https://github.com/snow884/pymageddon",
+          "potentialAction": {"@type": "PlayAction", "target": "{{ site_url }}/play"}
+        }
+      ]
+    }
+    </script>
 {% endblock %}
 
 {% block content %}

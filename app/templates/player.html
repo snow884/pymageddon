@@ -1,5 +1,8 @@
 {% extends "_menu_bar.html" %}
 
+{% block title %}{{ player_summary.player_name }} - PyMageddon player{% endblock %}
+{% block description %}Scores, ranks and bot code of PyMageddon player {{ player_summary.player_name }}.{% endblock %}
+
 {% block content %}
 {% set s = player_summary['player_scores'] %}
 {% set pname = player_summary.player_name %}

@@ -2,6 +2,9 @@
 
 {% extends "_menu_bar.html" %}
 
+{% block title %}Write a Python bot - PyMageddon{% endblock %}
+{% block description %}Program your PyMageddon creature in sandboxed Python. Set an intent each tick, deploy, and watch your bot survive the ecosystem.{% endblock %}
+
 {% block content %}
 
 <section class="pm-page-header">
@@ -40,7 +43,7 @@
             </ol>
             <h3 class="h6 fw-bold mb-2">Example</h3>
             <div class="pm-code small"><pre>intent = 'MOVE_FORWARD'</pre></div>
-            <p class="small text-body-secondary mt-3 mb-0">Full API documentation is coming soon. Browse other players' bots on the <a href="{{ url_for('players') }}">players page</a> for inspiration.</p>
+            <p class="small text-body-secondary mt-3 mb-0">The full bot language reference is in <a href="/llms.txt">llms.txt</a>. Browse other players' bots on the <a href="{{ url_for('players') }}">players page</a> for inspiration.</p>
         </div>
     </div>
 </div>

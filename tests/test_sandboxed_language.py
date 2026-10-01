@@ -172,3 +172,36 @@ if target:
         assert user_vars["found_x"] == 5
         assert user_vars["found_y"] == 3
         assert intent == Actions.MOVE_FORWARD
+
+
+def _documented_bot_examples():
+    import os
+    import re
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    docs = ["README.md", os.path.join("app", "templates", "llms.txt")]
+    examples = []
+    for doc in docs:
+        with open(os.path.join(root, doc)) as f:
+            examples += re.findall(r"```python\n(.*?)```", f.read(), re.S)
+    return examples
+
+
+def test_documented_bot_example_runs(setup_small_grid):
+    examples = _documented_bot_examples()
+    assert len(examples) == 2
+    setup_small_grid(10, 10)
+    cow = Cow(x_new=1, y_new=1)
+    Grass(x_new=5, y_new=1)
+
+    for code in examples:
+        cow.rotation = Rotations.UP
+        intent, variables, error = evaluate_code(code, {}, parent_object=cow)
+        assert error == ""
+        assert intent == Actions.ROTATE_RIGHT
+
+        cow.rotation = Rotations.RIGHT
+        intent, variables, error = evaluate_code(code, variables, parent_object=cow)
+        assert error == ""
+        assert intent == Actions.MOVE_FORWARD
+        assert variables["steps"] == 2

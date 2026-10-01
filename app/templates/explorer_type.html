@@ -1,5 +1,8 @@
 {% extends "_menu_bar.html" %}
 
+{% block title %}{{ type_summary.type_name }} - PyMageddon species{% endblock %}
+{% block description %}{{ type_summary.type_name }} in PyMageddon: {{ (type_summary.description_short or "") | striptags | trim }}{% endblock %}
+
 {% block content %}
 {% set name = type_summary.type_name %}
 {% set objs = (type_summary.objects or {}).values() | list %}
