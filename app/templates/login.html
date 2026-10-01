@@ -13,35 +13,36 @@
 {% endblock %}
 
 {% block content %}
-    <form id="loginForm">
-        <img class="mb-4" src="../../static/website/assets/pics/simple_logo.png" alt
-            width="250px" height="250px">
+    <a href="/"><img class="pm-auth-logo mb-4" src="/static/website/assets/pics/simple_logo.png" alt="Pymageddon"></a>
 
-        <h1 class="h3 mb-3 fw-normal">Please sign in </h1>
+    <h1 class="h3 mb-1">Welcome back</h1>
+    <p class="text-body-secondary mb-4">Sign in to jump into the ecosystem.</p>
 
+    <div id="message_area" class="pm-message alert alert-warning py-2 small" role="alert"></div>
+
+    <form id="loginForm" class="text-start">
         <div class="form-floating">
-            <p id="message_area"></p>
-            <input type="username" class="form-control" name="username"
-                placeholder="Username">
+            <input type="text" class="form-control" id="floatingInput" name="username"
+                placeholder="Username" autocomplete="username" required>
             <label for="floatingInput">Username</label>
         </div>
 
         <div class="form-floating">
             <input type="password" class="form-control"
                 id="floatingPassword" name="password"
-                placeholder="Password">
+                placeholder="Password" autocomplete="current-password" required>
             <label for="floatingPassword">Password</label>
         </div>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-        
+        <button class="w-100 btn btn-lg btn-primary mt-4" type="submit"><i class="bi bi-box-arrow-in-right me-2"></i>Sign in</button>
     </form>
-    
-    <br>
 
-    <button id='log_in_as_guest_button' class="w-100 btn btn-lg btn-primary">Log in as guest</button>
-    <p>If you don't have account and you want to create one please <a href="/create_player_page">sign up</a></p>
-    <p><a href="/">Exit the game</a></p>
+    <div class="pm-divider">or</div>
+
+    <button id='log_in_as_guest_button' class="w-100 btn btn-lg btn-ghost"><i class="bi bi-incognito me-2"></i>Continue as guest</button>
+
+    <p class="mt-4 mb-1 small text-body-secondary">New here? <a href="/create_player_page">Create an account</a></p>
+    <p class="small mb-0"><a href="/" class="text-body-secondary"><i class="bi bi-arrow-left me-1"></i>Back to home</a></p>
 
     <script>
         console.log("JS executing...")

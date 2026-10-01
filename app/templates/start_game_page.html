@@ -2,49 +2,23 @@
 
 {% block content %}
 
-  <img class="mb-4" src="../../static/website/assets/pics/zoom_blur_logo.png" alt width="250px" height="250px">
+  <a href="/"><img class="pm-auth-logo mb-4" src="/static/website/assets/pics/zoom_blur_logo.png" alt="Pymageddon"></a>
 
-  <p id="message_area"></p>
-    
-  <h1 class="h3 mb-3 fw-normal">Press button to play</h1>
+  <h1 class="h3 mb-1">Ready to survive?</h1>
+  <p class="text-body-secondary mb-4">Eat, avoid being eaten, and climb the leaderboard.</p>
 
-  <button id="new_game_button" class="w-100 btn btn-lg btn-primary" type="submit">Start new game</button>
-  
-  <p><a href="/">Exit the game</a></p>
-  
-  <br>  
+  <div id="message_area" class="pm-message alert alert-warning py-2 small" role="alert"></div>
 
-    <table class="table" id="score_table">
-      <thead>
-        <tr>
-          <th scope="col">Your scores</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
+  <button id="new_game_button" class="w-100 btn btn-lg btn-primary" type="submit"><i class="bi bi-play-fill me-1"></i>Start new game</button>
 
-        <tr class="table-primary">
-          <th scope="row">Games played</th>
-          <td id='player_games'><div class="spinner-border" role="status"><span class="sr-only"></span></div></td>
-        </tr>
+  <div class="row g-2 mt-4 text-start" id="score_table">
+    <div class="col-6"><div class="pm-mini-stat"><div class="k">Games played</div><div class="v" id="player_games"><span class="spinner-border spinner-border-sm" role="status"></span></div></div></div>
+    <div class="col-6"><div class="pm-mini-stat"><div class="k">Max score</div><div class="v" id="player_score"><span class="spinner-border spinner-border-sm" role="status"></span></div></div></div>
+    <div class="col-6"><div class="pm-mini-stat"><div class="k">Bot games</div><div class="v" id="family_games"><span class="spinner-border spinner-border-sm" role="status"></span></div></div></div>
+    <div class="col-6"><div class="pm-mini-stat"><div class="k">Bot max score</div><div class="v" id="family_score"><span class="spinner-border spinner-border-sm" role="status"></span></div></div></div>
+  </div>
 
-        <tr class="table-primary">
-          <th scope="row">Player max score</th>
-          <td id='player_score'><div class="spinner-border" role="status"><span class="sr-only"></span></div></td>
-        </tr>
-
-        <tr class="table-primary">
-          <th scope="row">Family games played</th>
-          <td id='family_games'><div class="spinner-border" role="status"><span class="sr-only"></span></div></td>
-        </tr>
-
-        <tr class="table-primary">
-          <th scope="row">Family max score</th>
-          <td id='family_score'><div class="spinner-border" role="status"><span class="sr-only"></span></div></td>
-        </tr>
-
-      </tbody>
-    </table>
+  <p class="small mt-4 mb-0"><a href="/" class="text-body-secondary"><i class="bi bi-arrow-left me-1"></i>Back to home</a></p>
 
     <script>
       console.log("JS executing...")

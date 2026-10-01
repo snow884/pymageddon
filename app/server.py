@@ -472,7 +472,7 @@ async def player(request: Request, player_name: str):
     )
 
 
-@app.get("/ ", response_class=HTMLResponse)
+@app.get("/world_map", response_class=HTMLResponse)
 async def world_map(request: Request):
 
     return templates.TemplateResponse(

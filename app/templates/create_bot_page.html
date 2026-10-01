@@ -4,25 +4,55 @@
 
 {% block content %}
 
-<br>
+<section class="pm-page-header">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create bot</li>
+        </ol>
+    </nav>
+    <h1 class="mb-2">Create a bot</h1>
+    <p class="lead mb-0">Write Python that drives your creature. Once deployed, you'll spectate it as it fights to survive.</p>
+</section>
 
-<form id="createBotForm">
-
-    <h1 class="h3 mb-3 fw-normal">Create a new bot</h1>
-    <p>Create a new bot by writing python code that drives the bot. Documentation on interacting with the API is coming.</p>
-    <p id="message_area"></p>
-    <div data-mdb-input-init class="form-outline">
-        <textarea class="form-control" name="code" rows="4"></textarea>
-        <label class="form-label" for="textAreaExample">Code</label>
+<div class="row g-4">
+    <div class="col-lg-8">
+        <form id="createBotForm" class="pm-card">
+            <div class="pm-card-header">
+                <h2><i class="bi bi-filetype-py me-2"></i>bot.py</h2>
+                <span class="small text-body-secondary">Tab inserts 4 spaces</span>
+            </div>
+            <div class="p-3">
+                <div id="message_area" class="pm-message alert alert-warning py-2 small" role="alert"></div>
+                <label class="visually-hidden" for="code_input">Code</label>
+                <textarea id="code_input" class="form-control pm-code-editor" name="code" rows="16" spellcheck="false" placeholder="intent = 'MOVE_FORWARD'"></textarea>
+                <button id="create_bot_button" class="w-100 btn btn-lg btn-primary mt-3" type="submit"><i class="bi bi-rocket-takeoff me-2"></i>Deploy bot</button>
+            </div>
+        </form>
     </div>
+    <div class="col-lg-4">
+        <div class="pm-card p-4 h-100">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-lightbulb me-2"></i>Getting started</h2>
+            <ol class="small text-body-secondary ps-3 mb-4">
+                <li class="mb-2">Your code runs every tick inside a sandbox.</li>
+                <li class="mb-2">Set <code>intent</code> to tell your bot what to do next.</li>
+                <li class="mb-2">Deploy and watch your bot live in spectator mode.</li>
+            </ol>
+            <h3 class="h6 fw-bold mb-2">Example</h3>
+            <div class="pm-code small"><pre>intent = 'MOVE_FORWARD'</pre></div>
+            <p class="small text-body-secondary mt-3 mb-0">Full API documentation is coming soon. Browse other players' bots on the <a href="{{ url_for('players') }}">players page</a> for inspiration.</p>
+        </div>
+    </div>
+</div>
 
-    <br>
-    
-    <button id="create_bot_button" class="w-100 btn btn-lg btn-primary" type="submit">Create bot</button>
-
-</form>
-
-<br>
+<script>
+    document.getElementById('code_input').addEventListener('keydown', function(event) {
+        if (event.key !== 'Tab') return;
+        event.preventDefault();
+        const start = this.selectionStart;
+        this.setRangeText('    ', start, this.selectionEnd, 'end');
+    });
+</script>
 
 <script>
 

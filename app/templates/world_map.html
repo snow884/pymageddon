@@ -4,85 +4,119 @@
 
 {% block content %}
 
-
-    <article>
-        <br>
-        <div class="bd-heading sticky-xl-top align-self-start mt-5 mb-3 mt-xl-0 mb-xl-2">
-            <h3>World map</h3>
-        </div>
-  
+<section class="pm-page-header">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">World map</li>
+        </ol>
+    </nav>
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
         <div>
-            <div class="bd-example-snippet bd-code-snippet">
-            <div class="bd-example m-0 border-0">
-        
-          <div class="row  row-cols-1 row-cols-md-2 g-4">
-            <div class="col">
-              <div class="card">
-                <img id='world_map_image' src="/map_image.png" alt="world map" width="100%" style="image-rendering: pixelated;">
-                <div class="card-body">
-                  <h5 class="card-title">Live view of Pymageddon map</h5>
-                  <p class="card-text">Pixels on the map represent different animals and plants. See the map legend to see what is what. The map is refreshed about every 10 seconds.</p>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Legend</h5>
-                      <p class="card-text">Map color to animal / plant color.</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% for key, value in types_dict.items() %}
-                        <li class="list-group-item"><div style="width: 15px; height: 15px; display:inline-block; background-color: rgb{{ value.rgb_map }};"></div>  
-                          <a href={{ url_for('explorer_type', type_name=key) }}>{{ key }}</a> 
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    <div class="card-body">
-                    </div>
-                  </div>
-            </div>  
-
-            <div class="col">
-              <div class="card">
-                <img id='hist_counts_image' src="/hist_counts_image.png" alt="count plot" width="100%" style="image-rendering: pixelated;">
-                <div class="card-body">
-                  <h5 class="card-title">Live plot of counts</h5>
-                  <p class="card-text">Live plot of counts of different animals/plants. See the legend for what the different colors mean</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col">
-              <div class="card">
-                <img id='hist_counts_image' src="/refresh_time_plot.png" alt="count plot" width="100%" style="image-rendering: pixelated;">
-                <div class="card-body">
-                  <h5 class="card-title">Live plot of world refresh time</h5>
-                  <p class="card-text">Live plot of how long it takes for a world to refresh in ms.</p>
-                </div>
-              </div>
-            </div>
-
+            <h1 class="mb-2">World map</h1>
+            <p class="lead mb-0">A live bird's-eye view of the whole ecosystem. Every pixel is an animal or a plant.</p>
         </div>
+        <div class="d-flex align-items-center gap-3">
+            <span class="pm-live">Live</span>
+            <span class="small text-body-secondary">Updated <span id="last_update">just now</span></span>
+        </div>
+    </div>
+</section>
 
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="pm-card">
+            <div class="pm-map-frame">
+                <img id="world_map_image" src="/map_image.png" alt="Live world map">
+            </div>
+        </div>
+    </div>
 
+    <div class="col-lg-4">
+        <div class="pm-card h-100 d-flex flex-column">
+            <div class="pm-card-header">
+                <h2><i class="bi bi-palette me-2"></i>Legend</h2>
+                <span class="small text-body-secondary">{{ types_dict | length }} species</span>
+            </div>
+            <div class="px-3 pt-3">
+                <div class="pm-search mw-100">
+                    <i class="bi bi-search"></i>
+                    <input id="legend_search" type="search" class="form-control form-control-sm" placeholder="Filter species..." aria-label="Filter species">
+                </div>
+            </div>
+            <div class="pm-legend overflow-auto" style="max-height: 520px;">
+                {% for key, value in types_dict.items() %}
+                <a href="{{ url_for('explorer_type', type_name=key) }}" data-name="{{ key | lower }}">
+                    <span class="pm-swatch" style="background-color: rgb{{ value.rgb_map }};"></span>{{ key }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
-    </article>
+    <div class="col-lg-6">
+        <div class="pm-card h-100">
+            <div class="pm-card-header">
+                <h2><i class="bi bi-graph-up me-2"></i>Population over time</h2>
+                <span class="pm-live">Live</span>
+            </div>
+            <div class="pm-plot">
+                <img id="hist_counts_image" src="/hist_counts_image.png" alt="Species population counts over time">
+            </div>
+            <div class="p-3 small text-body-secondary">Counts of each species over time (log scale). Line colors match the legend.</div>
+        </div>
+    </div>
 
+    <div class="col-lg-6">
+        <div class="pm-card h-100">
+            <div class="pm-card-header">
+                <h2><i class="bi bi-speedometer2 me-2"></i>World refresh time</h2>
+                <span class="pm-live">Live</span>
+            </div>
+            <div class="pm-plot">
+                <img id="refresh_time_image" src="/refresh_time_plot.png" alt="World refresh time plot">
+            </div>
+            <div class="p-3 small text-body-secondary">How long each world tick takes to compute, in milliseconds.</div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        var world_map_image = document.getElementById('world_map_image');
-        var hist_counts_image = document.getElementById('hist_counts_image');
-        world_map_image.src = '/map_image.png?rand=' + Math.random();
-        hist_counts_image.src = '/hist_counts_image.png?rand=' + Math.random();
+<script>
+    (() => {
+        const sources = {
+            world_map_image: '/map_image.png',
+            hist_counts_image: '/hist_counts_image.png',
+            refresh_time_image: '/refresh_time_plot.png',
+        };
+        const last_update = document.getElementById('last_update');
+        let last_time = Date.now();
 
-        setInterval(function() {
-            var world_map_image = document.getElementById('world_map_image');
-            world_map_image.src = '/map_image.png?rand=' + Math.random();
-            hist_counts_image.src = '/hist_counts_image.png?rand=' + Math.random();
-        }, 1000);
-    </script>
+        function refresh() {
+            Object.entries(sources).forEach(([id, url]) => {
+                const loader = new Image();
+                loader.onload = () => {
+                    document.getElementById(id).src = loader.src;
+                    last_time = Date.now();
+                };
+                loader.src = url + '?rand=' + Math.random();
+            });
+        }
 
-    <hr class="featurette-divider">
+        refresh();
+        setInterval(refresh, 1000);
+        setInterval(() => {
+            const secs = Math.round((Date.now() - last_time) / 1000);
+            last_update.textContent = secs < 2 ? 'just now' : secs + 's ago';
+        }, 500);
+
+        const legend_search = document.getElementById('legend_search');
+        legend_search.addEventListener('input', () => {
+            const q = legend_search.value.trim().toLowerCase();
+            document.querySelectorAll('.pm-legend a').forEach(a => {
+                a.classList.toggle('d-none', !a.dataset.name.includes(q));
+            });
+        });
+    })();
+</script>
 
 {% endblock %}

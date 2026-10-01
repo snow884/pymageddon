@@ -97,6 +97,8 @@ Targets: the `SUMMARY` abundance ratio should be ≤ 2.5 (it is currently ~1.8),
 
 Species counts include **all stages**. `realm.TYPE_COUNTS` is maintained in `BaseObject.__init__`/`die`, so never bypass these when creating or removing objects.
 
+Prey switching and satiation apply only to the built-in AI. Human players and bots running player code can eat anything in their diet (`EatObjectInFront`). Give the playable Cow a broad diet; players complained when it had little to eat.
+
 ## Pitfalls
 
 - **Adding reproduction sources outside the specs breaks balance.** For example, extending the Angel to lay all new species pushed the abundance ratio to 2.9 and was reverted.

@@ -14,39 +14,39 @@
 
 {% block content %}
 
-<form id="createPlayerForm">
-    <img class="mb-4" src="../../static/website/assets/pics/create_player_logo.png" alt
-    width="250px" height="250px">
+<a href="/"><img class="pm-auth-logo mb-4" src="/static/website/assets/pics/create_player_logo.png" alt="Create player"></a>
 
-    <h1 class="h3 mb-3 fw-normal">Create player </h1>
+<h1 class="h3 mb-1">Create your player</h1>
+<p class="text-body-secondary mb-4">Join the food chain. It's free.</p>
 
+<div id="message_area" class="pm-message alert alert-warning py-2 small" role="alert"></div>
+
+<form id="createPlayerForm" class="text-start">
     <div class="form-floating">
-        <p id="message_area"></p>
-        <input id="floatingUsername" type="username" class="form-control" name="username"
-            placeholder="Username">
+        <input id="floatingUsername" type="text" class="form-control" name="username"
+            placeholder="Username" autocomplete="username" required>
         <label for="floatingUsername">Username</label>
     </div>
 
     <div class="form-floating">
         <input type="password" class="form-control"
             id="floatingPassword" name="password"
-            placeholder="Password">
+            placeholder="Password" autocomplete="new-password" required>
         <label for="floatingPassword">Password</label>
     </div>
 
     <div class="form-floating">
         <input type="password" class="form-control"
             id="floatingPassword2" name="verify_password"
-            placeholder="Password">
+            placeholder="Password" autocomplete="new-password" required>
         <label for="floatingPassword2">Verify password</label>
     </div>
 
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Create user</button>
+    <button class="w-100 btn btn-lg btn-primary mt-4" type="submit"><i class="bi bi-person-plus me-2"></i>Create account</button>
 </form>
-    
-    <p>If you already have an account please <a href="/login_page">log in</a></p>
 
-    <p><a href="/">Exit the game</a></p>
+    <p class="mt-4 mb-1 small text-body-secondary">Already have an account? <a href="/login_page">Log in</a></p>
+    <p class="small mb-0"><a href="/" class="text-body-secondary"><i class="bi bi-arrow-left me-1"></i>Back to home</a></p>
 
     <script>
         console.log("JS executing...")
@@ -59,7 +59,7 @@
 
             const username = form.elements.username.value;
             const password = form.elements.password.value;
-            const verify_password = form.elements.password.value;
+            const verify_password = form.elements.verify_password.value;
 
             fetch('/create_player', {
                 method: 'POST', // or 'POST', 'PUT', 'DELETE', etc.

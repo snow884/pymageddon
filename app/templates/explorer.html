@@ -2,42 +2,157 @@
 
 {% block content %}
 
-<article>
-    <br>
-    
+{% set ns = namespace(total=0, bots=0) %}
+{% for key, value in objects_summary.items() %}
+    {% set objs = (value.objects or {}).values() | list %}
+    {% set ns.total = ns.total + (value.total_objects or objs | length) %}
+    {% set ns.bots = ns.bots + (objs | selectattr('family_name') | list | length) %}
+{% endfor %}
+
+<section class="pm-page-header">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Explorer</li>
+            <li class="breadcrumb-item active" aria-current="page">Species</li>
         </ol>
     </nav>
-    <p>List of all animals and plants found in Pymageddon.</p>
-    <div class="row  row-cols-1 row-cols-md-2 g-4">
-        {% for key, value in objects_summary.items() %}
-        <div class="col">
-            
-            <div class="card">
-                <div class="row g-0">
-                <div class="col-md-4">
-                    <img id='{{key}}_image' src="{{value.image}}" alt="{{key}}" width="100%" style="image-rendering: pixelated;">
+    <h1 class="mb-2">Species explorer</h1>
+    <p class="lead mb-0">Every animal and plant living in Pymageddon right now, with live population statistics.</p>
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><span class="pm-stat-icon"><i class="bi bi-collection"></i></span>Species</div>
+            <div class="pm-stat-value">{{ objects_summary | length }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><span class="pm-stat-icon"><i class="bi bi-people"></i></span>Organisms</div>
+            <div class="pm-stat-value">{{ ns.total }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><span class="pm-stat-icon"><i class="bi bi-cpu"></i></span>Player bots</div>
+            <div class="pm-stat-value">{{ ns.bots }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="pm-stat">
+            <div class="pm-stat-label"><span class="pm-stat-icon"><i class="bi bi-globe2"></i></span>Live map</div>
+            <div class="pm-stat-value fs-6 mt-2"><a href="{{ url_for('world_map') }}">Open world map <i class="bi bi-arrow-right"></i></a></div>
+        </div>
+    </div>
+</div>
+
+{% if ns.total %}
+<div class="pm-card mb-4">
+    <div class="pm-card-header"><h2>Population share</h2><span class="small text-body-secondary">hover for details</span></div>
+    <div class="p-3">
+        <div class="d-flex rounded-pill overflow-hidden" style="height: 14px;">
+            {% for key, value in objects_summary.items() | sort(attribute='1.total_objects', reverse=true) %}
+                {% set pop = value.total_objects or (value.objects or {}) | length %}
+                {% if pop %}
+                <div title="{{ key }}: {{ pop }} ({{ (pop / ns.total * 100) | round(1) }}%)" data-bs-toggle="tooltip"
+                     style="width: {{ pop / ns.total * 100 }}%; background-color: rgb{{ value.rgb_map }}; box-shadow: inset -1px 0 0 rgba(127,127,127,.35);"></div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="pm-toolbar">
+    <div class="pm-search">
+        <i class="bi bi-search"></i>
+        <input id="species_search" type="search" class="form-control" placeholder="Search species..." aria-label="Search species">
+    </div>
+    <select id="species_sort" class="form-select w-auto" aria-label="Sort species">
+        <option value="pop">Sort by population</option>
+        <option value="name">Sort by name</option>
+        <option value="hp">Sort by average HP</option>
+        <option value="score">Sort by top score</option>
+    </select>
+    <span id="species_count" class="small text-body-secondary ms-auto"></span>
+</div>
+
+<div id="species_grid" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+    {% for key, value in objects_summary.items() %}
+    {% set objs = (value.objects or {}).values() | list %}
+    {% set pop = value.total_objects or objs | length %}
+    {% set avg_hp = ((objs | sum(attribute='hp')) / (objs | length)) | round | int if objs else (value.hp or 0) | round | int %}
+    {% set top_score = objs | map(attribute='score') | select | max | default(0) %}
+    {% set share = (pop / ns.total * 100) if ns.total else 0 %}
+    <div class="col species-item" data-name="{{ key | lower }}" data-pop="{{ pop }}" data-hp="{{ avg_hp }}" data-score="{{ top_score }}">
+        <div class="pm-card pm-card-hover h-100 position-relative">
+            <div class="p-3 d-flex gap-3">
+                <div class="pm-sprite pm-sprite-sm">
+                    <img id="{{ key }}_image" src="{{ value.image }}" alt="{{ key }}" loading="lazy">
                 </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                    <h5 class="card-title"><a href="{{ url_for('explorer_type', type_name=key) }}">{{ key }}</a></h5>
-                    <p class="card-text">{{ value.description_short }}</p>
-                    <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                <div class="flex-grow-1 min-w-0">
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                        <h2 class="h6 card-title mb-0 stretched-link-title text-truncate">
+                            <a class="stretched-link" href="{{ url_for('explorer_type', type_name=key) }}">{{ key }}</a>
+                        </h2>
+                        <span class="pm-swatch flex-shrink-0" style="background-color: rgb{{ value.rgb_map }};" title="Map color"></span>
                     </div>
-                </div>
+                    <p class="small text-body-secondary mb-0 mt-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ value.description_short }}</p>
                 </div>
             </div>
-            
+            <div class="px-3 pb-3">
+                <div class="pm-mini-stats mb-2">
+                    <div class="pm-mini-stat"><div class="k">Population</div><div class="v">{{ pop }}</div></div>
+                    <div class="pm-mini-stat"><div class="k">Avg HP</div><div class="v">{{ avg_hp }}</div></div>
+                    <div class="pm-mini-stat"><div class="k">Top score</div><div class="v">{{ top_score }}</div></div>
+                </div>
+                <div class="d-flex justify-content-between small text-body-secondary mb-1">
+                    <span>Share of world</span><span>{{ share | round(1) }}%</span>
+                </div>
+                <div class="pm-progress"><span style="width: {{ share }}%"></span></div>
+            </div>
         </div>
-        {% endfor %}
-
     </div>
+    {% endfor %}
+</div>
 
-</article>
+<div id="species_empty" class="pm-empty d-none"><i class="bi bi-binoculars"></i>No species match your search.</div>
 
-<hr class="featurette-divider">
+<script>
+    (() => {
+        const grid = document.getElementById('species_grid');
+        const search = document.getElementById('species_search');
+        const sort = document.getElementById('species_sort');
+        const count = document.getElementById('species_count');
+        const empty = document.getElementById('species_empty');
+        const items = Array.from(grid.querySelectorAll('.species-item'));
+
+        function render() {
+            const q = search.value.trim().toLowerCase();
+            const key = sort.value;
+            const sorted = items.slice().sort((a, b) => key === 'name'
+                ? a.dataset.name.localeCompare(b.dataset.name)
+                : Number(b.dataset[key]) - Number(a.dataset[key]));
+            let shown = 0;
+            sorted.forEach(el => {
+                const match = el.dataset.name.includes(q);
+                el.classList.toggle('d-none', !match);
+                if (match) shown++;
+                grid.appendChild(el);
+            });
+            count.textContent = shown + ' of ' + items.length + ' species';
+            empty.classList.toggle('d-none', shown > 0);
+        }
+
+        search.addEventListener('input', render);
+        sort.addEventListener('change', render);
+        render();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+        });
+    })();
+</script>
 
 {% endblock %}

@@ -33,8 +33,11 @@ class EatObjectInFront(BaseEffect):
             obj_fut(t): r for t, r in self.types_eaten_to_hp_conv.items()
         }
 
+        # Satiation and prey switching only regulate the built-in AI.
+        player_controlled = parent_object.is_player or bool(parent_object.code)
+
         if parent_object.intent == Actions.MOVE_FORWARD and (
-            parent_object.hp < ecosystem.SATIATED_HP
+            player_controlled or parent_object.hp < ecosystem.SATIATED_HP
         ):
             x_new, y_new = parent_object.get_next_coords()
 
@@ -46,7 +49,9 @@ class EatObjectInFront(BaseEffect):
                 if occupied_by_obj_index:
                     obj_on_location = realm.OBJECT_LIST[occupied_by_obj_index]
 
-                    if not ecosystem.hunt_allowed(obj_on_location.type_name):
+                    if not player_controlled and not ecosystem.hunt_allowed(
+                        obj_on_location.type_name
+                    ):
                         return
 
                     for obj_type, reward in self.types_eaten_to_hp_conv.items():
