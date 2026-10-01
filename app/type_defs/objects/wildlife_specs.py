@@ -1394,6 +1394,7 @@ PLANTS = {
         "plant": {
             "name": "Sunflower",
             "image": "sunflower",
+            "upright": True,
             "prompt": (
                 "a big sunflower head with bright yellow petals and a brown seed center"
                 " surrounded by large green leaves"
@@ -1436,6 +1437,7 @@ PLANTS = {
         "plant": {
             "name": "Cactus",
             "image": "cactus",
+            "upright": True,
             "prompt": (
                 "a round green barrel cactus with ribs, white spines and a pink flower"
                 " on top"
@@ -1471,6 +1473,7 @@ PLANTS = {
         "seed": {
             "name": "ReedSeed",
             "image": "reed_seed",
+            "upright": True,
             "prompt": (
                 "a thick fluffy brown cattail seed head bursting with white fluff"
             ),
@@ -1479,6 +1482,7 @@ PLANTS = {
         "plant": {
             "name": "Reed",
             "image": "reed",
+            "upright": True,
             "prompt": (
                 "a clump of tall green reeds and brown cattails growing from a small"
                 " pool of water"
@@ -1500,6 +1504,7 @@ PLANTS = {
         "plant": {
             "name": "Pumpkin",
             "image": "pumpkin",
+            "upright": True,
             "prompt": (
                 "a big ripe orange pumpkin on a curly green vine with broad leaves"
             ),
@@ -1535,12 +1540,14 @@ PLANTS = {
         "seed": {
             "name": "Acorn",
             "image": "acorn",
+            "upright": True,
             "prompt": "a single shiny brown acorn with its textured cap",
             "desc": "An acorn that grows into an oak.",
         },
         "plant": {
             "name": "OakTree",
             "image": "oak_tree",
+            "upright": True,
             "prompt": (
                 "a round leafy oak tree crown with lobed green leaves and a few acorns"
             ),
@@ -1561,6 +1568,7 @@ PLANTS = {
         "plant": {
             "name": "Carrot",
             "image": "carrot",
+            "upright": True,
             "prompt": (
                 "an orange carrot top poking out of the soil with a bushy tuft of green"
                 " leaves"
@@ -1585,12 +1593,14 @@ PLANTS.update(
             "seed": {
                 "name": "Apple",
                 "image": "apple",
+                "upright": True,
                 "prompt": "a single shiny red apple with a small green leaf",
                 "desc": "A fallen apple. Its seeds grow into an apple tree.",
             },
             "sapling": {
                 "name": "AppleSapling",
                 "image": "apple_sapling",
+                "upright": True,
                 "prompt": "a young apple tree sapling with a few fresh green leaves",
                 "desc": "A young apple tree.",
             },
@@ -1610,6 +1620,7 @@ PLANTS.update(
             "seed": {
                 "name": "PineCone",
                 "image": "pine_cone",
+                "upright": True,
                 "prompt": "a single brown woody pine cone",
                 "desc": "A pine cone full of seeds. Squirrels hoard them.",
             },
@@ -1644,6 +1655,7 @@ PLANTS.update(
             "sapling": {
                 "name": "BrambleSprout",
                 "image": "bramble_sprout",
+                "upright": True,
                 "prompt": "a young thorny bramble shoot with serrated leaves",
                 "desc": "A young bramble shoot.",
             },
@@ -1666,12 +1678,14 @@ PLANTS.update(
             "seed": {
                 "name": "Strawberry",
                 "image": "strawberry",
+                "upright": True,
                 "prompt": "a single ripe red strawberry with a green leafy cap",
                 "desc": "A sweet strawberry covered in tiny seeds.",
             },
             "sapling": {
                 "name": "StrawberryRunner",
                 "image": "strawberry_runner",
+                "upright": True,
                 "prompt": "a small strawberry plantlet with three toothed leaves",
                 "desc": "A strawberry runner taking root.",
             },
@@ -1700,6 +1714,7 @@ PLANTS.update(
             "sapling": {
                 "name": "HazelSapling",
                 "image": "hazel_sapling",
+                "upright": True,
                 "prompt": "a young hazel sapling with round serrated leaves",
                 "desc": "A young hazel.",
             },
@@ -1728,12 +1743,14 @@ PLANTS.update(
             "sapling": {
                 "name": "WheatSprout",
                 "image": "wheat_sprout",
+                "upright": True,
                 "prompt": "a tuft of young bright green wheat sprouts",
                 "desc": "Young wheat.",
             },
             "plant": {
                 "name": "WheatStalks",
                 "image": "wheat_stalks",
+                "upright": True,
                 "prompt": "a clump of ripe golden wheat stalks with heavy ears",
                 "desc": "Ripe wheat.",
             },
@@ -1753,6 +1770,7 @@ PLANTS.update(
             "sapling": {
                 "name": "LotusBud",
                 "image": "lotus_bud",
+                "upright": True,
                 "prompt": (
                     "a closed pink lotus bud on a round lily pad floating in a small"
                     " pool of water"
@@ -1778,18 +1796,21 @@ PLANTS.update(
             "seed": {
                 "name": "MossSpore",
                 "image": "moss_spore",
+                "upright": True,
                 "prompt": "a small pebble with a few tiny green moss spore capsules",
                 "desc": "Moss spores on a pebble.",
             },
             "sapling": {
                 "name": "MossTuft",
                 "image": "moss_tuft",
+                "upright": True,
                 "prompt": "a small grey stone with a soft green moss tuft on top",
                 "desc": "A stone with a young moss tuft.",
             },
             "plant": {
                 "name": "MossCarpet",
                 "image": "moss_carpet",
+                "upright": True,
                 "prompt": (
                     "a cluster of round grey stones covered by a thick velvety green"
                     " moss carpet"
@@ -1821,6 +1842,7 @@ PLANTS.update(
             "plant": {
                 "name": "LivingStones",
                 "image": "living_stones",
+                "upright": True,
                 "prompt": (
                     "a cluster of lithops living stones succulents that look like"
                     " round grey and beige pebbles with a white daisy flower"
@@ -1845,12 +1867,14 @@ PLANTS.update(
             "sapling": {
                 "name": "SaltCrystal",
                 "image": "salt_crystal",
+                "upright": True,
                 "prompt": "a growing cubic white salt crystal on a flat grey stone",
                 "desc": "A growing salt crystal.",
             },
             "plant": {
                 "name": "SaltDeposit",
                 "image": "salt_deposit",
+                "upright": True,
                 "prompt": (
                     "a white and pale pink mineral salt rock deposit with cubic"
                     " crystals"

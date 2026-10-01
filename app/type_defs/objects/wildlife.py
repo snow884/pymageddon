@@ -28,6 +28,8 @@ POPULATE_TYPES = []
 
 class _Wildlife:
     description = ""
+    # Side-view sprites only make sense in their drawn orientation.
+    upright = False
 
     def __init__(
         self,
@@ -52,8 +54,12 @@ class _Wildlife:
             family_name=family_name,
             variables=variables,
         )
-        self.rotation = random.choice(
-            [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
+        self.rotation = (
+            Rotations.UP
+            if self.upright
+            else random.choice(
+                [Rotations.DOWN, Rotations.UP, Rotations.LEFT, Rotations.RIGHT]
+            )
         )
 
     def get_description_short(self) -> str:
@@ -97,12 +103,13 @@ def _register(name, base, attrs):
     return cls
 
 
-def _common_attrs(name, image, desc, rgb):
+def _common_attrs(name, image, desc, rgb, upright=False):
     return {
         "type_name": name,
         "image": f"../../static/objects/{image}.png",
         "description": desc,
         "rgb_map": tuple(rgb),
+        "upright": upright,
     }
 
 
@@ -171,6 +178,7 @@ for _species, _spec in PLANTS.items():
                 _seed["image"],
                 _seed["desc"],
                 _seed.get("rgb", _spec["rgb"]),
+                _seed.get("upright", False),
             ),
             "effects": [
                 TurnInto(
@@ -186,7 +194,11 @@ for _species, _spec in PLANTS.items():
             _Wildlife,
             {
                 **_common_attrs(
-                    _sapling["name"], _sapling["image"], _sapling["desc"], _spec["rgb"]
+                    _sapling["name"],
+                    _sapling["image"],
+                    _sapling["desc"],
+                    _spec["rgb"],
+                    _sapling.get("upright", False),
                 ),
                 "effects": [
                     TurnInto(
@@ -205,6 +217,7 @@ for _species, _spec in PLANTS.items():
                 _plant["image"],
                 _plant["desc"],
                 _plant.get("rgb", _spec["rgb"]),
+                _plant.get("upright", False),
             ),
             "effects": [
                 EmitObject(
@@ -222,7 +235,9 @@ for _name, _spec in INANIMATE.items():
         _name,
         _Wildlife,
         {
-            **_common_attrs(_name, _spec["image"], _spec["desc"], _spec["rgb"]),
+            **_common_attrs(
+                _name, _spec["image"], _spec["desc"], _spec["rgb"], upright=True
+            ),
             "effects": None,
         },
     )

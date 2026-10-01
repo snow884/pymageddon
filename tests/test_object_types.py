@@ -157,6 +157,16 @@ def test_inanimate_objects_are_passive(empty_world):
         assert obj.think() is None
 
 
+@pytest.mark.parametrize(
+    "name", [*INANIMATE, "Sunflower", "OakTree", "Carrot", "WheatStalks", "Strawberry"]
+)
+def test_upright_sprites_are_never_rotated(empty_world, name):
+    empty_world(20)
+    for i in range(20):
+        obj = WILDLIFE_CLASSES[name](x_new=i, y_new=0)
+        assert obj.rotation == Rotations.UP
+
+
 def test_egg_hatches_into_juvenile_that_grows_into_adult(
     empty_world, run_epochs, no_immigration
 ):
