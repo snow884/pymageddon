@@ -265,6 +265,31 @@ class TestGameEndpoints:
         assert data["global_params"]["status"] == "running"
         assert "time_left" in data["global_params"]
 
+        unchanged = client.get("/get_map?since_epoch=5", headers=headers)
+        assert unchanged.status_code == 204
+        assert unchanged.content == b""
+
+        newer = client.get("/get_map?since_epoch=4", headers=headers)
+        assert newer.status_code == 200
+        assert newer.json()["global_params"]["epoch"] == 5
+
+    def test_get_map_is_gzipped(self, client, auth_header, fake_redis_server):
+        headers, username = auth_header
+        tiles = {str(i): {"x": i, "y": i, "image": "grass.png"} for i in range(200)}
+        map_payload = {
+            "global_params": {"status": "game_over", "epoch": 1},
+            "player": {},
+            "objects": {},
+            "tiles": tiles,
+            "particles": {},
+        }
+        fake_redis_server.set(f"map_{username}", json.dumps(map_payload))
+        response = client.get(
+            "/get_map", headers={**headers, "Accept-Encoding": "gzip"}
+        )
+        assert response.headers.get("content-encoding") == "gzip"
+        assert len(response.json()["tiles"]) == 200
+
     def test_ping_and_ping2(self, client, auth_header):
         headers, _ = auth_header
         res_ping = client.get("/ping", headers=headers)

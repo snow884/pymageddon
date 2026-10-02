@@ -12,6 +12,7 @@ import redis
 from common_utils.utils import get_types_dict
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
@@ -57,6 +58,7 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all methods (GET, POST, PUT, etc.)
     allow_headers=["*"],  # Allow all headers
 )
+app.add_middleware(GZipMiddleware, minimum_size=1024, compresslevel=5)
 
 
 @app.middleware("http")
@@ -178,8 +180,6 @@ def get_user(username: str):
         return None
 
     user_dict = json.loads(user_dict_str)
-
-    print(user_dict)
 
     return User(**user_dict)
 
@@ -611,7 +611,10 @@ def scores(current_user: Annotated[User, Depends(get_current_active_user)]):
 
 
 @app.get("/get_map")
-def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
+def read_item(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    since_epoch: Optional[int] = None,
+):
 
     map_data_str = r.get(f"map_{current_user.username}")
 
@@ -633,6 +636,14 @@ def read_item(current_user: Annotated[User, Depends(get_current_active_user)]):
     map_data = json.loads(map_data_str)
 
     status = map_data["global_params"]["status"]
+
+    # Clients poll faster than the epoch rate; skip resending an unchanged map.
+    if (
+        status == "running"
+        and since_epoch is not None
+        and map_data["global_params"].get("epoch") == since_epoch
+    ):
+        return Response(status_code=204)
 
     if status == "running":
         unix_timestamp = time.time()

@@ -670,6 +670,7 @@
                         }
 
                         this.move_progress = 0.0;
+                        this.last_t = 1.0;
                         this.hp = obj_data["hp"] || 0;
                         this.hp_new = obj_data["hp"] || 0;
 
@@ -696,23 +697,29 @@
                             }
                         }
 
-                        this.name_text = new PIXI.Text({
-                            "text": name_to_display,
-                            "anchor": 0.5,
-                            "zIndex": 4,
-                            "style": new PIXI.TextStyle({
-                                "fontFamily": "Roboto",
-                                "fontSize": 16,
-                                "fill": "white",
-                            })
-                        });
-                        this.name_text.pivot.set(0, -50);
-                        app.stage.addChild(this.name_text);
+                        // PIXI.Text rasterises a canvas, so only create it when there is a name to show.
+                        this.name_text = null;
+                        if (name_to_display) {
+                            this.name_text = new PIXI.Text({
+                                "text": name_to_display,
+                                "anchor": 0.5,
+                                "zIndex": 4,
+                                "style": new PIXI.TextStyle({
+                                    "fontFamily": "Roboto",
+                                    "fontSize": 16,
+                                    "fill": "white",
+                                })
+                            });
+                            this.name_text.pivot.set(0, -50);
+                            app.stage.addChild(this.name_text);
+                        }
                     }
 
                     update_data(obj_data) {
-                        this.x = this.x_new;
-                        this.y = this.y_new;
+                        // Continue from where the sprite is on screen, so late/early updates never snap.
+                        const t = this.last_t;
+                        this.x = ((this.x_new - this.x) * t) + this.x;
+                        this.y = ((this.y_new - this.y) * t) + this.y;
 
                         if (this.is_particle) {
                             this.x_new = obj_data["x"];
@@ -741,12 +748,14 @@
                         this.rotation = this.rotation_new;
                         this.rotation_new = obj_data["rotation"] || 1;
 
-                        this.hp = this.hp_new;
+                        this.hp = ((this.hp_new - this.hp) * t) + this.hp;
                         this.hp_new = obj_data["hp"] || 0;
+                        this.last_t = 0.0;
                     }
 
                     update_position(time_delta, player_obj) {
                         const t = Math.min(Math.max(time_delta, 0.0), 1.0);
+                        this.last_t = t;
                         const maxDim = Math.max(app.screen.width, app.screen.height);
 
                         const player_x = player_obj ? (((player_obj.x_new - player_obj.x) * t) + player_obj.x) : 0;
@@ -803,7 +812,9 @@
                             this.health_bar.x = this.sprite.x;
                             this.health_bar.y = this.sprite.y;
                             this.health_bar.width = ((((this.hp_new - this.hp) * t) + this.hp) / 100.0) * this.sprite.width;
+                        }
 
+                        if (this.name_text) {
                             this.name_text.x = this.sprite.x;
                             this.name_text.y = this.sprite.y;
                         }
@@ -816,6 +827,7 @@
                         }
                         if (this.name_text) {
                             app.stage.removeChild(this.name_text);
+                            this.name_text.destroy();
                         }
                     }
                 }
@@ -829,6 +841,7 @@
                         this.player_obj = null;
                         this.textures = {};
                         this.refresh_time = 0.33;
+                        this.arrival_interval = null;
                         this.epoch = 0;
                         this.epoch_start_time = performance.now();
                         this.status = "running";
@@ -873,9 +886,17 @@
                             return false;
                         }
 
+                        // Animate over the observed arrival rate (EMA) so network jitter stretches motion instead of freezing it.
+                        const now = performance.now();
+                        const nominal = this.map_data['global_params']['time_interval'] || 0.33;
+                        const since_last = Math.min(Math.max((now - this.epoch_start_time) / 1000.0, nominal * 0.5), nominal * 2.0);
+                        this.arrival_interval = this.arrival_interval === null
+                            ? nominal
+                            : this.arrival_interval * 0.8 + since_last * 0.2;
+                        this.refresh_time = Math.min(Math.max(this.arrival_interval * 1.1, nominal * 0.9), nominal * 1.6);
+
                         this.epoch = incoming_epoch;
-                        this.epoch_start_time = performance.now();
-                        this.refresh_time = this.map_data['global_params']['time_interval'] || 0.33;
+                        this.epoch_start_time = now;
                         this.map_size_x = this.map_data['global_params']['map_size_x'] || 100;
 
                         // Sync objects
@@ -949,18 +970,24 @@
                         await Promise.all(loading_await_list);
                     }
 
-                    async fetch_data_objects() {
+                    async fetch_data_objects(only_if_changed = false) {
                         const token = sessionStorage.getItem('token');
-                        const response = await fetch("/get_map", {
+                        const url = only_if_changed ? "/get_map?since_epoch=" + encodeURIComponent(this.epoch) : "/get_map";
+                        const response = await fetch(url, {
                             method: 'GET',
+                            cache: 'no-store',
                             headers: {
                                 'Authorization': 'Bearer ' + token,
-                                'Content-Type': 'application/json',
                             }
                         });
 
                         if (response.status === 401) {
                             window.location.replace("/login_page");
+                            return null;
+                        }
+
+                        // 204: server has no newer epoch than ours.
+                        if (response.status === 204) {
                             return null;
                         }
 
@@ -1162,29 +1189,36 @@
                     }
                 }, 200);
 
-                // High-efficiency background polling loop decoupled from render ticker
-                let isPolling = false;
+                // Background polling decoupled from the render ticker. Only one request is in flight;
+                // right after a new epoch we idle until the next one is due, then poll quickly.
+                const MIN_POLL_GAP_MS = 25;
                 async function pollServer() {
-                    if (isPolling) return;
-                    isPolling = true;
+                    let got_new_epoch = false;
                     try {
-                        await map.fetch_data_objects();
-                        if (map.map_data && map.map_data.global_params) {
-                            if (map.map_data.global_params.status !== 'running') {
+                        const data = await map.fetch_data_objects(true);
+                        if (data && data.global_params) {
+                            if (data.global_params.status !== 'running') {
                                 map.status = 'stopped';
                             } else {
-                                map.refresh_data();
+                                got_new_epoch = map.refresh_data();
                             }
                         }
                     } catch (err) {
                         console.error("Map sync error:", err);
-                    } finally {
-                        isPolling = false;
                     }
+
+                    let delay = MIN_POLL_GAP_MS;
+                    if (got_new_epoch) {
+                        const nominal_ms = (map.map_data.global_params.time_interval || 0.33) * 1000;
+                        delay = Math.max(MIN_POLL_GAP_MS, nominal_ms * 0.6);
+                    }
+                    if (map.status !== 'running') {
+                        delay = 500;
+                    }
+                    setTimeout(pollServer, delay);
                 }
 
-                // Poll immediately and continuously with adaptive interval
-                setInterval(pollServer, 40);
+                pollServer();
 
                 // 60fps/120fps Smooth Render Loop
                 app.ticker.add((ticker) => {
