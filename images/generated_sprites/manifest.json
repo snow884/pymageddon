@@ -1991,6 +1991,71 @@
       "canvas": 676
     }
   },
+  "website_chase": {
+    "kind": "website_art",
+    "prompt": "An orange fox-shaped car chases a white black-spotted cow-shaped car along a woodland meadow trail. Both cars roll gently forward, remaining completely in frame. Preserve the meadow and leafy shrubs exactly as in the reference, all foliage stays still. Nothing appears or disappears. Soft tire shadows, playful chase. Preserve the reference's top-down orthographic illustrated game art: animal-shaped cars, crisp dark outlines, glossy highlights, soft painted shading, vivid colors. Fixed overhead camera, sharp readable silhouettes, consistent proportions and markings, no text.",
+    "negative_prompt": "photograph, photorealism, people, realistic animals, perspective camera, text, letters, watermark, logo, motion blur, blurry, duplicate cars, deformed wheels, morphing, cropped vehicles, washed out colors, flying objects, floating fruit, glowing plants, blooming flowers, debris",
+    "seed": 228989839899216,
+    "workflow": "app/common_utils/workflow_files/i2v_exported.json",
+    "model": "Wan2.2-I2V-A14B Q5_K_M + 4-step lora",
+    "source_sprites": [
+      "fox",
+      "cow"
+    ],
+    "size": 512,
+    "frames": 17,
+    "postprocess": {
+      "selected_frame": 2,
+      "mask": "circle for PNG badges",
+      "background": "source meadow outside feathered vehicle masks",
+      "outputs": {
+        "app/static/website/assets/pics/fox_chasing_cow_image.jpg": 512
+      }
+    }
+  },
+  "website_cow_badge": {
+    "kind": "website_art",
+    "prompt": "A single charming white cow-shaped car with black spots and pink ears, centered on a clean pale mint background. The headlights glint softly and the car gently rocks in place. Keep the original cow car shape unchanged and centered, generous clear margins. Preserve the reference's top-down orthographic illustrated game art: animal-shaped cars, crisp dark outlines, glossy highlights, soft painted shading, vivid colors. Fixed overhead camera, sharp readable silhouettes, consistent proportions and markings, no text.",
+    "negative_prompt": "photograph, photorealism, people, realistic animals, perspective camera, text, letters, watermark, logo, motion blur, blurry, duplicate cars, deformed wheels, morphing, cropped vehicles, washed out colors",
+    "seed": 254427548915354,
+    "workflow": "app/common_utils/workflow_files/i2v_exported.json",
+    "model": "Wan2.2-I2V-A14B Q5_K_M + 4-step lora",
+    "source_sprites": [
+      "cow"
+    ],
+    "size": 384,
+    "frames": 17,
+    "postprocess": {
+      "selected_frame": 9,
+      "mask": "circle for PNG badges",
+      "outputs": {
+        "app/static/website/assets/pics/simple_logo.png": 256,
+        "app/static/website/assets/pics/favicon_logo_small.png": 64,
+        "app/static/website/assets/pics/zoom_blur_logo.png": 256
+      }
+    }
+  },
+  "website_family": {
+    "kind": "website_art",
+    "prompt": "A white cow-shaped car and its smaller calf-shaped car together on a clean pale mint background. They gently rock side by side, glossy highlights sparkle. Preserve both cars' spotted paint and pink ears, full silhouettes, generous clear margins. Preserve the reference's top-down orthographic illustrated game art: animal-shaped cars, crisp dark outlines, glossy highlights, soft painted shading, vivid colors. Fixed overhead camera, sharp readable silhouettes, consistent proportions and markings, no text.",
+    "negative_prompt": "photograph, photorealism, people, realistic animals, perspective camera, text, letters, watermark, logo, motion blur, blurry, duplicate cars, deformed wheels, morphing, cropped vehicles, washed out colors",
+    "seed": 125878303771137,
+    "workflow": "app/common_utils/workflow_files/i2v_exported.json",
+    "model": "Wan2.2-I2V-A14B Q5_K_M + 4-step lora",
+    "source_sprites": [
+      "cow",
+      "calf"
+    ],
+    "size": 384,
+    "frames": 17,
+    "postprocess": {
+      "selected_frame": 9,
+      "mask": "circle for PNG badges",
+      "outputs": {
+        "app/static/website/assets/pics/create_player_logo.png": 256
+      }
+    }
+  },
   "wheat_grain": {
     "image": "app/static/objects/wheat_grain.png",
     "kind": "seed",

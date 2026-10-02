@@ -310,7 +310,7 @@ textarea.pm-code-editor:focus { background: #0f172a; color: #e2e8f0; }
   background: var(--pm-gradient); color: #fff;
   box-shadow: 0 8px 20px rgba(var(--pm-accent-rgb), .3);
 }
-.pm-feature-img { width: 100%; border-radius: var(--pm-radius); box-shadow: var(--pm-shadow-hover); border: 1px solid var(--pm-surface-border); }
+.pm-feature-img { width: 100%; height: auto; border-radius: var(--pm-radius); box-shadow: var(--pm-shadow-hover); border: 1px solid var(--pm-surface-border); }
 
 /* ---------- Map ---------- */
 .pm-map-frame { background: #000; display: flex; align-items: center; justify-content: center; aspect-ratio: 1 / 1; }

@@ -40,6 +40,31 @@ flowchart LR
 | Templates / static | [app/templates/](app/templates/), [app/static/](app/static/) | Jinja2 pages, the game client, and sprites. |
 | Sprite pipeline | [app/common_utils/generate_object_sprites.py](app/common_utils/generate_object_sprites.py) | Generates sprites with ComfyUI. Prompts and seeds are recorded in `images/generated_sprites/manifest.json`. |
 | Particle FX pipeline | [app/common_utils/generate_particle_fx.py](app/common_utils/generate_particle_fx.py) | Animates effects with ComfyUI image-to-video and packs them into additive flipbook sheets in `app/static/particles/fx/`. |
+| Website art pipeline | [app/common_utils/generate_website_art.py](app/common_utils/generate_website_art.py) | Uses actual game sprites as Wan I2V references for website illustrations and badges. Records prompts, seeds and selected frames in the sprite manifest. |
+
+To regenerate website art with ComfyUI on `localhost:8080`, run from `app/`:
+
+```sh
+../.venv/bin/python -m common_utils.generate_website_art --dry-run
+../.venv/bin/python -m common_utils.generate_website_art
+```
+
+Review the contact sheets in `/tmp/pymageddon_website` before publishing a generated
+frame (frame 0 is the input, not new art):
+
+```sh
+../.venv/bin/python -m common_utils.generate_website_art --publish --frame 9
+```
+
+Use `--only chase`, `--only cow_badge` or `--only family` to work on one composition.
+Use a fresh `--raw-dir` to regenerate instead of reusing cached clips. Website art
+is published as still JPEG/PNG images, with transparent circular badge edges;
+the UI does not auto-play video. Bump the image URL cache version in the templates
+after publishing replacements. The 17-frame clips use 512px for the illustration
+and 384px for badges to fit the generation server's GPU memory.
+For the chase illustration, publishing preserves the sprite-composed meadow
+outside feathered vehicle masks, avoiding I2V foliage and path-edge artifacts.
+The current reviewed selections are frame 2 for the chase and frame 9 for badges.
 
 ### Timing and client sync
 
