@@ -41,7 +41,7 @@ To get an access token, call `POST /token` with `{"is_guest": true}` for a guest
 | POST | /end_game | Leave the current game |
 | GET | /me | Name of the authenticated user |
 
-The world runs in epochs of about 0.33 s. `/get_map` returns `global_params.status` (`stopped` or `running`) and `time_left` until the next epoch.
+The world runs in epochs of about 0.33 s. `/get_map` returns `global_params.status` (`stopped` or `running`) and `time_left` until the next epoch. Pass `?since_epoch=N` to get an empty `204` while the map is still at epoch `N`.
 
 ## Bot language
 
