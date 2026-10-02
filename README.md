@@ -41,6 +41,17 @@ flowchart LR
 | Sprite pipeline | [app/common_utils/generate_object_sprites.py](app/common_utils/generate_object_sprites.py) | Generates sprites with ComfyUI. Prompts and seeds are recorded in `images/generated_sprites/manifest.json`. |
 | Particle FX pipeline | [app/common_utils/generate_particle_fx.py](app/common_utils/generate_particle_fx.py) | Animates effects with ComfyUI image-to-video and packs them into additive flipbook sheets in `app/static/particles/fx/`. |
 
+### Timing and client sync
+
+The game client in [app/templates/play.html](app/templates/play.html) never runs the simulation. It polls snapshots over HTTP and animates between them. These are the moving parts:
+
+1. **Server tick.** The game node advances one epoch every `realm.TIME_INTERVAL` (about 0.33 s; see `main_loop` in [main.py](app/main.py)). After each epoch, `send_map_data` writes `map_{player}` to Redis (expires after 5 s). The snapshot includes `global_params.epoch`, `time_interval` and `new_map_timestamp`.
+2. **Polling.** `pollServer()` runs a self-scheduling `setTimeout` loop with one request in flight at a time. It calls `GET /get_map?since_epoch=<last epoch>`. If the map is still `running` at that epoch, the server answers `204` with an empty body. Otherwise it returns the full snapshot. After a new epoch arrives, the client waits `0.6 × time_interval`, then polls every 25 ms until the next epoch. While not running, it polls every 500 ms.
+3. **Compression.** `GZipMiddleware` (responses of 1 KB or more) compresses snapshots, which mostly consist of the view's tiles. Bandwidth matters most when playing from another device on the network.
+4. **Interpolation.** Each sprite (`MyObject`) moves from (`x`, `y`) to (`x_new`, `y_new`) with `t = elapsed / map.refresh_time`, clamped to `[0, 1]`. When a snapshot arrives, `update_data()` starts the new segment from the **current on-screen position**, `lerp(x, x_new, last_t)`. Early or late snapshots therefore never make sprites snap. The camera follows the player sprite's interpolated position.
+5. **Adaptive duration.** `refresh_data()` keeps an exponential moving average of the actual time between epoch arrivals: weight 0.2, each sample clamped to `[0.5, 2] × time_interval`. It sets `refresh_time = 1.1 × EMA`, clamped to `[0.9, 1.6] × time_interval`. Network jitter then stretches motion slightly instead of freezing it.
+6. **Input.** Key changes go to `POST /control` immediately, with at most one request in flight. A newer key state is queued and replaces the older one. While a key is held, the state is also resent every 200 ms. The game node reads `control_{player}` on its next tick.
+
 ## Running locally
 
 ### With Docker Compose (recommended)
@@ -143,7 +154,7 @@ The live OpenAPI schema is at `/openapi.json`, and Swagger UI is at `/docs`.
 | POST | `/new_game` | ✓ | Join as a player, or spectate (`spectator_follow_index`, `spectator_follow_type`). |
 | POST | `/create_bot` | ✓ | Deploy bot code (`code_str`) and spectate it. |
 | POST | `/control` | ✓ | Held keys: `ArrowUp`, `ArrowDown`, `ArrowLeft`, `ArrowRight` (booleans). |
-| GET | `/get_map` | ✓ | Current view: `global_params`, `player`, `objects`, `tiles`, `particles`. |
+| GET | `/get_map` | ✓ | Current view: `global_params`, `player`, `objects`, `tiles`, `particles`. With `?since_epoch=N`, it returns `204` while the map is still at epoch `N`. |
 | GET | `/score` | ✓ | Your player and family scores and ranks. |
 | POST | `/end_game` | ✓ | Leave the game. |
 | GET | `/me` | ✓ | Authenticated username. |

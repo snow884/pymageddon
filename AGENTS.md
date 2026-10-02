@@ -15,6 +15,13 @@ For a dated summary of recent repository work, validation evidence, and the curr
 - **Particle effects:** server particles in `app/type_defs/particles/` set `fx` (a preset in `FX_PRESETS` in `app/templates/play.html`), and optionally `fx_sheet`/`fx_frames` (an I2V flipbook from `common_utils.generate_particle_fx`) and `fx_label`. The client plays them as real-time effects. Only `ground_stuck` particles (blood, tracks) still render the server-driven `image`.
 - **Bot language** (`app/sandboxed_language/evaluator.py`): this is a whitelist AST interpreter, not `exec`. Keep it that way. Never add attribute access, imports, loops or arbitrary calls. Expose new helpers only through `function_operators`. Then update the bot reference in `README.md` and `app/templates/llms.txt`.
 - **New public page or endpoint:** add the page to `app/templates/sitemap.xml`, and add both pages and endpoints to `app/templates/llms.txt`. If the route is private or authenticated, disallow it in `app/templates/robots.txt`. Give HTML pages `title` and `description` blocks (base template: `_menu_bar.html`). Use the `site_url` Jinja global for absolute URLs.
+- **Client timing / lag** (`app/templates/play.html`, `/get_map`, `/control`): read "Timing and client sync" in `README.md` first. Keep these invariants:
+  - Poll with `since_epoch` and keep a single request in flight. Don't go back to a fixed fast `setInterval` that downloads full maps.
+  - `update_data()` must start each new segment from the on-screen position (`last_t`), not from the previous target.
+  - Animation duration comes from the arrival-interval EMA, not from a hard-coded 0.33.
+  - Don't create a `PIXI.Text` (or other per-object canvas resources) for objects that display nothing; tiles churn every time the player moves.
+  - Don't log per request in hot endpoints (`get_user` runs on every authenticated call).
+  - If the snapshot format or tick rate changes, update `send_map_data` in `main.py`, `refresh_data()` in `play.html`, and the `/get_map` tests in `tests/test_server.py` together.
 - **Server secrets:** `SECRET_KEY` in `server.py` is a known placeholder. Don't copy it elsewhere.
 
 ## Checks
