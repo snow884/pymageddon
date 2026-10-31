@@ -45,5 +45,14 @@ jobs:
         cd docker_images && sh build_all.sh
 
     - name: Deployed!
-      run: echo App successfully deployed 
+      run: echo App successfully deployed
+
+  deploy-adamland:
+    name: Deploy to adamland
+    needs: [check_python_code]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: self-hosted
+    steps:
+      - name: Rebuild Pymageddon on adamland
+        run: /opt/adamland/bin/deploy-app.sh pymageddon 
 
