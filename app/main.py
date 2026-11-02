@@ -3,6 +3,7 @@ import queue
 import random
 import threading
 import time
+from enum import Enum
 
 import cython
 import redis
@@ -321,6 +322,64 @@ def find_all_types(obj):
     return objects, tiles, particles
 
 
+def _json_rotation(value):
+    if isinstance(value, Enum):
+        return value.value
+    return value
+
+
+def _view_object(obj):
+    # The play client only reads position, sprite, health, and labels.
+    # Dataclass dumps also carried bot code, effect objects, and variables.
+    return {
+        "index": obj.index,
+        "image": obj.image,
+        "x": obj.x,
+        "y": obj.y,
+        "rotation": _json_rotation(obj.rotation),
+        "hp": obj.hp or 0,
+        "is_alive": bool(obj.is_alive),
+        "player_name": obj.player_name or "",
+        "family_name": obj.family_name or "",
+    }
+
+
+def _view_tile(tile):
+    return {
+        "image": tile.image,
+        "x": tile.x,
+        "y": tile.y,
+        "rotation": _json_rotation(tile.rotation),
+    }
+
+
+def _view_particle(particle):
+    return {
+        "index": particle.index,
+        "image": particle.image,
+        "x": particle.x,
+        "y": particle.y,
+        "rotation": _json_rotation(particle.rotation),
+        "is_particle": True,
+        "motion": particle.motion,
+        "lifetime": particle.lifetime,
+        "life": particle.life,
+        "fx": particle.fx,
+        "fx_sheet": particle.fx_sheet,
+        "fx_frames": particle.fx_frames,
+        "fx_label": particle.fx_label,
+    }
+
+
+def _store_player_map(player_name, data):
+    payload = json.dumps(data, cls=EnumEncoder)
+    epoch = data["global_params"].get("epoch", 0)
+    realm.REDIS_CONNECTION.set(f"map_{player_name}", payload)
+    realm.REDIS_CONNECTION.set(f"map_epoch_{player_name}", epoch)
+    realm.REDIS_CONNECTION.expire(f"map_{player_name}", 5)
+    realm.REDIS_CONNECTION.expire(f"map_epoch_{player_name}", 5)
+
+
 def send_map_data(
     player_object,
     player_name,
@@ -365,13 +424,12 @@ def send_map_data(
             "dashboard_message": dashboard_message,
         },
         "player": {"object_id": str(player_object.index), "object_type": object_type},
-        "objects": {str(k): o.to_dict() for k, o in objects.items()},
-        "tiles": {str(k): t.to_dict() for k, t in tiles.items()},
-        "particles": {str(k): t.to_dict() for k, t in particles.items()},
+        "objects": {str(k): _view_object(o) for k, o in objects.items()},
+        "tiles": {str(k): _view_tile(t) for k, t in tiles.items()},
+        "particles": {str(k): _view_particle(t) for k, t in particles.items()},
     }
 
-    realm.REDIS_CONNECTION.set(f"map_{player_name}", json.dumps(data, cls=EnumEncoder))
-    realm.REDIS_CONNECTION.expire(f"map_{player_name}", 5)
+    _store_player_map(player_name, data)
 
 
 def send_score_data(player_name):
@@ -385,7 +443,7 @@ def send_score_data(player_name):
     )
 
 
-def send_map_data_all():
+def send_map_data_all(epoch=None):
 
     with realm.LOCK:
         for player_name, player_object in realm.PLAYER_LIST.items():
@@ -416,6 +474,11 @@ def send_map_data_all():
                 tiles,
                 particles,
             )
+
+    # Scores are not on the control path. Refreshing them every tick makes the
+    # map publisher fall behind the simulation.
+    if epoch is not None and epoch % ECOLOGY_STRIDE != 0:
+        return
 
     player_keys = (
         list(realm.REDIS_CONNECTION.scan_iter(match="player_*"))
@@ -505,16 +568,26 @@ def count_object():
         print(f"{type_name} : {cnt}")
 
 
-def simulate_epoch(player_control=False):
+# Snapshots and movement run every tick. Hunger, bot code, and births stay on
+# the previous 0.3s cadence so a faster tick does not shorten a life.
+ECOLOGY_STRIDE = 3
 
-    evaluate_thinking()
+
+def simulate_epoch(player_control=False, ecology=True):
+
+    if ecology:
+        evaluate_thinking()
 
     if player_control:
         evaluate_player_control()
 
-    evaluate_effects()
+    if ecology:
+        evaluate_effects()
+
     evaluate_moves()
-    ecosystem.rebalance()
+
+    if ecology:
+        ecosystem.rebalance()
 
 
 def generate_summary_yaml():
@@ -610,7 +683,7 @@ def worker_send_map_data_all(q, thread_id):
                 timeout=realm.TIME_INTERVAL * 2
             )  # Block until an item is available or timeout
             print(f"Thread {thread_id}: Processing {item}")
-            send_map_data_all()
+            send_map_data_all(item)
             q.task_done()  # Indicate that a formerly enqueued task is complete
         except queue.Empty as e:
             print(f"Thread {thread_id}: queue is empty")
@@ -704,12 +777,15 @@ def main_loop(steps=None):
         start_time = time.time()
         with realm.LOCK:
             handle_players()
-            simulate_epoch(player_control=realm.MODE == "full")
+            simulate_epoch(
+                player_control=realm.MODE == "full",
+                ecology=realm.EPOCH_COUNTER % ECOLOGY_STRIDE == 0,
+            )
 
         if realm.MODE == "full":
             q_send_map_data_all.put(realm.EPOCH_COUNTER)
 
-            if realm.EPOCH_COUNTER % 30 == 0:
+            if realm.EPOCH_COUNTER % max(1, int(round(10 / realm.TIME_INTERVAL))) == 0:
                 q_generate_plots.put(realm.EPOCH_COUNTER)
 
             if realm.EPOCH_COUNTER % int(360 / realm.TIME_INTERVAL) == 0:

@@ -631,13 +631,24 @@ def read_item(
     since_epoch: Optional[int] = None,
 ):
 
+    # Unchanged polls used to download and parse the whole viewport. The epoch
+    # key answers those with an empty 204.
+    if since_epoch is not None:
+        epoch_raw = r.get(f"map_epoch_{current_user.username}")
+        if epoch_raw is not None:
+            try:
+                if int(epoch_raw) == since_epoch:
+                    return Response(status_code=204)
+            except (TypeError, ValueError):
+                pass
+
     map_data_str = r.get(f"map_{current_user.username}")
 
     if not map_data_str:
         map_data = {
             "global_params": {
                 "status": "stopped",
-                "time_interval": 0.33,
+                "time_interval": 0.1,
                 "map_view_size": 11,
                 "epoch": 0,
             },
@@ -666,6 +677,10 @@ def read_item(
         map_data["global_params"]["time_left"] = max(
             0.0, new_map_timestamp - unix_timestamp
         )
+
+    # The texture catalog is static. Later polls already have it cached.
+    if since_epoch is not None:
+        map_data["global_params"].pop("textures", None)
 
     return map_data
 

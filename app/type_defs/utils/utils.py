@@ -65,3 +65,6 @@ class Spectator:
         realm.REDIS_CONNECTION.set(
             f"map_{self.player_name}", json.dumps(data, cls=EnumEncoder)
         )
+        realm.REDIS_CONNECTION.set(
+            f"map_epoch_{self.player_name}", data["global_params"]["epoch"]
+        )

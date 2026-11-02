@@ -840,7 +840,7 @@
                         this.player_id = "0";
                         this.player_obj = null;
                         this.textures = {};
-                        this.refresh_time = 0.33;
+                        this.refresh_time = 0.1;
                         this.arrival_interval = null;
                         this.epoch = 0;
                         this.epoch_start_time = performance.now();
@@ -888,7 +888,7 @@
 
                         // Animate over the observed arrival rate (EMA) so network jitter stretches motion instead of freezing it.
                         const now = performance.now();
-                        const nominal = this.map_data['global_params']['time_interval'] || 0.33;
+                        const nominal = this.map_data['global_params']['time_interval'] || 0.1;
                         const since_last = Math.min(Math.max((now - this.epoch_start_time) / 1000.0, nominal * 0.5), nominal * 2.0);
                         this.arrival_interval = this.arrival_interval === null
                             ? nominal
@@ -1001,7 +1001,7 @@
                     }
 
                     async init_objects() {
-                        this.refresh_time = this.map_data['global_params']['time_interval'] || 0.33;
+                        this.refresh_time = this.map_data['global_params']['time_interval'] || 0.1;
                         this.epoch = this.map_data['global_params']['epoch'] || 0;
                         this.epoch_start_time = performance.now();
                         this.status = this.map_data['global_params']['status'];
@@ -1255,34 +1255,26 @@
                     if (keys_pressed["ArrowRight"] || keys_pressed["ArrowLeft"] || keys_pressed["ArrowDown"] || keys_pressed["ArrowUp"]) {
                         send_control();
                     }
-                }, 200);
+                }, 80);
 
-                // Background polling decoupled from the render ticker. Only one request is in flight;
-                // right after a new epoch we idle until the next one is due, then poll quickly.
+                // One request in flight. Keep asking: a 204 is cheap, and waiting
+                // most of a tick after each frame is what made controls feel late.
                 const MIN_POLL_GAP_MS = 25;
                 async function pollServer() {
-                    let got_new_epoch = false;
                     try {
                         const data = await map.fetch_data_objects(true);
                         if (data && data.global_params) {
                             if (data.global_params.status !== 'running') {
                                 map.status = 'stopped';
                             } else {
-                                got_new_epoch = map.refresh_data();
+                                map.refresh_data();
                             }
                         }
                     } catch (err) {
                         console.error("Map sync error:", err);
                     }
 
-                    let delay = MIN_POLL_GAP_MS;
-                    if (got_new_epoch) {
-                        const nominal_ms = (map.map_data.global_params.time_interval || 0.33) * 1000;
-                        delay = Math.max(MIN_POLL_GAP_MS, nominal_ms * 0.6);
-                    }
-                    if (map.status !== 'running') {
-                        delay = 500;
-                    }
+                    const delay = map.status === 'running' ? MIN_POLL_GAP_MS : 200;
                     setTimeout(pollServer, delay);
                 }
 
@@ -1297,7 +1289,7 @@
                         if (map.player_obj) {
                             const now = performance.now();
                             const elapsed = (now - (map.epoch_start_time || now)) / 1000.0;
-                            const progress = Math.min(Math.max(elapsed / (map.refresh_time || 0.33), 0.0), 1.0);
+                            const progress = Math.min(Math.max(elapsed / (map.refresh_time || 0.1), 0.0), 1.0);
 
                             map.update_positions(progress);
 
