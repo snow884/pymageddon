@@ -2,7 +2,7 @@
 
 **A free-to-play, browser-based MMO survival game where you can program your creature in Python.**
 
-Play now: **<https://pymageddon.ai-mmo-games.de>**
+Play now: **<https://pymageddon.adamland.net>**
 
 Pymageddon simulates a living ecosystem with real predator-prey dynamics. Plants spread, herbivores graze, and predators hunt. Every creature needs food to survive, so populations rise and crash the way they do in nature. The world only supports as many predators as it can feed.
 
@@ -13,12 +13,12 @@ You can play in two ways:
 
 | | |
 |---|---|
-| Species explorer | <https://pymageddon.ai-mmo-games.de/explorer> |
-| Live world map | <https://pymageddon.ai-mmo-games.de/world_map> |
-| Leaderboard | <https://pymageddon.ai-mmo-games.de/players> |
-| Bot editor | <https://pymageddon.ai-mmo-games.de/create_bot_page> |
-| API docs (OpenAPI) | <https://pymageddon.ai-mmo-games.de/docs> |
-| Guide for AI agents | <https://pymageddon.ai-mmo-games.de/llms.txt> |
+| Species explorer | <https://pymageddon.adamland.net/explorer> |
+| Live world map | <https://pymageddon.adamland.net/world_map> |
+| Leaderboard | <https://pymageddon.adamland.net/players> |
+| Bot editor | <https://pymageddon.adamland.net/create_bot_page> |
+| API docs (OpenAPI) | <https://pymageddon.adamland.net/docs> |
+| Guide for AI agents | <https://pymageddon.adamland.net/llms.txt> |
 
 ## Architecture
 
@@ -153,17 +153,17 @@ Notes:
 - `and` and `or` evaluate both sides, so nest `if` statements when the right side depends on the left.
 - Any runtime error resets the bot's variables.
 
-Deploy from the [bot editor](https://pymageddon.ai-mmo-games.de/create_bot_page) or through the API:
+Deploy from the [bot editor](https://pymageddon.adamland.net/create_bot_page) or through the API:
 
 ```bash
-TOKEN=$(curl -s -X POST https://pymageddon.ai-mmo-games.de/token \
+TOKEN=$(curl -s -X POST https://pymageddon.adamland.net/token \
   -H 'Content-Type: application/json' -d '{"is_guest": true}' | jq -r .access_token)
 
-curl -X POST https://pymageddon.ai-mmo-games.de/create_bot \
+curl -X POST https://pymageddon.adamland.net/create_bot \
   -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
   -d '{"code_str": "intent = \"MOVE_FORWARD\""}'
 
-curl -H "Authorization: Bearer $TOKEN" https://pymageddon.ai-mmo-games.de/get_map
+curl -H "Authorization: Bearer $TOKEN" https://pymageddon.adamland.net/get_map
 ```
 
 More examples are in [app/sandboxed_language/test_codes/](app/sandboxed_language/test_codes/).
@@ -211,4 +211,4 @@ To add or rebalance species, follow [.github/skills/add-game-objects/SKILL.md](.
 
 ## Deployment
 
-Pushing to `master` runs [.github/workflows/cicd-prod.yml](.github/workflows/cicd-prod.yml), which runs the pre-commit checks and then builds and deploys the Docker images in [docker_images/](docker_images/).
+Pushing to `master` runs [.github/workflows/cicd-prod.yml](.github/workflows/cicd-prod.yml). After the pre-commit checks, a self-hosted runner on the adamland host runs `/opt/adamland/bin/deploy-app.sh pymageddon`. That rebuilds the game from this branch and serves it at <https://pymageddon.adamland.net>. The same workflow still builds the images in [docker_images/](docker_images/) for the existing AWS deploy.
