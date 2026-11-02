@@ -601,8 +601,10 @@
                             }
                         }
 
-                        let texture = map.textures['../../static/other/joystick_center.png'];
-                        let texture_outside = map.textures['../../static/other/joystick_outside.png'];
+                        this.centerImage = '../../static/other/joystick_center.png';
+                        this.outsideImage = '../../static/other/joystick_outside.png';
+                        let texture = map.textures[this.centerImage];
+                        let texture_outside = map.textures[this.outsideImage];
 
                         this.sprite = safeSprite(texture);
                         this.sprite_outside = safeSprite(texture_outside);
@@ -642,6 +644,7 @@
                 class MyObject {
                     constructor(obj_data, map, z_index) {
                         this.index = obj_data["index"];
+                        this.imageUrl = obj_data["image"];
 
                         let texture = map.textures[obj_data["image"]];
                         if (!texture) {
@@ -701,7 +704,8 @@
                         this.hp_new = obj_data["hp"] || 0;
 
                         if (obj_data["is_alive"]) {
-                            let hp_texture = map.textures["../../static/other/health_bar_green.png"];
+                            this.healthImage = "../../static/other/health_bar_green.png";
+                            let hp_texture = map.textures[this.healthImage];
                             this.health_bar = safeSprite(hp_texture);
                             app.stage.addChild(this.health_bar);
 
@@ -828,11 +832,14 @@
 
                         if (this.health_bar) {
                             if (this.hp_new <= 20) {
-                                this.health_bar.texture = map.textures["../../static/other/health_bar_red.png"];
+                                this.healthImage = "../../static/other/health_bar_red.png";
                             } else if (this.hp_new <= 50) {
-                                this.health_bar.texture = map.textures["../../static/other/health_bar_yellow.png"];
+                                this.healthImage = "../../static/other/health_bar_yellow.png";
                             } else {
-                                this.health_bar.texture = map.textures["../../static/other/health_bar_green.png"];
+                                this.healthImage = "../../static/other/health_bar_green.png";
+                            }
+                            if (map.textures[this.healthImage]) {
+                                this.health_bar.texture = map.textures[this.healthImage];
                             }
 
                             this.health_bar.x = this.sprite.x;
@@ -977,9 +984,60 @@
                         return true;
                     }
 
-                    async load_textures() {
-                        const pending = (this.map_data['global_params']['textures'] || [])
-                            .filter((url) => !this.textures[url]);
+                    apply_texture(url) {
+                        const texture = this.textures[url];
+                        if (!texture) {
+                            return;
+                        }
+                        const paint = (obj) => {
+                            if (!obj) {
+                                return;
+                            }
+                            if (obj.imageUrl === url && obj.sprite) {
+                                obj.sprite.texture = texture;
+                            }
+                            if (obj.healthImage === url && obj.health_bar) {
+                                obj.health_bar.texture = texture;
+                            }
+                        };
+                        Object.values(this.objects).forEach(paint);
+                        Object.values(this.tiles).forEach(paint);
+                        Object.values(this.particles).forEach(paint);
+                        if (this.nav_map_image === url && this.nav_map_sprite) {
+                            this.nav_map_sprite.texture = texture;
+                        }
+                        if (this.nav_cross_image === url && this.nav_cross_sprite) {
+                            this.nav_cross_sprite.texture = texture;
+                        }
+                        if (this.exit_image === url && this.exit_button_sprite) {
+                            this.exit_button_sprite.texture = texture;
+                        }
+                        if (this.joystick) {
+                            if (this.joystick.centerImage === url) {
+                                this.joystick.sprite.texture = texture;
+                            }
+                            if (this.joystick.outsideImage === url) {
+                                this.joystick.sprite_outside.texture = texture;
+                            }
+                        }
+                    }
+
+                    async load_textures(textureList) {
+                        const playerImage = this.player_obj && this.player_obj.imageUrl;
+                        const first = new Set([
+                            playerImage,
+                            "../../static/other/health_bar_green.png",
+                            "../../static/other/health_bar_red.png",
+                            "../../static/other/health_bar_yellow.png",
+                            "../../static/other/joystick_center.png",
+                            "../../static/other/joystick_outside.png",
+                            "../../static/other/exit_button.png",
+                            "../../static/other/red_cross.png",
+                            "../../map_image.png",
+                        ]);
+                        const pending = (textureList || [])
+                            .filter((url) => url && !this.textures[url]);
+                        pending.sort((a, b) => Number(first.has(b)) - Number(first.has(a)));
                         // Phones allow only a handful of connections. Opening every
                         // sprite at once stalls the page or fails the whole load.
                         const workers = Array.from({ length: 4 }, async () => {
@@ -987,6 +1045,7 @@
                                 const url = pending.shift();
                                 try {
                                     this.textures[url] = await PIXI.Assets.load(url);
+                                    this.apply_texture(url);
                                 } catch (err) {
                                     console.error("Asset load err:", url, err);
                                 }
@@ -1048,7 +1107,8 @@
 
                         const maxDim = Math.max(app.screen.width, app.screen.height);
 
-                        let nav_map_texture = this.textures['../../map_image.png'];
+                        this.nav_map_image = '../../map_image.png';
+                        let nav_map_texture = this.textures[this.nav_map_image];
                         this.nav_map_sprite = safeSprite(nav_map_texture);
                         app.stage.addChild(this.nav_map_sprite);
                         this.nav_map_sprite.zIndex = 5;
@@ -1058,7 +1118,8 @@
                         this.nav_map_sprite.width = (3.0 / 20.0) * maxDim;
                         this.nav_map_sprite.anchor.set(0.5);
 
-                        let nav_cross_texture = this.textures['../../static/other/red_cross.png'];
+                        this.nav_cross_image = '../../static/other/red_cross.png';
+                        let nav_cross_texture = this.textures[this.nav_cross_image];
                         this.nav_cross_sprite = safeSprite(nav_cross_texture);
                         app.stage.addChild(this.nav_cross_sprite);
                         this.nav_cross_sprite.zIndex = 6;
@@ -1066,7 +1127,8 @@
                         this.nav_cross_sprite.width = (2.0 / 20.0) * maxDim;
                         this.nav_cross_sprite.anchor.set(0.5);
 
-                        let exit_button_texture = this.textures['../../static/other/exit_button.png'];
+                        this.exit_image = '../../static/other/exit_button.png';
+                        let exit_button_texture = this.textures[this.exit_image];
                         this.exit_button_sprite = safeSprite(exit_button_texture);
                         app.stage.addChild(this.exit_button_sprite);
                         this.exit_button_sprite.zIndex = 6;
@@ -1172,9 +1234,9 @@
                 screen_title_small.visible = false;
 
                 const map = new MyMap();
-                // A phone often finishes downloading Pixi after the cow has already
-                // died, or after the map key expired. Start a fresh life instead of
-                // bouncing back to the menu.
+                // The cow's life starts when this page asks for a game. Draw that
+                // frame immediately. Sprite files stream in afterwards; waiting for
+                // all of them used to outlast the player.
                 const playToken = sessionStorage.getItem('token');
                 const playDeadline = Date.now() + 20000;
                 let requestedNewGame = false;
@@ -1205,16 +1267,18 @@
                     return;
                 }
 
-                await map.load_textures();
+                const textureList = (map.map_data.global_params.textures || []).slice();
                 await map.init_objects();
 
                 if (touchGame) {
                     try {
-                        new JoyStick();
+                        map.joystick = new JoyStick();
                     } catch (err) {
                         console.error('Joystick failed:', err);
                     }
                 }
+
+                map.load_textures(textureList);
 
                 function logKey(e) {
                     if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.code)) {
