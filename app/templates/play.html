@@ -1182,6 +1182,74 @@
                 document.addEventListener('keydown', logKey);
                 document.addEventListener('keyup', clearKey);
 
+                let restarting = false;
+
+                async function restartFromGameOver() {
+                    if (restarting || map.status === 'running') {
+                        return;
+                    }
+                    restarting = true;
+                    screen_title_small.text = "Starting a new game...";
+                    const token = sessionStorage.getItem('token');
+                    try {
+                        const response = await fetch('/new_game', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + token,
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        if (response.status === 401) {
+                            window.location.replace('/login_page');
+                            return;
+                        }
+                        if (!response.ok) {
+                            throw new Error('Could not start a new game.');
+                        }
+                        const start = Date.now();
+                        while (Date.now() - start < 30000) {
+                            const mapResponse = await fetch('/get_map', {
+                                headers: {
+                                    'Authorization': 'Bearer ' + token,
+                                },
+                            });
+                            if (mapResponse.ok) {
+                                const data = await mapResponse.json();
+                                if (data.global_params && data.global_params.status === 'running') {
+                                    window.location.replace('/play');
+                                    return;
+                                }
+                            }
+                            await new Promise((resolve) => setTimeout(resolve, 150));
+                        }
+                        throw new Error('The new game did not start.');
+                    } catch (error) {
+                        console.error(error);
+                        restarting = false;
+                        screen_title_small.text = "Press any key to play again...";
+                    }
+                }
+
+                document.addEventListener('keydown', function (e) {
+                    if (map.status === 'running') {
+                        return;
+                    }
+                    if (e.metaKey || e.ctrlKey || e.altKey) {
+                        return;
+                    }
+                    if (['ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight'].includes(e.code)) {
+                        return;
+                    }
+                    e.preventDefault();
+                    restartFromGameOver();
+                });
+
+                app.canvas.addEventListener('pointerdown', function () {
+                    if (map.status !== 'running') {
+                        restartFromGameOver();
+                    }
+                });
+
                 // Periodic input heartbeat when any movement key is pressed
                 setInterval(() => {
                     if (keys_pressed["ArrowRight"] || keys_pressed["ArrowLeft"] || keys_pressed["ArrowDown"] || keys_pressed["ArrowUp"]) {

@@ -449,6 +449,7 @@ async def player(request: Request, player_name: str):
             headers={"WWW-Authenticate": "Bearer"},
         )
     score_summary["player_name"] = player_name
+    score_summary.setdefault("player_scores", {})
 
     print(score_summary["player_scores"])
 
@@ -603,9 +604,23 @@ def create_bot(
 @app.get("/score")
 def scores(current_user: Annotated[User, Depends(get_current_active_user)]):
 
+    empty_scores = {
+        "player_games": 0,
+        "player_score": 0,
+        "family_games": 0,
+        "family_score": 0,
+    }
     scores_str = r.get(f"score_{current_user.username}")
 
+    if not scores_str:
+        return {"player_scores": empty_scores, "global_ranking": []}
+
     scores = json.loads(scores_str)
+    player_scores = scores.get("player_scores") or {}
+    for key, value in empty_scores.items():
+        player_scores.setdefault(key, value)
+    scores["player_scores"] = player_scores
+    scores.setdefault("global_ranking", [])
 
     return scores
 

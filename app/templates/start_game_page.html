@@ -57,17 +57,21 @@
             }
       })
       .then(data => {
+          const scores = (data && data['player_scores']) || {};
+          const stat = (key) => (scores[key] === undefined || scores[key] === null) ? 0 : scores[key];
 
-          player_games.innerText = data['player_scores']['player_games'];
-          player_score.innerText = data['player_scores']['player_score'];
-          family_games.innerText = data['player_scores']['family_games'];
-          family_score.innerText = data['player_scores']['family_score'];
+          player_games.innerText = stat('player_games');
+          player_score.innerText = stat('player_score');
+          family_games.innerText = stat('family_games');
+          family_score.innerText = stat('family_score');
 
       })
       .catch(error => {
-          // Handle errors
           console.error('Error:', error);
-          waring_message.innerText = error;
+          const message = document.getElementById('message_area');
+          if (message) {
+              message.innerText = error;
+          }
       });
     
     </script>
