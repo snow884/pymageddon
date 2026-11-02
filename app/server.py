@@ -625,6 +625,18 @@ def scores(current_user: Annotated[User, Depends(get_current_active_user)]):
     return scores
 
 
+_TEXTURE_CATALOG = None
+
+
+def _texture_catalog():
+    global _TEXTURE_CATALOG
+    if _TEXTURE_CATALOG is None:
+        from main import get_all_textures
+
+        _TEXTURE_CATALOG = get_all_textures()
+    return _TEXTURE_CATALOG
+
+
 @app.get("/get_map")
 def read_item(
     current_user: Annotated[User, Depends(get_current_active_user)],
@@ -651,6 +663,9 @@ def read_item(
                 "time_interval": 0.1,
                 "map_view_size": 11,
                 "epoch": 0,
+                # The play page loads these before it asks for a life. Starting
+                # the cow first let it die while the sprites were still downloading.
+                "textures": _texture_catalog(),
             },
             "player": {},
             "objects": {},

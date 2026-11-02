@@ -1234,40 +1234,52 @@
                 screen_title_small.visible = false;
 
                 const map = new MyMap();
-                // The cow's life starts when this page asks for a game. Draw that
-                // frame immediately. Sprite files stream in afterwards; waiting for
-                // all of them used to outlast the player.
+                // A new life starts only after the meadow sprites are in memory.
+                // The cow used to be born on the start page, then starve while this
+                // page was still downloading pictures.
                 const playToken = sessionStorage.getItem('token');
-                const playDeadline = Date.now() + 20000;
-                let requestedNewGame = false;
-                while (Date.now() < playDeadline) {
-                    const data = await map.fetch_data_objects();
-                    const status = data && data.global_params && data.global_params.status;
-                    if (status === 'running') {
-                        break;
-                    }
-                    if (!requestedNewGame) {
-                        requestedNewGame = true;
-                        try {
-                            await fetch('/new_game', {
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': 'Bearer ' + playToken,
-                                    'Content-Type': 'application/json',
-                                },
-                            });
-                        } catch (err) {
-                            console.error(err);
+                let data = await map.fetch_data_objects();
+                let status = data && data.global_params && data.global_params.status;
+                const textureList = ((data && data.global_params && data.global_params.textures) || []).slice();
+                if (status !== 'running' && textureList.length) {
+                    screen_title_indicative.text = "Loading the meadow...";
+                    screen_title_indicative.visible = true;
+                    const beforeLife = textureList.filter((url) => !url.includes('/particles/'));
+                    await map.load_textures(beforeLife);
+                    screen_title_indicative.visible = false;
+                }
+                if (status !== 'running') {
+                    const playDeadline = Date.now() + 20000;
+                    let requestedNewGame = false;
+                    while (Date.now() < playDeadline) {
+                        data = await map.fetch_data_objects();
+                        status = data && data.global_params && data.global_params.status;
+                        if (status === 'running') {
+                            break;
                         }
+                        if (!requestedNewGame) {
+                            requestedNewGame = true;
+                            try {
+                                await fetch('/new_game', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Authorization': 'Bearer ' + playToken,
+                                        'Content-Type': 'application/json',
+                                    },
+                                });
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                        await new Promise((resolve) => setTimeout(resolve, 200));
                     }
-                    await new Promise((resolve) => setTimeout(resolve, 200));
                 }
                 if (!map.map_data || map.map_data['global_params']['status'] !== 'running') {
                     window.location.replace("/start_game_page");
                     return;
                 }
 
-                const textureList = (map.map_data.global_params.textures || []).slice();
+                const playingTextures = (map.map_data.global_params.textures || textureList).slice();
                 await map.init_objects();
 
                 if (touchGame) {
@@ -1278,7 +1290,7 @@
                     }
                 }
 
-                map.load_textures(textureList);
+                map.load_textures(playingTextures);
 
                 function logKey(e) {
                     if (["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.code)) {
