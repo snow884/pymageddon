@@ -10,8 +10,8 @@ class Realm:
     PARTICLE_LIST = {}
     OBJ_COUNTER = 0
     MAP_VIEW_SIZE = 12
-    TIME_INTERVAL = 0.1
-    LAST_REFRESH_TIME = 0.1
+    TIME_INTERVAL = 0.2
+    LAST_REFRESH_TIME = 0.2
     EPOCH_COUNTER = 0
     MAP = None
     SCORE_LIST = None
@@ -44,8 +44,8 @@ class Realm:
         self.PARTICLE_LIST = {}
         self.OBJ_COUNTER = 0
         self.MAP_VIEW_SIZE = 12
-        self.TIME_INTERVAL = 0.1
-        self.LAST_REFRESH_TIME = 0.1
+        self.TIME_INTERVAL = 0.2
+        self.LAST_REFRESH_TIME = 0.2
         self.EPOCH_COUNTER = 0
         self.MAP = None
         self.SCORE_LIST = None

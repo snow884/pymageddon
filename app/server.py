@@ -660,7 +660,7 @@ def read_item(
         map_data = {
             "global_params": {
                 "status": "stopped",
-                "time_interval": 0.1,
+                "time_interval": 0.2,
                 "map_view_size": 11,
                 "epoch": 0,
                 # The play page loads these before it asks for a life. Starting

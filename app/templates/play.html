@@ -873,7 +873,7 @@
                         this.player_id = "0";
                         this.player_obj = null;
                         this.textures = {};
-                        this.refresh_time = 0.1;
+                        this.refresh_time = 0.2;
                         this.arrival_interval = null;
                         this.epoch = 0;
                         this.epoch_start_time = performance.now();
@@ -921,7 +921,7 @@
 
                         // Animate over the observed arrival rate (EMA) so network jitter stretches motion instead of freezing it.
                         const now = performance.now();
-                        const nominal = this.map_data['global_params']['time_interval'] || 0.1;
+                        const nominal = this.map_data['global_params']['time_interval'] || 0.2;
                         const since_last = Math.min(Math.max((now - this.epoch_start_time) / 1000.0, nominal * 0.5), nominal * 2.0);
                         this.arrival_interval = this.arrival_interval === null
                             ? nominal
@@ -1085,7 +1085,7 @@
                     }
 
                     async init_objects() {
-                        this.refresh_time = this.map_data['global_params']['time_interval'] || 0.1;
+                        this.refresh_time = this.map_data['global_params']['time_interval'] || 0.2;
                         this.epoch = this.map_data['global_params']['epoch'] || 0;
                         this.epoch_start_time = performance.now();
                         this.status = this.map_data['global_params']['status'];
@@ -1420,7 +1420,7 @@
                         if (map.player_obj) {
                             const now = performance.now();
                             const elapsed = (now - (map.epoch_start_time || now)) / 1000.0;
-                            const progress = Math.min(Math.max(elapsed / (map.refresh_time || 0.1), 0.0), 1.0);
+                            const progress = Math.min(Math.max(elapsed / (map.refresh_time || 0.2), 0.0), 1.0);
 
                             map.update_positions(progress);
 
