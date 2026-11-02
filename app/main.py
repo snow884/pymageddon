@@ -376,8 +376,8 @@ def _store_player_map(player_name, data):
     epoch = data["global_params"].get("epoch", 0)
     realm.REDIS_CONNECTION.set(f"map_{player_name}", payload)
     realm.REDIS_CONNECTION.set(f"map_epoch_{player_name}", epoch)
-    realm.REDIS_CONNECTION.expire(f"map_{player_name}", 5)
-    realm.REDIS_CONNECTION.expire(f"map_epoch_{player_name}", 5)
+    realm.REDIS_CONNECTION.expire(f"map_{player_name}", 20)
+    realm.REDIS_CONNECTION.expire(f"map_epoch_{player_name}", 20)
 
 
 def send_map_data(

@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
         <!-- Search console -->
         <meta name="google-site-verification" content="evmqjYRoTrRgw6tZvMG4eEVPDgUvSTFBpCkXOeOMdqA" />
@@ -15,13 +15,21 @@
                 padding: 0;
                 width: 100%;
                 height: 100%;
+                height: 100dvh;
                 overflow: hidden;
                 background-color: #000;
+                position: fixed;
+                inset: 0;
+                touch-action: none;
+                overscroll-behavior: none;
+                -webkit-user-select: none;
+                user-select: none;
             }
             canvas {
                 display: block;
                 width: 100%;
                 height: 100%;
+                touch-action: none;
             }
         </style>
     </head>
@@ -38,13 +46,15 @@
             
         (async () => {
 
+            const touchGame = window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
             const app = new PIXI.Application();
             await app.init({
-                antialias: true,
+                antialias: !touchGame,
                 autoDensity: true,
-                resolution: Math.min(window.devicePixelRatio || 1, 2),
+                resolution: touchGame ? 1 : Math.min(window.devicePixelRatio || 1, 2),
                 resizeTo: window,
                 backgroundColor: 0x141a12,
+                powerPreference: 'high-performance',
             });
             document.body.appendChild(app.canvas);
             app.stage.sortableChildren = true;
@@ -85,6 +95,14 @@
             }
 
             async function run_game() {
+                const fallbackCanvas = document.createElement('canvas');
+                fallbackCanvas.width = 1;
+                fallbackCanvas.height = 1;
+                const fallbackTexture = PIXI.Texture.from(fallbackCanvas);
+                function safeSprite(texture) {
+                    return PIXI.Sprite.from(texture || fallbackTexture);
+                }
+
 
                 // ---- Atmosphere: sky gradient, vignette, drifting dust, player glow ----
                 function makeLinearGradientTexture(size, stops) {
@@ -578,8 +596,8 @@
                         let texture = map.textures['../../static/other/joystick_center.png'];
                         let texture_outside = map.textures['../../static/other/joystick_outside.png'];
 
-                        this.sprite = PIXI.Sprite.from(texture);
-                        this.sprite_outside = PIXI.Sprite.from(texture_outside);
+                        this.sprite = safeSprite(texture);
+                        this.sprite_outside = safeSprite(texture_outside);
 
                         this.sprite.anchor.set(0.5);
                         this.sprite_outside.anchor.set(0.5);
@@ -622,7 +640,7 @@
                             console.warn("Unknown object texture:", obj_data["image"]);
                         }
 
-                        this.sprite = PIXI.Sprite.from(texture);
+                        this.sprite = safeSprite(texture);
                         app.stage.addChild(this.sprite);
                         this.sprite.anchor.set(0.5);
 
@@ -676,7 +694,7 @@
 
                         if (obj_data["is_alive"]) {
                             let hp_texture = map.textures["../../static/other/health_bar_green.png"];
-                            this.health_bar = PIXI.Sprite.from(hp_texture);
+                            this.health_bar = safeSprite(hp_texture);
                             app.stage.addChild(this.health_bar);
 
                             this.health_bar.anchor.set(0.5);
@@ -952,22 +970,21 @@
                     }
 
                     async load_textures() {
-                        const loading_await_list = [];
-                        const textures_list = this.map_data['global_params']['textures'] || [];
-
-                        for (const my_texture_url of textures_list) {
-                            if (!this.textures[my_texture_url]) {
-                                loading_await_list.push(
-                                    PIXI.Assets.load(my_texture_url)
-                                        .then(texture => {
-                                            this.textures[my_texture_url] = texture;
-                                        })
-                                        .catch(err => console.error("Asset load err:", my_texture_url, err))
-                                );
+                        const pending = (this.map_data['global_params']['textures'] || [])
+                            .filter((url) => !this.textures[url]);
+                        // Phones allow only a handful of connections. Opening every
+                        // sprite at once stalls the page or fails the whole load.
+                        const workers = Array.from({ length: 4 }, async () => {
+                            while (pending.length) {
+                                const url = pending.shift();
+                                try {
+                                    this.textures[url] = await PIXI.Assets.load(url);
+                                } catch (err) {
+                                    console.error("Asset load err:", url, err);
+                                }
                             }
-                        }
-
-                        await Promise.all(loading_await_list);
+                        });
+                        await Promise.all(workers);
                     }
 
                     async fetch_data_objects(only_if_changed = false) {
@@ -1024,7 +1041,7 @@
                         const maxDim = Math.max(app.screen.width, app.screen.height);
 
                         let nav_map_texture = this.textures['../../map_image.png'];
-                        this.nav_map_sprite = PIXI.Sprite.from(nav_map_texture);
+                        this.nav_map_sprite = safeSprite(nav_map_texture);
                         app.stage.addChild(this.nav_map_sprite);
                         this.nav_map_sprite.zIndex = 5;
                         this.nav_map_sprite.x = app.screen.width - (1.5 / 20.0) * maxDim;
@@ -1034,7 +1051,7 @@
                         this.nav_map_sprite.anchor.set(0.5);
 
                         let nav_cross_texture = this.textures['../../static/other/red_cross.png'];
-                        this.nav_cross_sprite = PIXI.Sprite.from(nav_cross_texture);
+                        this.nav_cross_sprite = safeSprite(nav_cross_texture);
                         app.stage.addChild(this.nav_cross_sprite);
                         this.nav_cross_sprite.zIndex = 6;
                         this.nav_cross_sprite.height = (2.0 / 20.0) * maxDim;
@@ -1042,7 +1059,7 @@
                         this.nav_cross_sprite.anchor.set(0.5);
 
                         let exit_button_texture = this.textures['../../static/other/exit_button.png'];
-                        this.exit_button_sprite = PIXI.Sprite.from(exit_button_texture);
+                        this.exit_button_sprite = safeSprite(exit_button_texture);
                         app.stage.addChild(this.exit_button_sprite);
                         this.exit_button_sprite.zIndex = 6;
                         this.exit_button_sprite.x = 0;
@@ -1147,9 +1164,35 @@
                 screen_title_small.visible = false;
 
                 const map = new MyMap();
-                await map.fetch_data_objects();
-
-                if (map.map_data['global_params']['status'] !== 'running') {
+                // A phone often finishes downloading Pixi after the cow has already
+                // died, or after the map key expired. Start a fresh life instead of
+                // bouncing back to the menu.
+                const playToken = sessionStorage.getItem('token');
+                const playDeadline = Date.now() + 20000;
+                let requestedNewGame = false;
+                while (Date.now() < playDeadline) {
+                    const data = await map.fetch_data_objects();
+                    const status = data && data.global_params && data.global_params.status;
+                    if (status === 'running') {
+                        break;
+                    }
+                    if (!requestedNewGame) {
+                        requestedNewGame = true;
+                        try {
+                            await fetch('/new_game', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': 'Bearer ' + playToken,
+                                    'Content-Type': 'application/json',
+                                },
+                            });
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 200));
+                }
+                if (!map.map_data || map.map_data['global_params']['status'] !== 'running') {
                     window.location.replace("/start_game_page");
                     return;
                 }
@@ -1157,8 +1200,12 @@
                 await map.load_textures();
                 await map.init_objects();
 
-                if ((typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1)) {
-                    new JoyStick();
+                if (touchGame) {
+                    try {
+                        new JoyStick();
+                    } catch (err) {
+                        console.error('Joystick failed:', err);
+                    }
                 }
 
                 function logKey(e) {
@@ -1329,6 +1376,7 @@
                     } else {
                         screen_title_big.text = "Game over !";
                         screen_title_big.visible = true;
+                        screen_title_small.text = touchGame ? "Tap to play again" : "Press any key to play again...";
                         screen_title_small.visible = true;
                     }
                 });
