@@ -142,7 +142,7 @@ def handle_players():
                         random.randint(0, realm.MAP.size_x - 1),
                         random.randint(0, realm.MAP.size_y - 1),
                     )
-                    Cow(
+                    obj_fut("Cow")(
                         x_new=x_new,
                         y_new=y_new,
                         is_player=True,
@@ -193,7 +193,7 @@ def handle_players():
                                     random.randint(0, realm.MAP.size_y - 1),
                                 )
 
-                                obj = Cow(
+                                obj = obj_fut("Cow")(
                                     x_new=x_new,
                                     y_new=y_new,
                                     is_player=False,
